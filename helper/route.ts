@@ -11,6 +11,7 @@ export const routes = {
   whatIsIObserver: "/what-is-iobserver",
   getIObserver: "/get-iobserver",
   contact: "/contact",
+  signIn: "/sign-in",
 } as const;
 
 /** Anchor ids of the home page sections that other pages link to. */
@@ -25,3 +26,11 @@ export type HomeSection = keyof typeof homeSections;
 
 /** Link to a home page section that also works from other pages, e.g. "/#pricing". */
 export const homeSection = (section: HomeSection) => `${routes.home}#${homeSections[section]}`;
+
+/** Anchor ids of the Get iObserver page sections that other pages link to. */
+export const getIObserverSections = {
+  checkout: "checkout",
+} as const;
+
+/** Link straight to the checkout form on the Get iObserver page: "/get-iobserver#checkout". */
+export const checkoutLink = `${routes.getIObserver}#${getIObserverSections.checkout}`;

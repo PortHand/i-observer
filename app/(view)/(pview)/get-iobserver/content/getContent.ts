@@ -1,5 +1,6 @@
 // Static content for the "Get iObserver" page.
 
+import { getIObserverSections } from "@/helper/route";
 import { appInfo } from "../../home/content/homeContent";
 
 export const getApp = {
@@ -82,8 +83,8 @@ export const getSteps: GetStep[] = [
   },
 ];
 
-/** Anchor id of the checkout section, linked from the steps above it. */
-export const checkoutSectionId = "checkout";
+/** Anchor id of the checkout section, linked from the steps above it and from other pages. */
+export const checkoutSectionId = getIObserverSections.checkout;
 
 export type CheckoutStep = "contact" | "pay" | "transaction" | "done";
 

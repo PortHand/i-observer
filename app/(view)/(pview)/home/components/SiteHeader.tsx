@@ -36,7 +36,11 @@ export default function SiteHeader({ signedIn, current }: { signedIn: boolean; c
               </Link>
             ))}
           </nav>
-          <Link href={homeSection("top")} className="button button--secondary button--sm">
+          <Link
+            href={signedIn ? homeSection("top") : routes.signIn}
+            className="button button--secondary button--sm"
+            aria-current={!signedIn && current === routes.signIn ? "page" : undefined}
+          >
             <CircleUser className="icon icon--sm" strokeWidth={1.75} />
             <span>{signedIn ? auth.navSignedIn : auth.navSignedOut}</span>
           </Link>

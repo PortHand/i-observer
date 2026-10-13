@@ -4,7 +4,7 @@
 import { appInfo } from "../../home/content/homeContent";
 import { pricePlans } from "../../get-iobserver/content/getContent";
 import { formatAmount } from "../../get-iobserver/helper/getHelper";
-import { routes } from "@/helper/route";
+import { checkoutLink, routes } from "@/helper/route";
 import { sectionIds } from "./contactContent";
 
 const messageLink = { href: `#${sectionIds.message}`, label: "Send us a message" };
@@ -119,7 +119,7 @@ export const faqs: Faq[] = [
     question: "How do I pay?",
     answer:
       "By UPI. Enter your email and phone, then scan the QR code with GPay, PhonePe, Paytm, BHIM or any UPI app; the amount is filled in for you. On a phone you can open your UPI app directly instead of scanning.",
-    link: { href: routes.getIObserver, label: "Go to checkout" },
+    link: { href: checkoutLink, label: "Go to checkout" },
   },
   {
     id: "utr",
