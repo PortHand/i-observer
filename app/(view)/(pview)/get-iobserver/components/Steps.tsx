@@ -1,11 +1,17 @@
-import { getApp, getSteps } from "../content/homeContent";
-import SectionHeader from "./SectionHeader";
+import { homeSections } from "@/helper/route";
+import { getApp, getSteps } from "../content/getContent";
 
-export default function GetApp() {
+export default function Steps() {
   return (
-    <section className="band" id="get">
+    <section className="band" id={homeSections.top}>
       <div className="container section">
-        <SectionHeader eyebrow={getApp.eyebrow} title={getApp.title} lead={getApp.lead} />
+        <header className="section__header animate-in">
+          <div className="stack-sm">
+            <span className="eyebrow">{getApp.eyebrow}</span>
+            <h1 className="display section__title">{getApp.title}</h1>
+          </div>
+          <p className="lead">{getApp.lead}</p>
+        </header>
 
         <ol className="steps">
           {getSteps.map(({ title, description }, index) => (

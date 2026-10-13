@@ -9,6 +9,7 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
+import { homeSection, routes } from "@/helper/route";
 
 export const appInfo = {
   name: "iObserver",
@@ -18,12 +19,13 @@ export const appInfo = {
 };
 
 export const navLinks = [
-  { href: "#features", label: "Features" },
-  { href: "#platforms", label: "Platforms" },
-  { href: "#demo", label: "Demo" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#get", label: "Get it" },
-  { href: "#shortcuts-section", label: "Shortcuts" },
+  { href: routes.whatIsIObserver, label: "What is it?" },
+  { href: homeSection("features"), label: "Features" },
+  { href: homeSection("platforms"), label: "Platforms" },
+  { href: homeSection("demo"), label: "Demo" },
+  { href: homeSection("pricing"), label: "Pricing" },
+  { href: homeSection("shortcuts"), label: "Shortcuts" },
+  { href: routes.getIObserver, label: "Get iObserver" },
 ];
 
 export const hero = {
@@ -34,7 +36,6 @@ export const hero = {
   lead: "A floating overlay that stays on top of every app while you present. Screen shares, recordings and screenshots never see it.",
   demoCta: "Watch the demo",
   pricingCta: "See pricing",
-  fineprint: "Works with Zoom · Meet · Teams · Screenshots",
 };
 
 export const heroExplainer = {
@@ -44,7 +45,7 @@ export const heroExplainer = {
   yours: "On your screen",
   theirs: "What they see",
   hidden: "Hidden from capture",
-  caption: "Same screen, two views. The overlay stays on your display and drops out of every share, recording and screenshot.",
+  caption: "Same screen, two views.",
 };
 
 export const auth = {
@@ -78,9 +79,9 @@ export interface Feature {
 
 export const features: Feature[] = [
   {
-    label: "Capture",
-    title: "Hidden from capture",
-    description: "Invisible in Zoom, Meet, Teams, recordings and screenshots.",
+    label: "Browse",
+    title: "Built-in browser",
+    description: "Open your notes, docs or any site right inside the overlay.",
   },
   {
     label: "Position",
@@ -149,41 +150,14 @@ export const plans: Plan[] = [
   },
 ];
 
-export const getApp = {
-  eyebrow: "Get iObserver",
-  title: "Up and running in a day.",
-  lead: "Pay by UPI, upload the screenshot here, and your login lands in your inbox within 24 hours.",
-  // TODO: replace with the real UPI ID.
-  upiId: "yourname@upi",
-};
-
-export interface GetStep {
-  title: string;
-  description: string;
-}
-
-export const getSteps: GetStep[] = [
-  {
-    title: "Pay and upload",
-    description: "Pay from any UPI app, then upload the screenshot here with the email you want your login on.",
-  },
-  {
-    title: "Get your login",
-    description: "We email your access credentials within 24 hours.",
-  },
-  {
-    title: "Download and present",
-    description: "Sign in, download the app for your system and start the overlay.",
-  },
-];
-
 export interface OsSupport {
   name: string;
   requirement: string;
   download: string;
   /** Whether the overlay is hidden from screen capture on this system. */
   captureHidden: boolean;
-  note: string;
+  /** Only where capture behaves differently; the tag covers the rest. */
+  note?: string;
 }
 
 export const osSection = {
@@ -201,14 +175,12 @@ export const osSupport: OsSupport[] = [
     requirement: "Windows 10 or 11 · 64-bit",
     download: ".exe installer",
     captureHidden: true,
-    note: "Hidden in Zoom, Meet, Teams and screenshots.",
   },
   {
     name: "macOS",
     requirement: "macOS 12 or later · Apple Silicon and Intel",
     download: ".dmg",
     captureHidden: true,
-    note: "Hidden in Zoom, Meet, Teams and screenshots.",
   },
   {
     name: "Linux",

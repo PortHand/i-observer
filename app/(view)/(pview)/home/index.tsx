@@ -3,7 +3,6 @@
 import "./home.css";
 import Demo from "./components/Demo";
 import Features from "./components/Features";
-import GetApp from "./components/GetApp";
 import Hero from "./components/Hero";
 import HeroExplainer from "./components/HeroExplainer";
 import Platforms from "./components/Platforms";
@@ -27,7 +26,6 @@ export default function HomeView() {
         <Platforms />
         <Demo />
         <Pricing status={home.pricingStatus} onChoose={home.handleChoosePlan} />
-        <GetApp />
         <Shortcuts platform={home.platform} />
       </main>
       <SiteFooter />

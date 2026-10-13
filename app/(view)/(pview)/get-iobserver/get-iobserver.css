@@ -1,0 +1,25 @@
+/* "Get iObserver" page. Layout, sections and step cards come from ../home/home.css. */
+
+/* Payment details under the steps */
+
+.payment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4) 48px;
+  margin: 0;
+  padding: var(--space-5) var(--space-6);
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+
+.payment dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.payment dd {
+  margin: 0;
+  text-transform: none;
+  font-size: var(--text-base);
+}

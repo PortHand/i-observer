@@ -1,10 +1,11 @@
 import { Check, X } from "lucide-react";
+import { homeSections } from "@/helper/route";
 import { osSection, osSupport } from "../content/homeContent";
 import SectionHeader from "./SectionHeader";
 
 export default function Platforms() {
   return (
-    <section className="band" id="platforms">
+    <section className="band" id={homeSections.platforms}>
       <div className="container section">
         <SectionHeader eyebrow={osSection.eyebrow} title={osSection.title} lead={osSection.lead} />
         <ul className="stats">
@@ -21,7 +22,7 @@ export default function Platforms() {
                 )}
                 <span className="mono">{captureHidden ? osSection.hidden : osSection.visible}</span>
               </p>
-              <p className="stat__note text-muted">{note}</p>
+              {note && <p className="stat__note text-muted">{note}</p>}
             </li>
           ))}
         </ul>

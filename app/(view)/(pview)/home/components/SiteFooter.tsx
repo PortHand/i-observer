@@ -5,9 +5,7 @@ export default function SiteFooter() {
     <footer className="page-footer theme-ink">
       <div className="container page-footer__inner mono">
         <span>{appInfo.name}</span>
-        <span>
-          {appInfo.name} v{appInfo.version}
-        </span>
+        <span>v{appInfo.version}</span>
       </div>
     </footer>
   );

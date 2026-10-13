@@ -1,4 +1,5 @@
 import { ArrowRight, Check, Info } from "lucide-react";
+import { homeSections } from "@/helper/route";
 import { plans, pricing, type Plan } from "../content/homeContent";
 import SectionHeader from "./SectionHeader";
 
@@ -9,7 +10,7 @@ interface PricingProps {
 
 export default function Pricing({ status, onChoose }: PricingProps) {
   return (
-    <section className="band band--light" id="pricing">
+    <section className="band band--light" id={homeSections.pricing}>
       <div className="container section">
         <SectionHeader eyebrow={pricing.eyebrow} title={pricing.title} lead={pricing.lead} />
         <div className="plans">

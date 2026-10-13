@@ -1,8 +1,9 @@
+import { homeSections } from "@/helper/route";
 import { features } from "../content/homeContent";
 
 export default function Features() {
   return (
-    <section className="band band--light" id="features">
+    <section className="band band--light" id={homeSections.features}>
       <div className="container section section--compact">
         <div className="topics">
           {features.map(({ label, title, description }) => (

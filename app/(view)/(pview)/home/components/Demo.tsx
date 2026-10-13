@@ -1,10 +1,11 @@
+import { homeSections } from "@/helper/route";
 import { demo } from "../content/homeContent";
 import { youtubeEmbedUrl } from "../helper/homeHelper";
 import SectionHeader from "./SectionHeader";
 
 export default function Demo() {
   return (
-    <section className="band" id="demo">
+    <section className="band" id={homeSections.demo}>
       <div className="container section">
         <SectionHeader eyebrow={demo.eyebrow} title={demo.title} lead={demo.lead} />
         <div className="video">
