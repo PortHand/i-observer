@@ -49,18 +49,22 @@ export const beforeYouWrite = {
   ],
 };
 
-export type TopicId = "payment" | "login" | "technical" | "pricing" | "other";
+export type TopicId = "payment" | "login" | "password" | "technical" | "pricing" | "other";
 
 export const topics: { id: TopicId; label: string; description: string }[] = [
   { id: "payment", label: "Payment or order", description: "UPI payment, receipt or order details" },
   { id: "login", label: "Login not received", description: "Paid, but no credentials after 24 hours" },
+  { id: "password", label: "Forgot password", description: "Get a new password for your login" },
   { id: "technical", label: "Technical help", description: "Installing, the overlay or screen sharing" },
   { id: "pricing", label: "Plans and pricing", description: "Choosing or changing a plan" },
   { id: "other", label: "Something else", description: "Anything not listed above" },
 ];
 
 /** Topics where an order reference helps us find the payment. */
-export const topicsWithReference: TopicId[] = ["payment", "login"];
+export const topicsWithReference: TopicId[] = ["payment", "login", "password"];
+
+/** Topics where the order reference is required: we need it to find the account. */
+export const topicsRequiringReference: TopicId[] = ["login", "password"];
 
 export const MESSAGE_MIN = 20;
 export const MESSAGE_MAX = 2000;
@@ -68,7 +72,7 @@ export const MESSAGE_MAX = 2000;
 export const form = {
   label: "Send a message",
   title: "How can we help?",
-  description: "Fields marked optional can be left blank.",
+  description: "Fields marked * are required.",
   nameLabel: "Your name",
   namePlaceholder: "Full name",
   emailLabel: "Email",
@@ -78,7 +82,8 @@ export const form = {
   phonePlaceholder: "98765 43210",
   topicLabel: "Topic",
   topicPlaceholder: "Choose a topic",
-  referenceLabel: "Order reference (optional)",
+  referenceLabel: "Order reference",
+  referenceOptional: "(optional)",
   referencePlaceholder: "IOB-AB12CD",
   referenceHint: "Printed on your receipt and in the UPI payment note.",
   messageLabel: "Message",
@@ -91,6 +96,7 @@ export const form = {
     phone: "Enter a 10-digit Indian mobile number, or leave it blank.",
     topic: "Choose a topic.",
     reference: "References look like IOB-AB12CD.",
+    referenceMissing: "Enter your order reference, e.g. IOB-AB12CD.",
     messageShort: `Write at least ${MESSAGE_MIN} characters so we can help.`,
     messageLong: `Keep the message under ${MESSAGE_MAX} characters.`,
   },

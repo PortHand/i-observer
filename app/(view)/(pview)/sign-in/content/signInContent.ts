@@ -28,7 +28,7 @@ export const loginHelp = {
     {
       title: "Forgot your password?",
       text: `Write to ${appInfo.supportEmail} from the email you used at checkout and we'll send you a new one.`,
-      link: { href: contactLink({ topic: "login" }), label: "Reset my password" },
+      link: { href: contactLink({ topic: "password" }), label: "Forgot password" },
     },
   ],
 };

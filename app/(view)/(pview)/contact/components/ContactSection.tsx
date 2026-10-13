@@ -28,6 +28,7 @@ export default function ContactSection() {
               defaults={contact.prefill}
               topic={contact.topic}
               showReference={contact.showReference}
+              referenceRequired={contact.referenceRequired}
               messageLength={contact.messageLength}
               errors={contact.errors}
               sendError={contact.sendError}

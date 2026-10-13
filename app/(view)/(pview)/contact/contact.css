@@ -103,6 +103,11 @@
   align-content: start;
 }
 
+.field__required {
+  margin-left: var(--space-1);
+  color: var(--color-danger);
+}
+
 .field__label--split {
   display: flex;
   justify-content: space-between;

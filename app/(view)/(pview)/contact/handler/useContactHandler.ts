@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { topicsWithReference, type TopicId } from "../content/contactContent";
+import { topicsRequiringReference, topicsWithReference, type TopicId } from "../content/contactContent";
 import {
   parseContactForm,
   readPrefill,
@@ -37,6 +37,7 @@ export const useContactHandler = () => {
   }, []);
 
   const showReference = topic !== "" && topicsWithReference.includes(topic);
+  const referenceRequired = topic !== "" && topicsRequiringReference.includes(topic);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -96,6 +97,7 @@ export const useContactHandler = () => {
   return {
     topic,
     showReference,
+    referenceRequired,
     messageLength,
     errors,
     sendError,

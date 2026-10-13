@@ -9,6 +9,7 @@ interface MessageFormProps {
   defaults: ContactPrefill;
   topic: TopicId | "";
   showReference: boolean;
+  referenceRequired: boolean;
   messageLength: number;
   errors: Partial<Record<ContactField, string>>;
   sendError: string;
@@ -21,6 +22,13 @@ interface MessageFormProps {
 }
 
 const topicOptions = topics.map(({ id, label, description }) => ({ value: id, label, description }));
+
+/** Red asterisk after a required field's label; screen readers get `required` from the input. */
+const RequiredMark = () => (
+  <span className="field__required" aria-hidden="true">
+    *
+  </span>
+);
 
 /** Inline error under a field, linked to the input with aria-describedby. */
 const FieldError = ({ id, message }: { id: string; message?: string }) =>
@@ -35,6 +43,7 @@ export default function MessageForm({
   defaults,
   topic,
   showReference,
+  referenceRequired,
   messageLength,
   errors,
   sendError,
@@ -58,7 +67,10 @@ export default function MessageForm({
 
       <div className="field-grid">
         <label className="field">
-          <span className="field__label">{form.nameLabel}</span>
+          <span className="field__label">
+            {form.nameLabel}
+            <RequiredMark />
+          </span>
           <span className="input-group">
             <User className="icon" strokeWidth={1.75} />
             <input
@@ -76,7 +88,10 @@ export default function MessageForm({
         </label>
 
         <label className="field">
-          <span className="field__label">{form.emailLabel}</span>
+          <span className="field__label">
+            {form.emailLabel}
+            <RequiredMark />
+          </span>
           <span className="input-group">
             <Mail className="icon" strokeWidth={1.75} />
             <input
@@ -119,8 +134,9 @@ export default function MessageForm({
 
         {/* A div, not a label: the dropdown is a button, labelled through labelledBy. */}
         <div className="field">
-          <span id="topic-label" className="field__label">
-            {form.topicLabel}
+          <span className="field__label">
+            <span id="topic-label">{form.topicLabel}</span>
+            <RequiredMark />
           </span>
           <Dropdown
             id="field-topic"
@@ -143,7 +159,10 @@ export default function MessageForm({
 
       {showReference && (
         <label className="field">
-          <span className="field__label">{form.referenceLabel}</span>
+          <span className="field__label">
+            {form.referenceLabel}
+            {referenceRequired ? <RequiredMark /> : ` ${form.referenceOptional}`}
+          </span>
           <span className="input-group">
             <Hash className="icon" strokeWidth={1.75} />
             <input
@@ -155,6 +174,7 @@ export default function MessageForm({
               aria-invalid={invalid("reference")}
               aria-describedby={describe("reference") ?? "reference-hint"}
               onInput={() => onEdit("reference")}
+              required={referenceRequired}
             />
           </span>
           {errors.reference ? (
@@ -169,7 +189,10 @@ export default function MessageForm({
 
       <label className="field">
         <span className="field__label field__label--split">
-          {form.messageLabel}
+          <span>
+            {form.messageLabel}
+            <RequiredMark />
+          </span>
           <span className={messageLength > MESSAGE_MAX ? "counter counter--over" : "counter"} aria-hidden="true">
             {messageLength}/{MESSAGE_MAX}
           </span>

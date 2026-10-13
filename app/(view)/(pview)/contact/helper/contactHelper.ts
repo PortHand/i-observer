@@ -1,5 +1,13 @@
 import { routes } from "@/helper/route";
-import { MESSAGE_MAX, MESSAGE_MIN, form, sectionIds, topics, type TopicId } from "../content/contactContent";
+import {
+  MESSAGE_MAX,
+  MESSAGE_MIN,
+  form,
+  sectionIds,
+  topics,
+  topicsRequiringReference,
+  type TopicId,
+} from "../content/contactContent";
 import { isValidEmail, isValidPhone, normalizePhone } from "../../get-iobserver/helper/getHelper";
 
 export type ContactField = "name" | "email" | "phone" | "topic" | "reference" | "message";
@@ -73,7 +81,8 @@ export const parseContactForm = (
   if (!isValidEmail(email)) errors.email = text.email;
   if (phone && !isValidPhone(phone)) errors.phone = text.phone;
   if (!isTopic(topic)) errors.topic = text.topic;
-  if (reference && !isValidReference(reference)) errors.reference = text.reference;
+  if (!reference && isTopic(topic) && topicsRequiringReference.includes(topic)) errors.reference = text.referenceMissing;
+  else if (reference && !isValidReference(reference)) errors.reference = text.reference;
   if (message.length < MESSAGE_MIN) errors.message = text.messageShort;
   else if (message.length > MESSAGE_MAX) errors.message = text.messageLong;
 
