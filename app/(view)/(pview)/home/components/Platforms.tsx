@@ -5,7 +5,7 @@ import SectionHeader from "./SectionHeader";
 
 export default function Platforms() {
   return (
-    <section className="band" id={homeSections.platforms}>
+    <section className="band band--light" id={homeSections.platforms}>
       <div className="container section">
         <SectionHeader eyebrow={osSection.eyebrow} title={osSection.title} lead={osSection.lead} />
         <ul className="stats">

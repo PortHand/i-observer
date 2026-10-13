@@ -18,28 +18,26 @@ export const appInfo = {
   utility: "Private screen overlay",
 };
 
+// Pages only; the link matching the current page is marked active.
 export const navLinks = [
-  { href: routes.whatIsIObserver, label: "What is it?" },
-  { href: homeSection("features"), label: "Features" },
-  { href: homeSection("platforms"), label: "Platforms" },
-  { href: homeSection("demo"), label: "Demo" },
-  { href: homeSection("pricing"), label: "Pricing" },
-  { href: homeSection("shortcuts"), label: "Shortcuts" },
+  { href: routes.home, label: "Home" },
+  { href: routes.whatIsIObserver, label: "What is iObserver?" },
   { href: routes.getIObserver, label: "Get iObserver" },
 ];
 
 export const hero = {
-  eyebrow: "Private by design",
-  titleStart: "Your notes on screen.",
-  titleAccent: "Invisible",
-  titleEnd: "to everyone else.",
-  lead: "A floating overlay that stays on top of every app while you present. Screen shares, recordings and screenshots never see it.",
-  demoCta: "Watch the demo",
-  pricingCta: "See pricing",
+  eyebrow: "Private screen overlay",
+  titleStart: "You see it.",
+  titleAccent: "They",
+  titleEnd: "don't.",
+  lead: "iObserver puts a private window on top of your screen for your notes, docs or any website. Share your screen in Zoom, Meet or Teams and that window stays out of the picture.",
+  primaryCta: { href: routes.whatIsIObserver, label: "What is iObserver?" },
+  demoCta: { href: homeSection("demo"), label: "Watch the demo" },
+  fineprint: "Windows · macOS · Linux · Login within 24 hours",
 };
 
 export const heroExplainer = {
-  label: "How it works",
+  label: "During a screen share",
   overlayTitle: "iObserver",
   notes: ["Open with the Q3 numbers", "Revenue up 18% YoY", "Ask about the rollout date"],
   yours: "On your screen",
@@ -71,29 +69,56 @@ export const auth = {
   navSignedIn: "Account",
 };
 
-export interface Feature {
-  label: string;
-  title: string;
-  description: string;
-}
+export const questionsSection = {
+  title: "Start with the question.",
+  lead: "The three things people ask first, with where to find the answer.",
+};
 
-export const features: Feature[] = [
+export const questions = [
   {
-    label: "Browse",
-    title: "Built-in browser",
-    description: "Open your notes, docs or any site right inside the overlay.",
+    label: "Basics",
+    title: "What is iObserver?",
+    description: "A floating window only you can see, even while you share your screen.",
+    link: { href: routes.whatIsIObserver, label: "Read the overview" },
   },
   {
-    label: "Position",
-    title: "Always on top",
-    description: "Floats above every app, including full-screen ones.",
+    label: "Setup",
+    title: "How do I get it?",
+    description: "Pay by UPI, upload the screenshot and get your login within 24 hours.",
+    link: { href: routes.getIObserver, label: "See the steps" },
   },
   {
-    label: "Control",
-    title: "Fully adjustable",
-    description: "Opacity slider, click-through mode and global shortcuts.",
+    label: "Platforms",
+    title: "Will it work on my computer?",
+    description: "Windows and macOS hide it from capture. Linux runs it but can't hide it.",
+    link: { href: homeSection("platforms"), label: "Check your system" },
   },
 ];
+
+export const howSection = {
+  title: "How it works in a meeting.",
+  lead: "Four steps, from opening the overlay to presenting with it.",
+};
+
+export const howSteps = [
+  { label: "Open", description: "Start the overlay from the app. It floats above every window." },
+  { label: "Fill", description: "Open your notes, a doc or any website inside it." },
+  { label: "Share", description: "Share your screen in Zoom, Meet or Teams as usual." },
+  { label: "Present", description: "You read the overlay. Viewers only see what's under it." },
+];
+
+export const stats = [
+  { value: "3", label: "Desktop systems" },
+  { value: "30–100%", label: "Overlay opacity" },
+  { value: "3", label: "Global shortcuts" },
+  { value: "24 h", label: "Login delivery" },
+];
+
+export const closing = {
+  title: "Ready to present privately?",
+  lead: "Pay by UPI, upload the screenshot and your login arrives within 24 hours.",
+  cta: { href: routes.getIObserver, label: "Get iObserver" },
+};
 
 export const demo = {
   eyebrow: "Demo",

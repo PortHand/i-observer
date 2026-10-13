@@ -1,4 +1,3 @@
-import { homeSections } from "@/helper/route";
 import { shortcutRows, shortcutsSection } from "../content/homeContent";
 import { getShortcuts, type Platform } from "../helper/homeHelper";
 import Keys from "./Keys";
@@ -8,7 +7,7 @@ export default function Shortcuts({ platform }: { platform: Platform }) {
   const shortcuts = getShortcuts(platform);
 
   return (
-    <section className="band" id={homeSections.shortcuts}>
+    <section className="band" id="shortcuts">
       <div className="container section">
         <SectionHeader {...shortcutsSection} />
         <ul className="list">

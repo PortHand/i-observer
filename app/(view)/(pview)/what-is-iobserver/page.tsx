@@ -3,12 +3,14 @@ import "../home/home.css";
 import "./what-is-iobserver.css";
 import { routes } from "@/helper/route";
 import SiteFooter from "../home/components/SiteFooter";
+import Closing from "../home/components/Closing";
 import SiteHeader from "../home/components/SiteHeader";
-import Closing from "./components/Closing";
 import Hiding from "./components/Hiding";
 import Inside from "./components/Inside";
 import Intro from "./components/Intro";
+import ShortcutsSection from "./components/ShortcutsSection";
 import UseCases from "./components/UseCases";
+import { closing } from "./content/whatIsContent";
 
 export const metadata: Metadata = {
   title: "What is iObserver?",
@@ -23,8 +25,9 @@ export default function WhatIsView() {
         <Intro />
         <Inside />
         <Hiding />
+        <ShortcutsSection />
         <UseCases />
-        <Closing />
+        <Closing {...closing} />
       </main>
       <SiteFooter />
     </>

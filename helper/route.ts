@@ -12,14 +12,12 @@ export const routes = {
   getIObserver: "/get-iobserver",
 } as const;
 
-/** Anchor ids of the home page sections. */
+/** Anchor ids of the home page sections that other pages link to. */
 export const homeSections = {
   top: "top",
-  features: "features",
   platforms: "platforms",
   demo: "demo",
   pricing: "pricing",
-  shortcuts: "shortcuts-section",
 } as const;
 
 export type HomeSection = keyof typeof homeSections;

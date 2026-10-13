@@ -1,15 +1,18 @@
 "use client";
 
 import "./home.css";
+import Closing from "./components/Closing";
 import Demo from "./components/Demo";
-import Features from "./components/Features";
 import Hero from "./components/Hero";
 import HeroExplainer from "./components/HeroExplainer";
+import HowItWorks from "./components/HowItWorks";
 import Platforms from "./components/Platforms";
 import Pricing from "./components/Pricing";
-import Shortcuts from "./components/Shortcuts";
+import Questions from "./components/Questions";
 import SiteFooter from "./components/SiteFooter";
 import SiteHeader from "./components/SiteHeader";
+import { routes } from "@/helper/route";
+import { closing } from "./content/homeContent";
 import { useHomeHandler } from "./handler/useHomeHandler";
 
 export default function HomeView() {
@@ -17,16 +20,17 @@ export default function HomeView() {
 
   return (
     <>
-      <SiteHeader signedIn={home.user !== null} />
+      <SiteHeader signedIn={home.user !== null} current={routes.home} />
       <main>
         <Hero>
           <HeroExplainer />
         </Hero>
-        <Features />
+        <Questions />
+        <HowItWorks />
         <Platforms />
         <Demo />
         <Pricing status={home.pricingStatus} onChoose={home.handleChoosePlan} />
-        <Shortcuts platform={home.platform} />
+        <Closing {...closing} />
       </main>
       <SiteFooter />
     </>

@@ -120,6 +120,12 @@ a {
   line-height: 1.5;
 }
 
+.fineprint {
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -313,6 +319,18 @@ a {
   font-size: 36px;
 }
 
+.topic__link {
+  justify-self: start;
+  margin-top: var(--space-3);
+  font-size: var(--text-xs);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--duration-fast) var(--easing);
+}
+
+.topic__link:hover {
+  border-bottom-color: currentColor;
+}
+
 .topic p {
   max-width: 320px;
   font-size: var(--text-lg);
@@ -458,6 +476,30 @@ a {
   font-size: var(--text-sm);
 }
 
+/* Four-across variants of the step and stat rows */
+
+.steps--four,
+.stats--four {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Closing call to action between two ink rules */
+
+.closing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+  align-items: center;
+  justify-content: space-between;
+  padding: 48px 0;
+  border-top: 1px solid var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+.closing .lead {
+  margin-top: var(--space-3);
+}
+
 /* Footer */
 
 .page-footer__inner {
@@ -478,7 +520,9 @@ a {
   .section__header,
   .topics,
   .steps,
+  .steps--four,
   .stats,
+  .stats--four,
   .plans {
     grid-template-columns: 1fr;
   }

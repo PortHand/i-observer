@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { ArrowRight, MonitorPlay } from "lucide-react";
-import { homeSection, homeSections } from "@/helper/route";
+import { homeSections } from "@/helper/route";
 import { hero } from "../content/homeContent";
 
 export default function Hero({ children }: { children: ReactNode }) {
@@ -14,15 +15,16 @@ export default function Hero({ children }: { children: ReactNode }) {
           </h1>
           <p className="lead">{hero.lead}</p>
           <div className="hero__actions">
-            <a href={homeSection("demo")} className="button button--secondary">
-              <MonitorPlay className="icon icon--sm" strokeWidth={1.75} />
-              {hero.demoCta}
-            </a>
-            <a href={homeSection("pricing")} className="button button--ghost">
-              {hero.pricingCta}
+            <Link href={hero.primaryCta.href} className="button button--primary">
+              {hero.primaryCta.label}
               <ArrowRight className="icon icon--sm" strokeWidth={1.75} />
+            </Link>
+            <a href={hero.demoCta.href} className="button button--secondary">
+              <MonitorPlay className="icon icon--sm" strokeWidth={1.75} />
+              {hero.demoCta.label}
             </a>
           </div>
+          <p className="fineprint mono">{hero.fineprint}</p>
         </div>
         {children}
       </div>
