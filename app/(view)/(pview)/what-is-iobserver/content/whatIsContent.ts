@@ -1,19 +1,19 @@
 // Static content for the "What is iObserver?" page. Facts mirror iobserver-app (see its README).
 
-import { homeSection, routes } from "@/helper/route";
+import { routes } from "@/helper/route";
 
 export const intro = {
-  eyebrow: "What is iObserver?",
-  titleStart: "A private window",
-  titleAccent: "only you",
-  titleEnd: "can see.",
-  lead: "iObserver is a desktop app that opens a floating overlay above every other app. It sits on your screen while you present, and it's left out of screen shares, recordings and screenshots.",
-  primaryCta: { href: homeSection("pricing"), label: "See pricing" },
-  secondaryCta: { href: routes.getIObserver, label: "How to get it" },
+  eyebrow: "Basics",
+  title: "What is iObserver?",
+  lead: "iObserver is a desktop app that puts a private window on top of your screen. You can read it while you present, but screen shares, recordings and screenshots leave it out.",
+};
+
+export const oneLine = {
+  label: "In one line:",
+  text: "It's a window on your screen that your audience never sees.",
 };
 
 export const factSheet = {
-  label: "In one line",
   rows: [
     { term: "What", value: "Desktop overlay app" },
     { term: "Runs on", value: "Windows · macOS · Linux" },
