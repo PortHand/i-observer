@@ -1,5 +1,7 @@
 // Static content for the "Get iObserver" page.
 
+import { appInfo } from "../../home/content/homeContent";
+
 export const getApp = {
   eyebrow: "Get iObserver",
   title: "Up and running in a day.",
@@ -13,7 +15,7 @@ export const payment = {
   payeeName: "iObserver",
   currency: "INR",
   /** Mailbox for payment questions and the "email us instead" fallback. */
-  supportEmail: "developers@oyela.in",
+  supportEmail: appInfo.supportEmail,
 };
 
 export type PlanId = "monthly" | "yearly" | "lifetime";

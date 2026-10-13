@@ -9,7 +9,6 @@
  * Components reference these variables only; change the look here.
  */
 
-
 :root {
   color-scheme: light;
 
@@ -90,7 +89,79 @@
   /* Focus */
   --ring: 0 0 0 2px var(--color-accent);
 
-  /* Motion */
+  /* Accordion (components/common/Accordion.tsx): question rows that expand to show the answer */
+
+.accordion {
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.accordion__item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.accordion__heading {
+  margin: 0;
+  font: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.accordion__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-5) 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+}
+
+.accordion__trigger:hover {
+  color: var(--color-accent-text);
+}
+
+.accordion__icon {
+  flex: none;
+  color: var(--color-text-muted);
+  transition: transform var(--duration) var(--easing);
+}
+
+.accordion__item--open .accordion__icon {
+  transform: rotate(45deg);
+  color: var(--color-accent-text);
+}
+
+/* Animates height from 0 to the content's size. */
+.accordion__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--duration) var(--easing);
+}
+
+.accordion__item--open .accordion__panel {
+  grid-template-rows: 1fr;
+}
+
+.accordion__content {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.accordion__body {
+  padding-bottom: var(--space-5);
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+/* Motion */
   --duration-fast: 120ms;
   --duration: 180ms;
   --duration-slow: 400ms;
@@ -480,6 +551,169 @@ kbd {
   outline: none;
   border-color: var(--color-accent);
   box-shadow: inset 0 -1px 0 var(--color-accent);
+}
+
+.input-prefix {
+  position: absolute;
+  left: 40px;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  letter-spacing: 0;
+  pointer-events: none;
+}
+
+.input-group > .input--prefixed {
+  padding-left: 76px;
+}
+
+.mono-input {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-label);
+}
+
+.text-link {
+  justify-self: start;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.text-link:hover {
+  color: var(--color-text);
+}
+
+/* Dropdown (components/common/Dropdown.tsx): a button styled like `.input` that opens a listbox */
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown__trigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dropdown--open .dropdown__trigger {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 -1px 0 var(--color-accent);
+}
+
+.dropdown__icon {
+  flex: none;
+  color: var(--color-text-subtle);
+}
+
+.dropdown--open .dropdown__icon {
+  color: var(--color-accent-text);
+}
+
+.dropdown__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown__value--placeholder {
+  color: var(--color-text-subtle);
+}
+
+.dropdown__chevron {
+  flex: none;
+  color: var(--color-text-subtle);
+  transition: transform var(--duration) var(--easing);
+}
+
+.dropdown--open .dropdown__chevron {
+  transform: rotate(180deg);
+}
+
+.dropdown__list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  left: 0;
+  max-height: 280px;
+  margin: 0;
+  padding: var(--space-1);
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  box-shadow: 0 12px 32px rgb(36 35 33 / 14%);
+  animation: dropdown-in var(--duration-fast) var(--easing);
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+.dropdown__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-left: 2px solid transparent;
+  font-size: var(--text-base);
+  cursor: pointer;
+}
+
+.dropdown__option--active {
+  background: var(--color-surface-hover);
+}
+
+.dropdown__option--selected {
+  border-left-color: var(--color-accent);
+  font-weight: var(--weight-bold);
+}
+
+.dropdown__option--selected .icon {
+  flex: none;
+  color: var(--color-accent-text);
+}
+
+.dropdown__option-text {
+  display: grid;
+  gap: 2px;
+}
+
+.dropdown__option-description {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+}
+
+.textarea {
+  height: auto;
+  min-height: 132px;
+  padding: var(--space-3);
+  line-height: var(--leading-normal);
+  resize: vertical;
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+  box-shadow: inset 0 -1px 0 var(--color-danger);
+}
+
+.field-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-danger);
+  font-size: var(--text-sm);
 }
 
 .form-error {

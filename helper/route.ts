@@ -10,6 +10,7 @@ export const routes = {
   home: "/",
   whatIsIObserver: "/what-is-iobserver",
   getIObserver: "/get-iobserver",
+  contact: "/contact",
 } as const;
 
 /** Anchor ids of the home page sections that other pages link to. */

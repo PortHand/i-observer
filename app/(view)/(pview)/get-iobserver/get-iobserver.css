@@ -175,24 +175,6 @@
 
 /* Contact form */
 
-.input-prefix {
-  position: absolute;
-  left: 40px;
-  color: var(--color-text-muted);
-  font-size: var(--text-base);
-  letter-spacing: 0;
-  pointer-events: none;
-}
-
-.input-group > .input--prefixed {
-  padding-left: 76px;
-}
-
-.mono-input {
-  font-family: var(--font-mono);
-  letter-spacing: var(--tracking-label);
-}
-
 .file-input {
   padding: var(--space-3);
   border: 1px dashed var(--color-border-strong);
@@ -226,16 +208,6 @@
 
 .form-actions--stretch > .button {
   flex: 1 1 180px;
-}
-
-.text-link {
-  justify-self: start;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.text-link:hover {
-  color: var(--color-text);
 }
 
 /* QR code */

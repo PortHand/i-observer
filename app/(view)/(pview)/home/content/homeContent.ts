@@ -16,6 +16,8 @@ export const appInfo = {
   version: "1.0.0",
   tagline: "Invisible to screen share",
   utility: "Private screen overlay",
+  /** The one support mailbox, shown on the contact page and in checkout. */
+  supportEmail: "support@iobserver.app",
 };
 
 // Pages only; the link matching the current page is marked active.
@@ -23,6 +25,7 @@ export const navLinks = [
   { href: routes.home, label: "Home" },
   { href: routes.whatIsIObserver, label: "What is iObserver?" },
   { href: routes.getIObserver, label: "Get iObserver" },
+  { href: routes.contact, label: "Contact" },
 ];
 
 export const hero = {
