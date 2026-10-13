@@ -87,15 +87,10 @@ export default function Checkout() {
               {co.step === "done" && co.summary && (
                 <Confirmation
                   summary={co.summary}
-                  copied={co.copied}
                   downloading={co.downloading}
                   downloadError={co.downloadError}
-                  canShare={co.canShare}
                   headingRef={co.headingRef}
-                  onCopy={co.handleCopy}
-                  onShare={co.handleShare}
                   onDownload={co.handleDownload}
-                  onStartOver={co.handleStartOver}
                 />
               )}
             </div>

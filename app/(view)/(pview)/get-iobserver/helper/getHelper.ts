@@ -71,13 +71,17 @@ const LOGIN_DELIVERY_MS = 24 * 60 * 60 * 1000;
 export const loginExpectedBy = (submittedAt: string) =>
   new Date(Date.parse(submittedAt) + LOGIN_DELIVERY_MS).toISOString();
 
-/** Receipt rows, shared by the confirmation screen, the downloaded receipt and the shared text. */
+/** "INR 3,999": the PDF's built-in fonts have no rupee sign. */
+const formatAmountPlain = (amount: number) =>
+  `${payment.currency} ${new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(amount)}`;
+
+/** Rows of the PDF receipt. */
 export const receiptRows = (summary: TransactionSummary) => {
   const { labels } = receipt;
   return [
     { label: labels.status, value: receipt.status },
     { label: labels.plan, value: planTitle(summary.planId) },
-    { label: labels.amount, value: formatAmount(getPlan(summary.planId).amount) },
+    { label: labels.amount, value: formatAmountPlain(getPlan(summary.planId).amount) },
     { label: labels.reference, value: summary.reference },
     { label: labels.utr, value: summary.utr },
     { label: labels.paidTo, value: payment.upiId },
@@ -92,15 +96,14 @@ export const receiptRows = (summary: TransactionSummary) => {
 export const receiptFooter = () =>
   receipt.footer.map((line) => line.replace("{supportEmail}", payment.supportEmail));
 
-/** Plain-text receipt for sharing, copying and the support email. */
-export const summaryText = (summary: TransactionSummary) =>
-  [
-    `iObserver · ${receipt.title}`,
-    "",
-    ...receiptRows(summary).map(({ label, value }) => `${label}: ${value}`),
-    "",
-    ...receiptFooter(),
-  ].join("\n");
+/** Reads an uploaded image as a data URL, so it can be kept for the PDF and survive a reload. */
+export const readAsDataUrl = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
 
 export const supportMailto = (subject: string, body: string) =>
   `mailto:${payment.supportEmail}?${toQuery({ subject, body })}`;

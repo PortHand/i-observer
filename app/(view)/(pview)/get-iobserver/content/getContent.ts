@@ -85,10 +85,12 @@ export const checkoutSectionId = "checkout";
 
 export type CheckoutStep = "contact" | "pay" | "transaction" | "done";
 
-/** Payment receipt shown after submitting, and downloaded or shared from there. */
+/** PDF receipt downloaded from the success screen. */
 export const receipt = {
-  title: "Payment details",
-  status: "Submitted · pending verification",
+  title: "Payment receipt",
+  badge: "Order successful",
+  message: "Login credentials will be shared on {email} within 24 hours.",
+  status: "Payment submitted · verification within 24 hours",
   labels: {
     status: "Status",
     plan: "Plan",
@@ -103,6 +105,9 @@ export const receipt = {
     loginBy: "Login expected by",
   },
   noScreenshot: "Not attached",
+  screenshotTitle: "Payment screenshot",
+  screenshotMissing: "No screenshot was attached to this order.",
+  screenshotUnavailable: "A screenshot was submitted but is no longer available on this device.",
   footer: [
     "We verify the payment and email your login within 24 hours of submission.",
     "Questions? Write to {supportEmail} and quote your reference.",
@@ -173,16 +178,19 @@ export const checkout = {
     emailInstead: "Trouble submitting? Email the details instead",
   },
   done: {
-    label: "Received",
-    title: "We've got your payment details.",
-    description: "We'll verify the payment and email your login within 24 hours.",
-    download: "Download receipt",
-    downloadFailed: "Couldn't create the receipt. Use Copy details instead.",
-    share: "Share details",
-    copy: "Copy details",
-    copied: "Details copied",
-    emailCopy: "Email a copy to support",
-    help: "No email after 24 hours? Check spam, then write to us with your reference.",
-    startOver: "Make another purchase",
+    title: "Order successful",
+    message: "Login credentials will be shared on {email} within 24 hours.",
+    nextTitle: "What happens next",
+    next: {
+      received: { title: "Payment details received", detail: "UTR {utr}" },
+      verifying: { title: "Verifying your payment", detail: "We match your UTR with our bank record." },
+      emailed: { title: "Login credentials emailed", detail: "By {loginBy}" },
+    },
+    download: "Download PDF receipt",
+    downloadFailed: "Couldn't create the PDF. Please try again.",
+    supportTitle: "Didn't get the email within 24 hours?",
+    supportText: "Check your spam folder first, then contact support with your reference {reference}.",
+    supportCta: "Contact support",
+    supportSubject: "Login not received · {reference}",
   },
 };

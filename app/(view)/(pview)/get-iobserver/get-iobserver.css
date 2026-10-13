@@ -282,8 +282,7 @@
   margin: 0;
 }
 
-.copy-row__value,
-.receipt dd {
+.copy-row__value {
   overflow-wrap: anywhere;
   text-transform: none;
 }
@@ -299,30 +298,198 @@
   }
 }
 
-/* Confirmation */
+/* Success: confirmation header, next steps, receipt download and support */
 
-.confirmation__label {
-  display: inline-flex;
+.success {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.success__header {
+  display: flex;
+  gap: var(--space-4);
   align-items: center;
-  gap: var(--space-2);
-  color: var(--color-success);
-}
-
-.receipt {
-  display: grid;
-  margin: 0;
-}
-
-.receipt__row {
-  display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
+  padding-bottom: var(--space-5);
   border-bottom: 1px solid var(--color-border);
 }
 
-.receipt__row dd {
+.success__tick {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  background: var(--color-success);
+  color: #ffffff;
+  box-shadow: 0 0 0 6px var(--color-success-soft);
+  animation: tick-pop var(--duration-slow) var(--easing) both;
+}
+
+.success__tick svg {
+  width: 26px;
+  height: 26px;
+}
+
+@keyframes tick-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+.success__heading {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.checkout__panel .success__heading h3 {
+  font-size: 36px;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+
+.success__meta {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.success__message {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4);
+  border-left: 3px solid var(--color-success);
+  background: var(--color-success-soft);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.success__message .icon {
+  flex: none;
+  margin-top: 2px;
+  color: var(--color-success);
+}
+
+/* Next steps: a vertical timeline joined by a rule */
+
+.timeline {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.timeline ol {
+  display: grid;
   margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline__item {
+  position: relative;
+  display: flex;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  color: var(--color-text-subtle);
+}
+
+.timeline__item:last-child {
+  padding-bottom: 0;
+}
+
+/* Connector from this marker down to the next one. */
+.timeline__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 28px;
+  bottom: 0;
+  left: 13px;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.timeline__marker {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  font-size: var(--text-xs);
+}
+
+.timeline__text {
+  display: grid;
+  gap: 2px;
+  padding-top: 3px;
+}
+
+.timeline__title {
+  font-weight: var(--weight-bold);
+}
+
+.timeline__detail {
+  font-size: var(--text-sm);
+}
+
+.timeline__item--done {
+  color: var(--color-text);
+}
+
+.timeline__item--done .timeline__marker {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: #ffffff;
+}
+
+.timeline__item--done:not(:last-child)::after {
+  background: var(--color-success);
+}
+
+.timeline__item--current {
+  color: var(--color-text);
+}
+
+.timeline__item--current .timeline__marker {
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.timeline__item--done .timeline__detail,
+.timeline__item--current .timeline__detail {
+  color: var(--color-text-muted);
+}
+
+/* Support note under the download */
+
+.support-note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.support-note__icon {
+  align-self: start;
+  margin-top: 2px;
+  color: var(--color-text);
+}
+
+.support-note__text {
+  display: grid;
+  gap: 2px;
+}
+
+.support-note__title {
+  color: var(--color-text);
+  font-weight: var(--weight-bold);
 }
 
 @media (max-width: 980px) {
@@ -370,9 +537,16 @@
     grid-column: 1 / -1;
   }
 
-  .receipt__row {
-    grid-template-columns: 1fr;
-    gap: var(--space-1);
+  .support-note {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .support-note .button {
+    grid-column: 1 / -1;
+  }
+
+  .checkout__panel .success__heading h3 {
+    font-size: 28px;
   }
 }
 

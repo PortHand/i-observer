@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { checkout, defaultPlanId, type CheckoutStep, type PlanId } from "../content/getContent";
 import {
   isValidEmail,
@@ -9,14 +9,16 @@ import {
   isValidUtr,
   normalizePhone,
   normalizeUtr,
-  summaryText,
+  readAsDataUrl,
   type TransactionSummary,
 } from "../helper/getHelper";
-import { receiptFileName, renderReceiptPng } from "../helper/receiptImage";
+import { receiptFileName, renderReceiptPdf } from "../helper/receiptPdf";
 import * as getService from "../services/getService";
 
 // Progress survives a reload: phones often reload the tab after switching to the UPI app.
 const STORAGE_KEY = "iobserver.checkout";
+// Kept apart from the rest: a large screenshot may not fit in storage, and that's fine.
+const SCREENSHOT_KEY = "iobserver.checkout.screenshot";
 
 interface SavedCheckout {
   step: CheckoutStep;
@@ -42,17 +44,32 @@ const save = (state: SavedCheckout | null) => {
   }
 };
 
-const subscribeNoop = () => () => {};
-const detectShare = () => typeof navigator.share === "function";
+const saveScreenshot = (dataUrl: string | null) => {
+  try {
+    if (dataUrl) sessionStorage.setItem(SCREENSHOT_KEY, dataUrl);
+    else sessionStorage.removeItem(SCREENSHOT_KEY);
+  } catch {
+    // Too large or storage blocked: the PDF still works until the page is reloaded.
+  }
+};
 
-export type CopyTarget = "upi" | "reference" | "summary";
+const loadScreenshot = () => {
+  try {
+    return sessionStorage.getItem(SCREENSHOT_KEY);
+  } catch {
+    return null;
+  }
+};
+
+export type CopyTarget = "upi" | "reference";
 
 export const useCheckoutHandler = () => {
-  const canShare = useSyncExternalStore(subscribeNoop, detectShare, () => false);
   const [step, setStep] = useState<CheckoutStep>("contact");
   const [planId, setPlanId] = useState<PlanId>(defaultPlanId);
   const [order, setOrder] = useState<getService.Order | null>(null);
   const [summary, setSummary] = useState<TransactionSummary | null>(null);
+  /** The uploaded payment screenshot as a data URL, for the PDF receipt. */
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [copied, setCopied] = useState<CopyTarget | null>(null);
@@ -70,6 +87,7 @@ export const useCheckoutHandler = () => {
     setOrder(saved.order);
     if (saved.order) setPlanId(saved.order.planId);
     setSummary(saved.summary);
+    if (saved.summary?.screenshotName) setScreenshotUrl(loadScreenshot());
     setStep(saved.step);
   }, []);
 
@@ -135,6 +153,9 @@ export const useCheckoutHandler = () => {
     try {
       const result = await getService.submitTransaction({ reference: order.reference, utr, screenshot });
       if (!result.ok) return setError(result.error);
+      const dataUrl = screenshot ? await readAsDataUrl(screenshot).catch(() => null) : null;
+      setScreenshotUrl(dataUrl);
+      saveScreenshot(dataUrl);
       setSummary({ ...order, utr, submittedAt: result.submittedAt, screenshotName: screenshot?.name ?? null });
       goTo("done");
     } finally {
@@ -153,23 +174,12 @@ export const useCheckoutHandler = () => {
     }
   };
 
-  const handleShare = async () => {
-    if (!summary) return;
-    const text = summaryText(summary);
-    try {
-      await navigator.share({ title: checkout.done.title, text });
-    } catch (shareError) {
-      // Cancelling the share sheet is not an error; anything else falls back to copying.
-      if ((shareError as Error).name !== "AbortError") await handleCopy("summary", text);
-    }
-  };
-
   const handleDownload = async () => {
     if (!summary) return;
     setDownloading(true);
     setDownloadError("");
     try {
-      const url = URL.createObjectURL(await renderReceiptPng(summary));
+      const url = URL.createObjectURL(await renderReceiptPdf(summary, screenshotUrl));
       const link = document.createElement("a");
       link.href = url;
       link.download = receiptFileName(summary.reference);
@@ -183,13 +193,6 @@ export const useCheckoutHandler = () => {
     }
   };
 
-  const handleStartOver = () => {
-    setOrder(null);
-    setPlanId(defaultPlanId);
-    setSummary(null);
-    goTo("contact");
-  };
-
   return {
     step,
     planId,
@@ -200,15 +203,12 @@ export const useCheckoutHandler = () => {
     copied,
     downloading,
     downloadError,
-    canShare,
     headingRef,
     goTo,
     setPlanId,
     handleContact,
     handleTransaction,
     handleCopy,
-    handleShare,
     handleDownload,
-    handleStartOver,
   };
 };
