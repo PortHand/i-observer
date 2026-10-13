@@ -1,6 +1,5 @@
 "use client";
 
-import "./home.css";
 import Closing from "./components/Closing";
 import Demo from "./components/Demo";
 import Hero from "./components/Hero";

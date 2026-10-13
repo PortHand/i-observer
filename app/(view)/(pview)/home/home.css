@@ -1,4 +1,4 @@
-/* Home page layout. Shared components live in app/globals.css. */
+/* Site layout shared by all public pages, imported once in ../layout.tsx. Shared components live in app/globals.css. */
 
 html {
   scroll-behavior: smooth;

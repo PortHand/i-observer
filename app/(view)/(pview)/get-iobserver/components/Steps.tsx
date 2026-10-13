@@ -1,5 +1,6 @@
+import { ArrowDown } from "lucide-react";
 import { homeSections } from "@/helper/route";
-import { getApp, getSteps } from "../content/getContent";
+import { checkoutSectionId, getApp, getSteps } from "../content/getContent";
 
 export default function Steps() {
   return (
@@ -10,10 +11,16 @@ export default function Steps() {
             <span className="eyebrow">{getApp.eyebrow}</span>
             <h1 className="display section__title">{getApp.title}</h1>
           </div>
-          <p className="lead">{getApp.lead}</p>
+          <div className="stack-sm">
+            <p className="lead">{getApp.lead}</p>
+            <a className="button button--primary steps__cta" href={`#${checkoutSectionId}`}>
+              Start checkout
+              <ArrowDown className="icon icon--sm" strokeWidth={1.75} />
+            </a>
+          </div>
         </header>
 
-        <ol className="steps">
+        <ol className="steps steps--four">
           {getSteps.map(({ title, description }, index) => (
             <li key={title} className="step">
               <span className="step__label mono">
@@ -23,13 +30,6 @@ export default function Steps() {
             </li>
           ))}
         </ol>
-
-        <dl className="payment mono">
-          <div>
-            <dt>UPI ID</dt>
-            <dd>{getApp.upiId}</dd>
-          </div>
-        </dl>
       </div>
     </section>
   );

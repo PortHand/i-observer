@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import "../home/home.css";
 import "./what-is-iobserver.css";
 import { routes } from "@/helper/route";
 import SiteFooter from "../home/components/SiteFooter";
