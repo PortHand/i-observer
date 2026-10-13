@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" fill="#242321" />
+  <!-- Fedora: pinched crown and wide brim -->
+  <path d="M19.6 27l1.8-10.4c.5-3.2 4.1-4 6.6-2.4 2 1.4 6 1.4 8 0 2.5-1.6 6.1-.8 6.6 2.4L44.4 27z" fill="#F7F6F0" />
+  <ellipse cx="32" cy="32.2" rx="26" ry="5.6" fill="#F7F6F0" />
+  <!-- Mask: nobody sees who's behind it -->
+  <path d="M17.1 41.2Q32 42.9 46.8 41.2l-.7 8.8q-5.1.8-12.1 1.1l-2-2.7-2 2.7q-7-.3-12.1-1.1z" fill="#F7F6F0" />
+  <!-- Narrowed eyes: the observer -->
+  <path d="M20.8 43.8l8.6 1.8c-1.1 2-2.7 2.7-4.1 2.6-2.7-.2-4.3-2-4.5-4.4zM43.2 43.8l-8.6 1.8c1.1 2 2.7 2.7 4.1 2.6 2.7-.2 4.3-2 4.5-4.4z" fill="#C83232" />
+</svg>
