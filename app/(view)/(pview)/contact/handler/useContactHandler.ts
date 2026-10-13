@@ -2,7 +2,13 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { topicsWithReference, type TopicId } from "../content/contactContent";
-import { parseContactForm, type ContactField, type ContactMessage } from "../helper/contactHelper";
+import {
+  parseContactForm,
+  readPrefill,
+  type ContactField,
+  type ContactMessage,
+  type ContactPrefill,
+} from "../helper/contactHelper";
 import * as contactService from "../services/contactService";
 
 export const useContactHandler = () => {
@@ -13,11 +19,22 @@ export const useContactHandler = () => {
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState<{ message: ContactMessage; ticket: string } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [prefill, setPrefill] = useState<ContactPrefill>({});
   const formRef = useRef<HTMLFormElement>(null);
   const sentRef = useRef<HTMLHeadingElement>(null);
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => () => clearTimeout(copyTimer.current), []);
+
+  // Fill the form from links like /contact?topic=login&reference=IOB-AB12CD#message.
+  useEffect(() => {
+    const next = readPrefill(window.location.search);
+    if (Object.keys(next).length === 0) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- the URL is only readable after hydration.
+    setPrefill(next);
+    if (next.topic) setTopic(next.topic);
+    if (next.message) setMessageLength(next.message.length);
+  }, []);
 
   const showReference = topic !== "" && topicsWithReference.includes(topic);
 
@@ -71,6 +88,7 @@ export const useContactHandler = () => {
 
   const handleSendAnother = () => {
     setSent(null);
+    setPrefill({});
     setTopic("");
     setMessageLength(0);
   };
@@ -84,6 +102,7 @@ export const useContactHandler = () => {
     submitting,
     sent,
     copied,
+    prefill,
     formRef,
     sentRef,
     setTopic,

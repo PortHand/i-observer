@@ -193,6 +193,8 @@ export const checkout = {
     supportTitle: "Didn't get the email within 24 hours?",
     supportText: "Check your spam folder first, then contact support with your reference {reference}.",
     supportCta: "Contact support",
-    supportSubject: "Login not received · {reference}",
+    /** Pre-filled in the contact form that "Contact support" opens. */
+    supportMessage:
+      "I paid for iObserver and shared my transaction on {submitted} (UTR {utr}), but I haven't received my login yet.",
   },
 };

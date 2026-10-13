@@ -2,9 +2,11 @@ import type { FormEvent, RefObject } from "react";
 import { CircleAlert, Hash, Mail, MessageSquare, Phone, Send, User } from "lucide-react";
 import Dropdown from "@/components/common/Dropdown";
 import { MESSAGE_MAX, form, topics, type TopicId } from "../content/contactContent";
-import type { ContactField } from "../helper/contactHelper";
+import type { ContactField, ContactPrefill } from "../helper/contactHelper";
 
 interface MessageFormProps {
+  /** Values filled in from the URL. */
+  defaults: ContactPrefill;
   topic: TopicId | "";
   showReference: boolean;
   messageLength: number;
@@ -30,6 +32,7 @@ const FieldError = ({ id, message }: { id: string; message?: string }) =>
   ) : null;
 
 export default function MessageForm({
+  defaults,
   topic,
   showReference,
   messageLength,
@@ -82,6 +85,7 @@ export default function MessageForm({
               type="email"
               autoComplete="email"
               placeholder={form.emailPlaceholder}
+              defaultValue={defaults.email}
               aria-invalid={invalid("email")}
               aria-describedby={describe("email")}
               onInput={() => onEdit("email")}
@@ -147,6 +151,7 @@ export default function MessageForm({
               name="reference"
               autoComplete="off"
               placeholder={form.referencePlaceholder}
+              defaultValue={defaults.reference}
               aria-invalid={invalid("reference")}
               aria-describedby={describe("reference") ?? "reference-hint"}
               onInput={() => onEdit("reference")}
@@ -174,6 +179,7 @@ export default function MessageForm({
           name="message"
           rows={6}
           placeholder={form.messagePlaceholder}
+          defaultValue={defaults.message}
           aria-invalid={invalid("message")}
           aria-describedby={describe("message")}
           onInput={(event) => {

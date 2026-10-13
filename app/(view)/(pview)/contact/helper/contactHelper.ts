@@ -1,4 +1,5 @@
-import { MESSAGE_MAX, MESSAGE_MIN, form, topics, type TopicId } from "../content/contactContent";
+import { routes } from "@/helper/route";
+import { MESSAGE_MAX, MESSAGE_MIN, form, sectionIds, topics, type TopicId } from "../content/contactContent";
 import { isValidEmail, isValidPhone, normalizePhone } from "../../get-iobserver/helper/getHelper";
 
 export type ContactField = "name" | "email" | "phone" | "topic" | "reference" | "message";
@@ -23,6 +24,36 @@ export const normalizeReference = (reference: string) => {
 };
 
 const isValidReference = (reference: string) => /^IOB-[A-Z0-9]{6}$/.test(reference);
+
+/** Form fields another page can fill in through the URL, e.g. the checkout success screen. */
+export interface ContactPrefill {
+  topic?: TopicId;
+  reference?: string;
+  email?: string;
+  message?: string;
+}
+
+/** Link to the contact form with fields filled in, scrolled to the form. */
+export const contactLink = (prefill: ContactPrefill) => {
+  const entries = Object.entries(prefill).filter((entry): entry is [string, string] => Boolean(entry[1]));
+  const query = new URLSearchParams(entries).toString();
+  return `${routes.contact}${query ? `?${query}` : ""}#${sectionIds.message}`;
+};
+
+/** Reads a prefill back from the URL, dropping anything invalid. */
+export const readPrefill = (search: string): ContactPrefill => {
+  const params = new URLSearchParams(search);
+  const topic = params.get("topic") ?? "";
+  const reference = normalizeReference(params.get("reference") ?? "");
+  const email = (params.get("email") ?? "").trim().toLowerCase();
+  const message = (params.get("message") ?? "").trim().slice(0, MESSAGE_MAX);
+  return {
+    ...(isTopic(topic) && { topic }),
+    ...(isValidReference(reference) && { reference }),
+    ...(isValidEmail(email) && { email }),
+    ...(message && { message }),
+  };
+};
 
 /** Reads and checks the form. Returns the cleaned message, or an error per invalid field. */
 export const parseContactForm = (

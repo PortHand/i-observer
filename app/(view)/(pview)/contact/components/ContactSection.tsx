@@ -23,6 +23,9 @@ export default function ContactSection() {
             />
           ) : (
             <MessageForm
+              // Remount when a prefill arrives, so the inputs pick up their new default values.
+              key={JSON.stringify(contact.prefill)}
+              defaults={contact.prefill}
               topic={contact.topic}
               showReference={contact.showReference}
               messageLength={contact.messageLength}

@@ -1,10 +1,11 @@
 import type { RefObject } from "react";
+import Link from "next/link";
 import { Check, CircleAlert, Download, LifeBuoy, Mail } from "lucide-react";
+import { contactLink } from "../../contact/helper/contactHelper";
 import { checkout } from "../content/getContent";
 import {
   formatDateTime,
   loginExpectedBy,
-  supportMailto,
   type TransactionSummary,
 } from "../helper/getHelper";
 
@@ -32,6 +33,7 @@ export default function Confirmation({
     utr: summary.utr,
     reference: summary.reference,
     loginBy: formatDateTime(loginExpectedBy(summary.submittedAt)),
+    submitted: formatDateTime(summary.submittedAt),
   };
   const [before, after] = done.message.split("{email}");
   const steps = [
@@ -39,15 +41,12 @@ export default function Confirmation({
     { ...done.next.verifying, state: "current" },
     { ...done.next.emailed, state: "todo" },
   ];
-  const supportHref = supportMailto(
-    fill(done.supportSubject, values),
-    [
-      `Reference: ${summary.reference}`,
-      `UTR: ${summary.utr}`,
-      `Email: ${summary.email}`,
-      `Submitted: ${formatDateTime(summary.submittedAt)}`,
-    ].join("\n"),
-  );
+  const supportHref = contactLink({
+    topic: "login",
+    reference: summary.reference,
+    email: summary.email,
+    message: fill(done.supportMessage, values),
+  });
 
   return (
     <div className="success">
@@ -115,9 +114,9 @@ export default function Confirmation({
           <p className="support-note__title">{done.supportTitle}</p>
           <p>{fill(done.supportText, values)}</p>
         </div>
-        <a className="button button--secondary button--sm" href={supportHref}>
+        <Link className="button button--secondary button--sm" href={supportHref}>
           {done.supportCta}
-        </a>
+        </Link>
       </aside>
     </div>
   );
