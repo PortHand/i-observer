@@ -19,6 +19,11 @@ export const databaseUrl = () => {
   url.username = encodeURIComponent(user);
   if (password) url.password = encodeURIComponent(password);
   url.pathname = `/${encodeURIComponent(name)}`;
-  if (ssl) url.searchParams.set("sslmode", "require");
+  if (ssl) {
+    // libpq's "require": encrypted, without checking the certificate against a CA. Hosted Postgres
+    // such as Supabase signs with its own CA, which node-postgres's stricter "require" rejects.
+    url.searchParams.set("sslmode", "require");
+    url.searchParams.set("uselibpqcompat", "true");
+  }
   return url.toString();
 };
