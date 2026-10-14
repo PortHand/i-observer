@@ -5,12 +5,15 @@ export type FieldErrors = Partial<Record<string, string>>;
 export class HttpError extends Error {
   readonly status: number;
   readonly fields?: FieldErrors;
+  /** For 429s: seconds until the request may be retried, so the page can show a countdown. */
+  readonly retryAfter?: number;
 
-  constructor(status: number, message: string, fields?: FieldErrors) {
+  constructor(status: number, message: string, fields?: FieldErrors, retryAfter?: number) {
     super(message);
     this.name = "HttpError";
     this.status = status;
     this.fields = fields;
+    this.retryAfter = retryAfter;
   }
 
   static badRequest(message: string, fields?: FieldErrors) {
@@ -29,7 +32,7 @@ export class HttpError extends Error {
     return new HttpError(409, message);
   }
 
-  static tooManyRequests(message: string) {
-    return new HttpError(429, message);
+  static tooManyRequests(message: string, retryAfter?: number) {
+    return new HttpError(429, message, undefined, retryAfter);
   }
 }

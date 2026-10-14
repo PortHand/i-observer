@@ -39,6 +39,8 @@ interface SavedCheckout {
   summary: TransactionSummary | null;
   /** Email the latest verification code went to, while the code field is showing. */
   codeSentTo?: string | null;
+  /** When "Resend code" unlocks (ms since epoch), so the countdown survives a reload. */
+  resendAt?: number;
   draft?: ContactDraft | null;
   verified?: VerifiedEmail | null;
 }
@@ -95,6 +97,9 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
   const [resendAt, setResendAt] = useState(0);
   const [now, setNow] = useState(0);
   const [notice, setNotice] = useState("");
+  /** The OTP modal, and the error shown inside it (separate from the form's error). */
+  const [otpOpen, setOtpOpen] = useState(false);
+  const [otpError, setOtpError] = useState("");
   const [summary, setSummary] = useState<TransactionSummary | null>(null);
   /** The uploaded payment screenshot as a data URL, for the PDF receipt. */
   const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
@@ -104,7 +109,6 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const codeRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const restored = useRef(false);
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -118,6 +122,10 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     setCodeSentTo(saved.codeSentTo ?? null);
     setDraft(saved.draft ?? null);
     setVerified(saved.verified ?? null);
+    setResendAt(saved.resendAt ?? 0);
+    setNow(Date.now());
+    // A code was pending when the page reloaded (e.g. after switching to the mail app): ask for it again.
+    if (saved.codeSentTo && saved.step === "contact") setOtpOpen(true);
     if (saved.order) setPlanId(saved.order.planId);
     setSummary(saved.summary);
     if (saved.summary?.screenshotName) setScreenshotUrl(loadScreenshot());
@@ -127,8 +135,8 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
   useEffect(() => {
     if (!restored.current) return;
     const empty = step === "contact" && !order && !codeSentTo && !verified;
-    save(empty ? null : { step, order, summary, codeSentTo, draft, verified });
-  }, [step, order, summary, codeSentTo, draft, verified]);
+    save(empty ? null : { step, order, summary, codeSentTo, resendAt, draft, verified });
+  }, [step, order, summary, codeSentTo, resendAt, draft, verified]);
 
   // Tick once a second while "Resend code" is locked, to show the countdown.
   useEffect(() => {
@@ -154,23 +162,34 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     });
   };
 
-  /** Emails a code to `email` and shows the code field. Returns false if sending failed. */
-  const sendCode = async (email: string) => {
+  /**
+   * Emails a code to `email`. "Wait N seconds" counts as sent: a code went to this address under a
+   * minute ago and still works, so the modal opens with the countdown on "Resend code" (e.g. after
+   * "Change email" and back to the same address).
+   */
+  const sendCode = async (email: string): Promise<{ error: string } | { sent: boolean }> => {
     const result = await getService.sendEmailOtp(email);
-    if (!result.ok) {
-      setError(result.fields?.email ?? result.error);
-      return false;
-    }
+    const resendAfter = result.ok ? result.resendAfter : result.retryAfter;
+    if (!result.ok && resendAfter === undefined) return { error: result.fields?.email ?? result.error };
     setCodeSentTo(email);
-    setResendAt(Date.now() + result.resendAfter * 1000);
+    setResendAt(Date.now() + (resendAfter ?? 0) * 1000);
     setNow(Date.now());
-    requestAnimationFrame(() => codeRef.current?.focus());
-    return true;
+    return { sent: result.ok };
+  };
+
+  /** Creates the order, or updates it when editing (same reference; the server re-prices it), then shows the QR code. */
+  const saveOrder = async (request: getService.OrderRequest, token: string | null) => {
+    const result = order
+      ? await getService.updateOrder(order.reference, request, token)
+      : await getService.createOrder(request, token);
+    if (!result.ok) return setError(result.fields?.email ?? result.error);
+    setOrder(result.order);
+    goTo("pay");
   };
 
   /**
-   * Step 1 submit. An email that isn't verified yet gets a code first; the next submit checks the
-   * code and then creates the order. Editing an order only needs a code if the email changes.
+   * Step 1 submit ("Generate QR code"). A verified email goes straight to the QR code; otherwise a
+   * code is emailed and the OTP modal opens. Editing an order only needs a code if the email changes.
    */
   const handleContact = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -184,31 +203,41 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
 
     setSubmitting(true);
     setError("");
-    setNotice("");
     setDraft({ email, phone });
     try {
-      let token = verified?.email === email ? verified.token : null;
-      const needsCode = !token && order?.email !== email;
+      const token = verified?.email === email ? verified.token : null;
+      if (token || order?.email === email) return await saveOrder({ planId, email, phone }, token);
 
-      if (needsCode && codeSentTo !== email) return void (await sendCode(email));
-      if (needsCode) {
-        const code = String(data.get("code") ?? "").replace(/\D/g, "");
-        if (code.length !== 6) return setError(contact.invalidCode);
-        const result = await getService.verifyEmailOtp(email, code);
-        if (!result.ok) return setError(result.fields?.code ?? result.error);
-        token = result.token;
-        setVerified({ email, token });
-        setCodeSentTo(null);
+      setOtpError("");
+      setNotice("");
+      // A code already went to this address: reopen the modal instead of sending another.
+      if (codeSentTo !== email) {
+        const outcome = await sendCode(email);
+        if ("error" in outcome) return setError(outcome.error);
       }
+      setOtpOpen(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
-      // Editing the plan or details of an existing order keeps its reference; the server re-prices it.
-      const request = { planId, email, phone };
-      const result = order
-        ? await getService.updateOrder(order.reference, request, token)
-        : await getService.createOrder(request, token);
-      if (!result.ok) return setError(result.fields?.email ?? result.error);
-      setOrder(result.order);
-      goTo("pay");
+  /** OTP modal submit: checks the code, then creates the order with the details from step 1. */
+  const handleVerifyCode = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!draft) return setOtpOpen(false);
+    const code = String(new FormData(event.currentTarget).get("code") ?? "").replace(/\D/g, "");
+    if (code.length !== 6) return setOtpError(checkout.contact.invalidCode);
+
+    setSubmitting(true);
+    setOtpError("");
+    setNotice("");
+    try {
+      const result = await getService.verifyEmailOtp(draft.email, code);
+      if (!result.ok) return setOtpError(result.fields?.code ?? result.error);
+      setVerified({ email: draft.email, token: result.token });
+      setCodeSentTo(null);
+      setOtpOpen(false);
+      await saveOrder({ planId, ...draft }, result.token);
     } finally {
       setSubmitting(false);
     }
@@ -217,19 +246,24 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
   const handleResendCode = async () => {
     if (!codeSentTo || resendIn > 0) return;
     setSubmitting(true);
-    setError("");
+    setOtpError("");
     setNotice("");
     try {
-      if (await sendCode(codeSentTo)) setNotice(checkout.contact.codeResent);
+      const outcome = await sendCode(codeSentTo);
+      if ("error" in outcome) setOtpError(outcome.error);
+      else if (outcome.sent) setNotice(checkout.contact.codeResent);
     } finally {
       setSubmitting(false);
     }
   };
 
-  /** Hides the code field so a different email can be entered. */
+  /** Closes the modal. The code stays valid, so "Generate QR code" reopens it without sending another. */
+  const handleCloseOtp = () => setOtpOpen(false);
+
+  /** Closes the modal and selects the email field so a different address can be entered. */
   const handleChangeEmail = () => {
+    setOtpOpen(false);
     setCodeSentTo(null);
-    setError("");
     setNotice("");
     requestAnimationFrame(() => emailRef.current?.select());
   };
@@ -299,9 +333,8 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     codeSentTo,
     resendIn,
     notice,
-    /** True once the email in use is proven, so the submit button can skip the code step. */
-    emailVerified: verified !== null || order !== null,
-    codeRef,
+    otpOpen,
+    otpError,
     emailRef,
     summary,
     error,
@@ -313,7 +346,9 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     goTo,
     setPlanId,
     handleContact,
+    handleVerifyCode,
     handleResendCode,
+    handleCloseOtp,
     handleChangeEmail,
     handleTransaction,
     handleCopy,

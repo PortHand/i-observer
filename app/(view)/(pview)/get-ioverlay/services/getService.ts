@@ -43,7 +43,7 @@ export interface Order extends OrderRequest {
 }
 
 /** Failures may name the fields at fault, e.g. { code: "That code isn't right. 2 tries left." }. */
-type Failure = { ok: false; error: string; fields?: Partial<Record<string, string>> };
+type Failure = { ok: false; error: string; fields?: Partial<Record<string, string>>; retryAfter?: number };
 
 export type OrderResult = { ok: true; order: Order } | Failure;
 

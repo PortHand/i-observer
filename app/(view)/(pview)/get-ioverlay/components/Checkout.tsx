@@ -7,6 +7,7 @@ import { formatAmount, formatPhone, getPlan, planTitle } from "../helper/getHelp
 import type { Plan } from "../services/getService";
 import Confirmation from "./Confirmation";
 import ContactForm from "./ContactForm";
+import OtpModal from "./OtpModal";
 import PayPanel from "./PayPanel";
 import TransactionForm from "./TransactionForm";
 
@@ -68,21 +69,26 @@ export default function Checkout({ plans }: CheckoutProps) {
                   planId={co.planId}
                   order={co.order}
                   draft={co.draft}
-                  codeSentTo={co.codeSentTo}
-                  emailVerified={co.emailVerified}
-                  resendIn={co.resendIn}
-                  notice={co.notice}
                   error={co.error}
                   submitting={co.submitting}
                   headingRef={co.headingRef}
                   emailRef={co.emailRef}
-                  codeRef={co.codeRef}
                   onPlanChange={co.setPlanId}
                   onSubmit={co.handleContact}
-                  onResendCode={co.handleResendCode}
-                  onChangeEmail={co.handleChangeEmail}
                 />
               )}
+              <OtpModal
+                open={co.otpOpen}
+                email={co.codeSentTo ?? co.draft?.email ?? ""}
+                error={co.otpError}
+                notice={co.notice}
+                submitting={co.submitting}
+                resendIn={co.resendIn}
+                onVerify={co.handleVerifyCode}
+                onResend={co.handleResendCode}
+                onChangeEmail={co.handleChangeEmail}
+                onClose={co.handleCloseOtp}
+              />
               {co.step === "pay" && co.order && (
                 <PayPanel
                   order={co.order}

@@ -4,14 +4,19 @@ import { HttpError, type FieldErrors } from "./httpError";
 // Server Actions answer with the same result shape as the page services: { ok: true, ...data } or
 // { ok: false, error, fields? }. Their arguments come straight from the browser, so validate them.
 
-export type ActionResult<T extends object> = ({ ok: true } & T) | { ok: false; error: string; fields?: FieldErrors };
+export type ActionFailure = { ok: false; error: string; fields?: FieldErrors; retryAfter?: number };
+
+export type ActionResult<T extends object> = ({ ok: true } & T) | ActionFailure;
 
 /** Runs an action, turning thrown errors into a failed result the page can show. */
 export const runAction = async <T extends object>(action: () => Promise<T>): Promise<ActionResult<T>> => {
   try {
     return { ok: true, ...(await action()) };
   } catch (error) {
-    if (error instanceof HttpError) return { ok: false, error: error.message, ...(error.fields && { fields: error.fields }) };
+    if (error instanceof HttpError) {
+      const { message, fields, retryAfter } = error;
+      return { ok: false, error: message, ...(fields && { fields }), ...(retryAfter !== undefined && { retryAfter }) };
+    }
     console.error(error);
     return { ok: false, error: "Something went wrong on our side. Please try again in a minute." };
   }

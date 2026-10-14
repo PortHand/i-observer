@@ -110,12 +110,18 @@ export const checkout = {
     phonePlaceholder: "98765 43210",
     phonePrefix: "+91",
     submit: "Generate QR code",
-    /** Before the email is verified: emails a 6-digit code first. */
-    sendCode: "Send verification code",
-    verifySubmit: "Verify & generate QR code",
+    /** Marks email and phone as required. */
+    required: "*",
+    /** Modal that opens on "Generate QR code" while the email isn't verified yet. */
+    otp: {
+      eyebrow: "Verify your email",
+      title: "Enter the code",
+      description: "We sent a 6-digit code to {email}. It expires in 10 minutes; check spam if it isn't in your inbox.",
+      verify: "Verify & continue",
+      close: "Close",
+    },
     codeLabel: "Verification code",
     codePlaceholder: "6-digit code",
-    codeHint: "Sent to {email}. Check spam if it isn't in your inbox; it expires in 10 minutes.",
     resend: "Resend code",
     resendIn: "Resend in {seconds}s",
     codeResent: "New code sent.",

@@ -638,12 +638,7 @@
   }
 }
 
-/* Email verification code, shown under the contact fields in step 1. */
-
-.otp {
-  display: grid;
-  gap: var(--space-2);
-}
+/* OTP modal (components/OtpModal.tsx), opened from step 1. */
 
 .otp__input {
   letter-spacing: 0.3em;
@@ -652,10 +647,6 @@
 .otp__actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--space-2);
-}
-
-/* The email is locked while its code is pending; "Change email" unlocks it. */
-.input[readonly] {
-  color: var(--color-text-muted);
 }

@@ -63,7 +63,11 @@ export class OtpService {
 
     const latest = await this.otps.latest(key);
     const waited = latest ? (now - latest.createdAt.getTime()) / 1000 : Infinity;
-    if (waited < resendAfterSeconds) throw HttpError.tooManyRequests(messages.wait(Math.ceil(resendAfterSeconds - waited)));
+    if (waited < resendAfterSeconds) {
+      // The last code is still valid (it was sent under a minute ago), so the page can just ask for it.
+      const retryAfter = Math.ceil(resendAfterSeconds - waited);
+      throw HttpError.tooManyRequests(messages.wait(retryAfter), retryAfter);
+    }
     if ((await this.otps.countSince(key, new Date(now - 60 * MINUTE))) >= maxCodesPerHour) {
       throw HttpError.tooManyRequests(messages.tooMany(key.channel));
     }
