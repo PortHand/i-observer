@@ -39,23 +39,28 @@ export const useContactHandler = () => {
   const showReference = topic !== "" && topicsWithReference.includes(topic);
   const referenceRequired = topic !== "" && topicsRequiringReference.includes(topic);
 
+  /** Shows field errors and takes the user to the first problem. */
+  const showErrors = (fieldErrors: Partial<Record<ContactField, string>>) => {
+    setErrors(fieldErrors);
+    const first = Object.keys(fieldErrors)[0];
+    formRef.current?.querySelector<HTMLElement>(`[name="${first}"]:not([type="hidden"]), #field-${first}`)?.focus();
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const result = parseContactForm(new FormData(event.currentTarget));
-    if (!result.ok) {
-      setErrors(result.errors);
-      // Take the user to the first problem.
-      const first = Object.keys(result.errors)[0];
-      formRef.current?.querySelector<HTMLElement>(`[name="${first}"]:not([type="hidden"]), #field-${first}`)?.focus();
-      return;
-    }
+    if (!result.ok) return showErrors(result.errors);
 
     setErrors({});
     setSendError("");
     setSubmitting(true);
     try {
       const response = await contactService.sendMessage(result.message);
-      if (!response.ok) return setSendError(response.error);
+      if (!response.ok) {
+        // The server repeats the browser's checks; if it still rejects a field, show it there.
+        if (response.fields && Object.keys(response.fields).length > 0) return showErrors(response.fields);
+        return setSendError(response.error);
+      }
       setSent({ message: result.message, ticket: response.ticket });
       requestAnimationFrame(() => {
         sentRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });

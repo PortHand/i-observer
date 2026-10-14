@@ -2,6 +2,7 @@ import "server-only";
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "../db/schema";
+import { databaseUrl } from "./databaseConfig";
 
 export type Orm = NodePgDatabase<typeof schema>;
 
@@ -10,12 +11,10 @@ export type Orm = NodePgDatabase<typeof schema>;
 const cache = globalThis as typeof globalThis & { iobserverOrm?: Orm };
 
 export class Database {
-  /** Connects on first use, so `next build` works without DATABASE_URL. */
+  /** Connects on first use, so `next build` works without the DB_* settings. */
   static get orm(): Orm {
     if (!cache.iobserverOrm) {
-      const connectionString = process.env.DATABASE_URL;
-      if (!connectionString) throw new Error("DATABASE_URL is not set. Add it to .env.local (see .env.example).");
-      cache.iobserverOrm = drizzle({ client: new Pool({ connectionString, max: 10 }), schema });
+      cache.iobserverOrm = drizzle({ client: new Pool({ connectionString: databaseUrl(), max: 10 }), schema });
     }
     return cache.iobserverOrm;
   }

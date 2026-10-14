@@ -31,7 +31,7 @@ export const normalizeReference = (reference: string) => {
   return code ? `IOB-${code}` : "";
 };
 
-export const isValidReference = (reference: string) => /^IOB-[A-Z0-9]{6}$/.test(reference);
+const isValidReference = (reference: string) => /^IOB-[A-Z0-9]{6}$/.test(reference);
 
 /** Form fields another page can fill in through the URL, e.g. the checkout success screen. */
 export interface ContactPrefill {

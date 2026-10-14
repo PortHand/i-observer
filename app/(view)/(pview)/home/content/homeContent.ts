@@ -17,7 +17,7 @@ export const appInfo = {
   tagline: "Invisible to screen share",
   utility: "Private screen overlay",
   /** The one support mailbox, shown on the contact page and in checkout. */
-  supportEmail: "support@iobserver.app",
+  supportEmail: "support@i-overlay.com",
 };
 
 // Pages only; the link matching the current page is marked active.
