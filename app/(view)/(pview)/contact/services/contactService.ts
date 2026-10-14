@@ -1,8 +1,7 @@
-// API calls for the Contact page.
+// Server calls for the Contact page. They are Server Actions
+// (server/features/contact/action/contactActions.ts), so there's no API route.
 
-import { http } from "@/helper/http";
-import { HttpError } from "@/helper/httpError";
-import { apiRoutes } from "@/helper/route";
+import * as contactActions from "@/server/features/contact/action/contactActions";
 import type { ContactField, ContactMessage } from "../helper/contactHelper";
 
 export type SendMessageResult =
@@ -13,14 +12,6 @@ export type SendMessageResult =
 export const sendMessage = async (message: ContactMessage): Promise<SendMessageResult> => {
   const body = new FormData();
   for (const [field, value] of Object.entries(message)) body.set(field, value);
-
-  try {
-    const { ticket } = await http.post<{ ticket: string }>(apiRoutes.contact, body, "form");
-    return { ok: true, ticket };
-  } catch (error) {
-    if (!(error instanceof HttpError)) throw error;
-    // On a 400 the API lists the fields it rejected, so they can be shown next to each input.
-    const { fields } = (error.data ?? {}) as { fields?: Partial<Record<ContactField, string>> };
-    return { ok: false, error: error.message, fields };
-  }
+  // On failure the server lists the fields it rejected, so they can be shown next to each input.
+  return (await contactActions.sendMessage(body)) as SendMessageResult;
 };

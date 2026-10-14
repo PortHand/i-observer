@@ -14,11 +14,6 @@ export const routes = {
   signIn: "/sign-in",
 } as const;
 
-/** API route paths, called through helper/http.ts. Each matches a route.ts under app/api. */
-export const apiRoutes = {
-  contact: "/api/contact",
-} as const;
-
 /** Anchor ids of the home page sections that other pages link to. */
 export const homeSections = {
   top: "top",

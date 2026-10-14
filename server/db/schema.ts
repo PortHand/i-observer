@@ -3,3 +3,5 @@
 // database until you run `npm run db:generate` and `npm run db:migrate`.
 
 export * from "../features/contact/schema/contactSchema";
+export * from "../features/pricing/schema/pricingSchema";
+export * from "../features/order/schema/orderSchema";

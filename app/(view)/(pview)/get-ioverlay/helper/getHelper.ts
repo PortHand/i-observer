@@ -1,4 +1,5 @@
-import { defaultPlanId, payment, pricePlans, receipt, type PlanId } from "../content/getContent";
+import { payment, receipt } from "../content/getContent";
+import type { Order, Payee, Plan, PlanId } from "../services/getService";
 
 export { isValidEmail } from "../../home/helper/homeHelper";
 
@@ -32,25 +33,24 @@ export const formatAmount = (amount: number) =>
 export const formatDateTime = (iso: string) =>
   new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
 
-/** Falls back to the default plan, e.g. for progress saved before a plan was removed. */
-export const getPlan = (id: PlanId) =>
-  pricePlans.find((plan) => plan.id === id) ?? pricePlans.find((plan) => plan.id === defaultPlanId)!;
+/** The plan marked default, else the first. Callers make sure there is at least one plan. */
+export const defaultPlan = (plans: Plan[]) => plans.find((plan) => plan.isDefault) ?? plans[0];
 
-export const planTitle = (id: PlanId) => {
-  const plan = getPlan(id);
-  return `iOverlay ${plan.name} · ${plan.period}`;
-};
+/** Falls back to the default plan, e.g. for progress saved before a plan was hidden. */
+export const getPlan = (plans: Plan[], id: PlanId) => plans.find((plan) => plan.id === id) ?? defaultPlan(plans);
+
+export const planTitle = (plan: Pick<Plan, "name" | "period">) => `iOverlay ${plan.name} · ${plan.period}`;
 
 // URLSearchParams encodes spaces as "+", which some UPI apps show literally in the payment note.
 const toQuery = (params: Record<string, string>) =>
   new URLSearchParams(params).toString().replace(/\+/g, "%20");
 
-/** UPI deep link (NPCI linking spec). Scanned as a QR code or opened directly on a phone. */
-export const buildUpiLink = (reference: string, planId: PlanId) =>
+/** UPI deep link (NPCI linking spec). Any UPI app can scan it as a QR code or open it on a phone. */
+export const buildUpiLink = ({ reference, amount, payee }: Order) =>
   `upi://pay?${toQuery({
-    pa: payment.upiId,
-    pn: payment.payeeName,
-    am: getPlan(planId).amount.toFixed(2),
+    pa: payee.upiId,
+    pn: payee.name,
+    am: amount.toFixed(2),
     cu: payment.currency,
     tn: `iOverlay ${reference}`,
   })}`;
@@ -62,6 +62,9 @@ export interface TransactionSummary {
   phone: string;
   utr: string;
   submittedAt: string;
+  planLabel: string;
+  amount: number;
+  payee: Payee;
   /** File name of the uploaded payment screenshot, if any. */
   screenshotName?: string | null;
 }
@@ -80,11 +83,11 @@ export const receiptRows = (summary: TransactionSummary) => {
   const { labels } = receipt;
   return [
     { label: labels.status, value: receipt.status },
-    { label: labels.plan, value: planTitle(summary.planId) },
-    { label: labels.amount, value: formatAmountPlain(getPlan(summary.planId).amount) },
+    { label: labels.plan, value: summary.planLabel },
+    { label: labels.amount, value: formatAmountPlain(summary.amount) },
     { label: labels.reference, value: summary.reference },
     { label: labels.utr, value: summary.utr },
-    { label: labels.paidTo, value: payment.upiId },
+    { label: labels.paidTo, value: summary.payee.upiId },
     { label: labels.email, value: summary.email },
     { label: labels.phone, value: formatPhone(summary.phone) },
     { label: labels.screenshot, value: summary.screenshotName ?? receipt.noScreenshot },

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./sign-in.css";
 import { routes } from "@/helper/route";
 import SiteFooter from "../home/components/SiteFooter";
 import SiteHeader from "../home/components/SiteHeader";
 import LoginHelp from "./components/LoginHelp";
+import LowestPrice from "./components/LowestPrice";
 import SignInSection from "./components/SignInSection";
 import { intro } from "./content/signInContent";
 
@@ -27,7 +29,13 @@ export default function SignInView() {
               </div>
               <LoginHelp />
             </div>
-            <SignInSection />
+            <SignInSection
+              price={
+                <Suspense fallback={null}>
+                  <LowestPrice />
+                </Suspense>
+              }
+            />
           </div>
         </section>
       </main>

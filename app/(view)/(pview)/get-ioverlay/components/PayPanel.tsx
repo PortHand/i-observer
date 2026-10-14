@@ -1,9 +1,9 @@
 import type { RefObject } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { ArrowLeft, ArrowRight, Check, Copy, Smartphone } from "lucide-react";
-import { checkout, payment } from "../content/getContent";
+import { checkout } from "../content/getContent";
 import type { CopyTarget } from "../handler/useCheckoutHandler";
-import { buildUpiLink, formatAmount, getPlan, planTitle } from "../helper/getHelper";
+import { buildUpiLink, formatAmount } from "../helper/getHelper";
 import type { Order } from "../services/getService";
 
 interface PayPanelProps {
@@ -17,9 +17,9 @@ interface PayPanelProps {
 
 export default function PayPanel({ order, copied, headingRef, onCopy, onBack, onPaid }: PayPanelProps) {
   const { pay } = checkout;
-  const upiLink = buildUpiLink(order.reference, order.planId);
+  const upiLink = buildUpiLink(order);
   const copyRows: { target: CopyTarget; label: string; value: string }[] = [
-    { target: "upi", label: pay.upiLabel, value: payment.upiId },
+    { target: "upi", label: pay.upiLabel, value: order.payee.upiId },
     { target: "reference", label: pay.referenceLabel, value: order.reference },
   ];
 
@@ -46,8 +46,8 @@ export default function PayPanel({ order, copied, headingRef, onCopy, onBack, on
             title={pay.qrAlt}
           />
         </div>
-        <p className="qr__amount display">{formatAmount(getPlan(order.planId).amount)}</p>
-        <p className="qr__payee mono">{planTitle(order.planId)}</p>
+        <p className="qr__amount display">{formatAmount(order.amount)}</p>
+        <p className="qr__payee mono">{order.planLabel}</p>
       </div>
 
       <dl className="copy-list">

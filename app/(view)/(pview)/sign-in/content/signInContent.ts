@@ -1,8 +1,6 @@
 // Static content for the Sign in page.
 
 import { checkoutLink } from "@/helper/route";
-import { pricePlans } from "../../get-ioverlay/content/getContent";
-import { formatAmount } from "../../get-ioverlay/helper/getHelper";
 import { contactLink } from "../../contact/helper/contactHelper";
 import { appInfo } from "../../home/content/homeContent";
 
@@ -51,13 +49,12 @@ export const form = {
   },
 };
 
-const lowestPrice = Math.min(...pricePlans.map((plan) => plan.amount));
-
 /** "Don't have iOverlay?" block under the form. */
 export const buy = {
   divider: "Don't have iOverlay?",
   text: "Pick a plan, pay by UPI and get your username and password by email within 24 hours.",
-  price: `Plans from ${formatAmount(lowestPrice)}`,
+  /** {price} is the cheapest active plan, read from the database. */
+  price: "Plans from {price}",
   cta: "Buy iOverlay",
   href: checkoutLink,
 };

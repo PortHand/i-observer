@@ -9,55 +9,13 @@ export const getApp = {
   lead: "Share your contact details, pay by UPI QR and send us the transaction details. Your login lands in your inbox within 24 hours.",
 };
 
-/** UPI payee the QR code pays. */
+/** Payment settings. Plans and the UPI payee live in the database (plans and upi_accounts tables). */
 export const payment = {
-  // TODO: replace with the real UPI ID and payee name.
-  upiId: "yourname@upi",
-  payeeName: "iOverlay",
   currency: "INR",
   /** Mailbox for payment questions and the "email us instead" fallback. */
   supportEmail: appInfo.supportEmail,
 };
 
-export type PlanId = "monthly" | "yearly" | "lifetime";
-
-export interface PricePlan {
-  id: PlanId;
-  name: string;
-  /** Amount in rupees, paid once by UPI. */
-  amount: number;
-  period: string;
-  description: string;
-  badge?: string;
-}
-
-// TODO: replace with the real plans and prices.
-export const pricePlans: PricePlan[] = [
-  {
-    id: "monthly",
-    name: "Monthly",
-    amount: 499,
-    period: "1 month",
-    description: "Try it for an interview season or a busy month.",
-  },
-  {
-    id: "yearly",
-    name: "Yearly",
-    amount: 3999,
-    period: "12 months",
-    description: "Two-thirds off the monthly price for regular presenters.",
-    badge: "Best value",
-  },
-  {
-    id: "lifetime",
-    name: "Lifetime",
-    amount: 7999,
-    period: "One-time",
-    description: "Pay once, including every future update.",
-  },
-];
-
-export const defaultPlanId: PlanId = "yearly";
 
 export interface GetStep {
   title: string;
@@ -128,6 +86,9 @@ export const checkout = {
     { step: "transaction", label: "Share payment", hint: "UTR / transaction ID" },
   ] satisfies { step: CheckoutStep; label: string; hint: string }[],
   progressLabel: "Checkout progress",
+  loading: "Loading plans…",
+  /** Shown when no plan is active in the database. */
+  unavailable: "Checkout is paused for a moment. Email {supportEmail} and we'll help you buy iOverlay.",
   summary: {
     title: "Your order",
     label: "Plan",
@@ -149,6 +110,7 @@ export const checkout = {
     phonePlaceholder: "98765 43210",
     phonePrefix: "+91",
     submit: "Generate QR code",
+    planMissing: "Choose a plan.",
     invalidEmail: "Enter a valid email address.",
     invalidPhone: "Enter a 10-digit Indian mobile number.",
   },

@@ -1,10 +1,12 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useSignInHandler } from "../handler/useSignInHandler";
 import BuyPanel from "./BuyPanel";
 import SignInForm from "./SignInForm";
 
-export default function SignInSection() {
+/** `price` is the server-rendered "Plans from …" line, passed through to BuyPanel. */
+export default function SignInSection({ price }: { price: ReactNode }) {
   const signIn = useSignInHandler();
 
   return (
@@ -19,7 +21,7 @@ export default function SignInSection() {
         onTogglePassword={signIn.togglePasswordVisible}
         onSubmit={signIn.handleSubmit}
       />
-      <BuyPanel />
+      <BuyPanel price={price} />
     </div>
   );
 }

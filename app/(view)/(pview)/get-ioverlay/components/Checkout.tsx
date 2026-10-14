@@ -4,18 +4,27 @@ import { Check, Mail } from "lucide-react";
 import { checkout, checkoutSectionId, payment } from "../content/getContent";
 import { useCheckoutHandler } from "../handler/useCheckoutHandler";
 import { formatAmount, formatPhone, getPlan, planTitle } from "../helper/getHelper";
+import type { Plan } from "../services/getService";
 import Confirmation from "./Confirmation";
 import ContactForm from "./ContactForm";
 import PayPanel from "./PayPanel";
 import TransactionForm from "./TransactionForm";
 
-export default function Checkout() {
-  const co = useCheckoutHandler();
+interface CheckoutProps {
+  /** Active plans from the database. Must not be empty: CheckoutLoader shows a notice instead. */
+  plans: Plan[];
+}
+
+export default function Checkout({ plans }: CheckoutProps) {
+  const co = useCheckoutHandler(plans);
   const { summary } = checkout;
   // "done" isn't in the list, so every step counts as complete then.
   const stepIndex = checkout.progress.findIndex(({ step }) => step === co.step);
   const currentIndex = stepIndex === -1 ? checkout.progress.length : stepIndex;
-  const plan = getPlan(co.planId);
+  // Once an order exists, show what the server fixed for it rather than the plan list's current price.
+  const plan = getPlan(plans, co.planId);
+  const amount = co.order && co.step !== "contact" ? co.order.amount : plan.amount;
+  const label = co.order && co.step !== "contact" ? co.order.planLabel : planTitle(plan);
   const canEdit = co.order !== null && (co.step === "pay" || co.step === "transaction");
 
   return (
@@ -55,6 +64,7 @@ export default function Checkout() {
             <div className="card checkout__panel">
               {co.step === "contact" && (
                 <ContactForm
+                  plans={plans}
                   planId={co.planId}
                   order={co.order}
                   error={co.error}
@@ -100,11 +110,11 @@ export default function Checkout() {
               <dl className="order">
                 <div className="order__row order__row--amount">
                   <dt className="field__label">{summary.amountLabel}</dt>
-                  <dd className="order__amount display">{formatAmount(plan.amount)}</dd>
+                  <dd className="order__amount display">{formatAmount(amount)}</dd>
                 </div>
                 <div className="order__row">
                   <dt className="field__label">{summary.label}</dt>
-                  <dd>{planTitle(plan.id)}</dd>
+                  <dd>{label}</dd>
                 </div>
                 <div className="order__row">
                   <dt className="field__label">{summary.deliveryLabel}</dt>

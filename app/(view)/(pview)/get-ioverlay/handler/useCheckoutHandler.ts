@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { checkout, defaultPlanId, type CheckoutStep, type PlanId } from "../content/getContent";
+import { checkout, type CheckoutStep } from "../content/getContent";
 import {
+  defaultPlan,
   isValidEmail,
   isValidPhone,
   isValidScreenshot,
@@ -29,7 +30,10 @@ interface SavedCheckout {
 const loadSaved = (): SavedCheckout | null => {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as SavedCheckout) : null;
+    const saved = raw ? (JSON.parse(raw) as SavedCheckout) : null;
+    // Progress saved before orders carried a fixed price and payee can't build a QR code, so start over.
+    if ((saved?.order && !saved.order.payee?.upiId) || (saved?.summary && typeof saved.summary.amount !== "number")) return null;
+    return saved;
   } catch {
     return null;
   }
@@ -63,9 +67,10 @@ const loadScreenshot = () => {
 
 export type CopyTarget = "upi" | "reference";
 
-export const useCheckoutHandler = () => {
+/** `plans` are the active plans from the database; there is always at least one. */
+export const useCheckoutHandler = (plans: getService.Plan[]) => {
   const [step, setStep] = useState<CheckoutStep>("contact");
-  const [planId, setPlanId] = useState<PlanId>(defaultPlanId);
+  const [planId, setPlanId] = useState<getService.PlanId>(defaultPlan(plans).id);
   const [order, setOrder] = useState<getService.Order | null>(null);
   const [summary, setSummary] = useState<TransactionSummary | null>(null);
   /** The uploaded payment screenshot as a data URL, for the PDF receipt. */
@@ -118,16 +123,12 @@ export const useCheckoutHandler = () => {
     if (!isValidEmail(email)) return setError(contact.invalidEmail);
     if (!isValidPhone(phone)) return setError(contact.invalidPhone);
 
-    // Editing the plan or details of an existing order keeps its reference.
-    if (order) {
-      setOrder({ ...order, planId, email, phone });
-      return goTo("pay");
-    }
-
     setSubmitting(true);
     setError("");
     try {
-      const result = await getService.createOrder({ planId, email, phone });
+      // Editing the plan or details of an existing order keeps its reference; the server re-prices it.
+      const request = { planId, email, phone };
+      const result = order ? await getService.updateOrder(order.reference, request) : await getService.createOrder(request);
       if (!result.ok) return setError(result.error);
       setOrder(result.order);
       goTo("pay");
@@ -151,7 +152,7 @@ export const useCheckoutHandler = () => {
     setSubmitting(true);
     setError("");
     try {
-      const result = await getService.submitTransaction({ reference: order.reference, utr, screenshot });
+      const result = await getService.submitTransaction({ reference: order.reference, utr });
       if (!result.ok) return setError(result.error);
       const dataUrl = screenshot ? await readAsDataUrl(screenshot).catch(() => null) : null;
       setScreenshotUrl(dataUrl);

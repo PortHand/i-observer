@@ -1,10 +1,11 @@
 import type { FormEvent, RefObject } from "react";
 import { CircleAlert, Mail, Phone, QrCode } from "lucide-react";
-import { checkout, pricePlans, type PlanId } from "../content/getContent";
+import { checkout } from "../content/getContent";
 import { formatAmount, getPlan } from "../helper/getHelper";
-import type { Order } from "../services/getService";
+import type { Order, Plan, PlanId } from "../services/getService";
 
 interface ContactFormProps {
+  plans: Plan[];
   planId: PlanId;
   order: Order | null;
   error: string;
@@ -15,6 +16,7 @@ interface ContactFormProps {
 }
 
 export default function ContactForm({
+  plans,
   planId,
   order,
   error,
@@ -37,7 +39,7 @@ export default function ContactForm({
       <fieldset className="plan-picker">
         <legend className="field__label">{contact.planLabel}</legend>
         <div className="plan-tiles">
-          {pricePlans.map((plan) => (
+          {plans.map((plan) => (
             <label key={plan.id} className="plan-tile">
               <input
                 className="visually-hidden"
@@ -55,7 +57,7 @@ export default function ContactForm({
           ))}
         </div>
         <p className="plan-picker__description" aria-live="polite">
-          {getPlan(planId).description}
+          {getPlan(plans, planId).description}
         </p>
       </fieldset>
 

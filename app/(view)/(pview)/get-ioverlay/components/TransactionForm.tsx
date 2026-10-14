@@ -1,7 +1,7 @@
 import type { FormEvent, RefObject } from "react";
 import { ArrowLeft, CircleAlert, Hash, Mail, Send } from "lucide-react";
 import { checkout } from "../content/getContent";
-import { formatAmount, formatPhone, getPlan, planTitle, supportMailto } from "../helper/getHelper";
+import { formatAmount, formatPhone, supportMailto } from "../helper/getHelper";
 import type { Order } from "../services/getService";
 
 interface TransactionFormProps {
@@ -25,9 +25,9 @@ export default function TransactionForm({
   const mailto = supportMailto(
     `iOverlay payment ${order.reference}`,
     [
-      planTitle(order.planId),
+      order.planLabel,
       `Reference: ${order.reference}`,
-      `Amount: ${formatAmount(getPlan(order.planId).amount)}`,
+      `Amount: ${formatAmount(order.amount)}`,
       `Email: ${order.email}`,
       `Phone: ${formatPhone(order.phone)}`,
       "UTR / transaction ID: ",

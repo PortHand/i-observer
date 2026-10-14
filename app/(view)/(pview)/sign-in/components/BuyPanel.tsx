@@ -1,9 +1,11 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { CreditCard } from "lucide-react";
 import { buy } from "../content/signInContent";
 
 /** "Don't have iOverlay?" block under the sign-in form, linking to checkout. */
-export default function BuyPanel() {
+/** `price` is rendered by the server (LowestPrice), since prices come from the database. */
+export default function BuyPanel({ price }: { price: ReactNode }) {
   return (
     <div className="sign-in__buy">
       <p className="sign-in__divider mono">
@@ -14,7 +16,7 @@ export default function BuyPanel() {
         <CreditCard className="icon icon--sm" strokeWidth={1.75} />
         {buy.cta}
       </Link>
-      <p className="sign-in__price mono">{buy.price}</p>
+      {price}
     </div>
   );
 }

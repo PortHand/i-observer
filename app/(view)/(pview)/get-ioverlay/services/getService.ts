@@ -1,7 +1,22 @@
-// API calls for the "Get iOverlay" page. There is no backend yet, so these are placeholders:
-// they succeed locally without sending anything. Replace them before taking real payments.
+// Server calls for the "Get iOverlay" page, plus the plan and order shapes the server sends. The
+// calls are Server Actions (server/features/order/action/orderActions.ts), so there's no API route.
 
-import type { PlanId } from "../content/getContent";
+import * as orderActions from "@/server/features/order/action/orderActions";
+
+export type PlanId = string;
+
+/** A plan from the plans table. Prices are edited in the database, not in code. */
+export interface Plan {
+  id: PlanId;
+  name: string;
+  /** Amount in rupees, paid once by UPI. */
+  amount: number;
+  period: string;
+  description: string;
+  badge: string | null;
+  /** Pre-selected at checkout. */
+  isDefault: boolean;
+}
 
 export interface OrderRequest {
   planId: PlanId;
@@ -10,46 +25,41 @@ export interface OrderRequest {
   phone: string;
 }
 
+/** Who the UPI QR code pays: the active account in the upi_accounts table when the order was saved. */
+export interface Payee {
+  upiId: string;
+  name: string;
+}
+
 export interface Order extends OrderRequest {
   /** Short code added to the UPI payment note so the payment can be matched to this order. */
   reference: string;
+  /** e.g. "iOverlay Yearly · 12 months". */
+  planLabel: string;
+  /** Rupees, fixed when the order was saved, so a later price change doesn't affect it. */
+  amount: number;
+  payee: Payee;
 }
 
-export type CreateOrderResult = { ok: true; order: Order } | { ok: false; error: string };
+export type OrderResult = { ok: true; order: Order } | { ok: false; error: string };
 
 export interface TransactionRequest {
   reference: string;
   utr: string;
-  screenshot: File | null;
 }
 
 export type SubmitTransactionResult =
   | { ok: true; submittedAt: string }
   | { ok: false; error: string };
 
-const REFERENCE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+/** Saves the order before the QR code is shown. The server issues the reference and fixes the price and payee. */
+export const createOrder = (request: OrderRequest): Promise<OrderResult> => orderActions.createOrder(request);
 
-const makeReference = () => {
-  const bytes = crypto.getRandomValues(new Uint8Array(6));
-  const code = Array.from(bytes, (byte) => REFERENCE_ALPHABET[byte % REFERENCE_ALPHABET.length]).join("");
-  return `IOV-${code}`;
-};
+/** Changes the plan or contact details of an unpaid order. Keeps the reference; refreshes the price and payee. */
+export const updateOrder = (reference: string, request: OrderRequest): Promise<OrderResult> =>
+  orderActions.updateOrder(reference, request);
 
-/** Saves the plan and contact details before the QR code is shown, so we can follow up on unfinished payments. */
-export const createOrder = async (request: OrderRequest): Promise<CreateOrderResult> => {
-  // TODO: replace with a call to the real orders API, which should issue the reference and own the price.
-  return { ok: true, order: { ...request, reference: makeReference() } };
-};
-
-/** Sends the UTR and optional screenshot. The backend verifies the payment and emails the login. */
-export const submitTransaction = async ({
-  reference,
-  utr,
-  screenshot,
-}: TransactionRequest): Promise<SubmitTransactionResult> => {
-  // TODO: replace with a multipart upload to the real orders API.
-  void reference;
-  void utr;
-  void screenshot;
-  return { ok: true, submittedAt: new Date().toISOString() };
-};
+/** Sends the UTR. We check it against the bank statement and email the login. */
+// TODO: upload the payment screenshot too, once it has somewhere to go (a private storage bucket).
+export const submitTransaction = ({ reference, utr }: TransactionRequest): Promise<SubmitTransactionResult> =>
+  orderActions.submitTransaction(reference, utr);

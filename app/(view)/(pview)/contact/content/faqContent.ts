@@ -1,9 +1,7 @@
-// FAQ section of the Contact page. Facts mirror the other pages: plans and prices come from the
-// checkout content, systems and limits from the "What is iOverlay?" page.
+// FAQ section of the Contact page. Facts mirror the other pages: systems and limits from the
+// "What is iOverlay?" page. Prices live in the database, so answers point to checkout for them.
 
 import { appInfo } from "../../home/content/homeContent";
-import { pricePlans } from "../../get-ioverlay/content/getContent";
-import { formatAmount } from "../../get-ioverlay/helper/getHelper";
 import { checkoutLink, routes } from "@/helper/route";
 import { sectionIds } from "./contactContent";
 
@@ -45,8 +43,6 @@ export interface Faq {
   answer: string;
   link?: { href: string; label: string };
 }
-
-const planList = pricePlans.map((plan) => `${plan.name} (${formatAmount(plan.amount)}, ${plan.period.toLowerCase()})`).join(", ");
 
 export const faqs: Faq[] = [
   {
@@ -110,7 +106,7 @@ export const faqs: Faq[] = [
     id: "plans",
     category: "payment",
     question: "Which plans are there?",
-    answer: `${planList}. Pick one at checkout; you can see the full price before you pay.`,
+    answer: "Monthly, yearly and one-time lifetime plans. Current prices are on the Get iOverlay page; pick one at checkout and you see the full price before you pay.",
     link: { href: routes.getIOverlay, label: "Compare plans" },
   },
   {

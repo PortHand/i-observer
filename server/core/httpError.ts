@@ -1,7 +1,7 @@
 /** Field name → message, shown next to the matching form field. */
 export type FieldErrors = Partial<Record<string, string>>;
 
-/** An error the client caused or should see. BaseController turns it into a JSON response with this status. */
+/** An error the client caused or should see. runAction (baseAction.ts) turns it into a failed result. */
 export class HttpError extends Error {
   readonly status: number;
   readonly fields?: FieldErrors;

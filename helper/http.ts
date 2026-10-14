@@ -2,7 +2,7 @@
 // Resolves with the parsed response body, and throws HttpError (helper/httpError.ts) when the
 // server answers with an error status, can't be reached, or takes too long.
 //
-//   const { ticket } = await http.post<{ ticket: string }>(apiRoutes.contact, formData, "form");
+//   const { user } = await http.post<{ user: User }>("/users", formData, "form");
 
 import { HttpError } from "./httpError";
 
