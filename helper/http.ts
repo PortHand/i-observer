@@ -29,8 +29,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 const DEFAULT_TIMEOUT = 15000;
 
 const messages = {
-  network: "Couldn't reach iObserver. Check your connection and try again.",
-  timeout: "iObserver took too long to answer. Please try again.",
+  network: "Couldn't reach iOverlay. Check your connection and try again.",
+  timeout: "iOverlay took too long to answer. Please try again.",
   server: "Something went wrong on our side. Please try again in a minute.",
   failed: "The request failed. Please try again.",
 };

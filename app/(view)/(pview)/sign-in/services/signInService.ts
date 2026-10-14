@@ -13,5 +13,5 @@ export const signIn = async ({ username, password }: SignInCredentials): Promise
   // TODO: replace with a call to the real auth API.
   void username;
   void password;
-  return { ok: false, error: "Sign-in is not available on the web yet. Use the iObserver desktop app." };
+  return { ok: false, error: "Sign-in is not available on the web yet. Use the iOverlay desktop app." };
 };

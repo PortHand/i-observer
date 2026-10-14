@@ -16,6 +16,8 @@ export interface MailAttachment {
   filename: string;
   content: Buffer;
   contentType?: string;
+  /** Content ID for an image shown inside the HTML (<img src="cid:...">) rather than as a file. */
+  cid?: string;
 }
 
 /** Delivers a finished message. Swap implementations to change provider without touching callers. */

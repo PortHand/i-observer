@@ -48,7 +48,7 @@ export const useHomeHandler = () => {
   };
 
   const handleStartOverlay = () => {
-    setOverlayStatus("Open the iObserver desktop app to start the overlay.");
+    setOverlayStatus("Open the iOverlay desktop app to start the overlay.");
   };
 
   const focusSignIn = () => {

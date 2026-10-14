@@ -86,7 +86,7 @@
   color: var(--color-text);
 }
 
-/* "Don't have iObserver?" block under the form */
+/* "Don't have iOverlay?" block under the form */
 
 .sign-in__buy {
   display: grid;

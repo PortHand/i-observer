@@ -1,10 +1,10 @@
-// Static content for the "Get iObserver" page.
+// Static content for the "Get iOverlay" page.
 
-import { getIObserverSections } from "@/helper/route";
+import { getIOverlaySections } from "@/helper/route";
 import { appInfo } from "../../home/content/homeContent";
 
 export const getApp = {
-  eyebrow: "Get iObserver",
+  eyebrow: "Get iOverlay",
   title: "Up and running in a day.",
   lead: "Share your contact details, pay by UPI QR and send us the transaction details. Your login lands in your inbox within 24 hours.",
 };
@@ -13,7 +13,7 @@ export const getApp = {
 export const payment = {
   // TODO: replace with the real UPI ID and payee name.
   upiId: "yourname@upi",
-  payeeName: "iObserver",
+  payeeName: "iOverlay",
   currency: "INR",
   /** Mailbox for payment questions and the "email us instead" fallback. */
   supportEmail: appInfo.supportEmail,
@@ -84,7 +84,7 @@ export const getSteps: GetStep[] = [
 ];
 
 /** Anchor id of the checkout section, linked from the steps above it and from other pages. */
-export const checkoutSectionId = getIObserverSections.checkout;
+export const checkoutSectionId = getIOverlaySections.checkout;
 
 export type CheckoutStep = "contact" | "pay" | "transaction" | "done";
 
@@ -196,6 +196,6 @@ export const checkout = {
     supportCta: "Contact support",
     /** Pre-filled in the contact form that "Contact support" opens. */
     supportMessage:
-      "I paid for iObserver and shared my transaction on {submitted} (UTR {utr}), but I haven't received my login yet.",
+      "I paid for iOverlay and shared my transaction on {submitted} (UTR {utr}), but I haven't received my login yet.",
   },
 };

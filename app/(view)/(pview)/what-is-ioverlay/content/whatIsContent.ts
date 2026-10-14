@@ -1,11 +1,11 @@
-// Static content for the "What is iObserver?" page. Facts mirror iobserver-app (see its README).
+// Static content for the "What is iOverlay?" page. Facts mirror iobserver-app (see its README).
 
 import { routes } from "@/helper/route";
 
 export const intro = {
   eyebrow: "Basics",
-  title: "What is iObserver?",
-  lead: "iObserver is a desktop app that puts a private window on top of your screen. You can read it while you present, but screen shares, recordings and screenshots leave it out.",
+  title: "What is iOverlay?",
+  lead: "iOverlay is a desktop app that puts a private window on top of your screen. You can read it while you present, but screen shares, recordings and screenshots leave it out.",
 };
 
 export const oneLine = {
@@ -50,7 +50,7 @@ export const insideTopics = [
 export const hidingSection = {
   eyebrow: "How it stays hidden",
   title: "Your screen, minus one window.",
-  lead: "iObserver doesn't fight the screen-share app. It asks your operating system to leave the overlay out of every capture.",
+  lead: "iOverlay doesn't fight the screen-share app. It asks your operating system to leave the overlay out of every capture.",
 };
 
 export const hidingSteps = [
@@ -94,5 +94,5 @@ export const useCases = [
 export const closing = {
   title: "Ready to try it?",
   lead: "Pay by UPI, upload the screenshot and your login arrives within 24 hours.",
-  cta: { href: routes.getIObserver, label: "Get iObserver" },
+  cta: { href: routes.getIOverlay, label: "Get iOverlay" },
 };

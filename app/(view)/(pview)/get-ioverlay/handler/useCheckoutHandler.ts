@@ -16,9 +16,9 @@ import { receiptFileName, renderReceiptPdf } from "../helper/receiptPdf";
 import * as getService from "../services/getService";
 
 // Progress survives a reload: phones often reload the tab after switching to the UPI app.
-const STORAGE_KEY = "iobserver.checkout";
+const STORAGE_KEY = "ioverlay.checkout";
 // Kept apart from the rest: a large screenshot may not fit in storage, and that's fine.
-const SCREENSHOT_KEY = "iobserver.checkout.screenshot";
+const SCREENSHOT_KEY = "ioverlay.checkout.screenshot";
 
 interface SavedCheckout {
   step: CheckoutStep;

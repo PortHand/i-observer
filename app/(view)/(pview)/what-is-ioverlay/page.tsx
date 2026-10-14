@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./what-is-iobserver.css";
+import "./what-is-ioverlay.css";
 import { routes } from "@/helper/route";
 import SiteFooter from "../home/components/SiteFooter";
 import Closing from "../home/components/Closing";
@@ -12,14 +12,14 @@ import UseCases from "./components/UseCases";
 import { closing } from "./content/whatIsContent";
 
 export const metadata: Metadata = {
-  title: "What is iObserver?",
+  title: "What is iOverlay?",
   description: "A desktop overlay that stays on your screen and out of screen shares, recordings and screenshots.",
 };
 
 export default function WhatIsView() {
   return (
     <>
-      <SiteHeader signedIn={false} current={routes.whatIsIObserver} />
+      <SiteHeader signedIn={false} current={routes.whatIsIOverlay} />
       <main>
         <Intro />
         <Inside />

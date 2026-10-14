@@ -8,7 +8,7 @@ import {
   topicsRequiringReference,
   type TopicId,
 } from "../content/contactContent";
-import { isValidEmail, isValidPhone, normalizePhone } from "../../get-iobserver/helper/getHelper";
+import { isValidEmail, isValidPhone, normalizePhone } from "../../get-ioverlay/helper/getHelper";
 
 export type ContactField = "name" | "email" | "phone" | "topic" | "reference" | "message";
 
@@ -18,20 +18,20 @@ export interface ContactMessage {
   /** 10-digit Indian mobile number, or "" when left blank. */
   phone: string;
   topic: TopicId;
-  /** Order reference such as IOB-AB12CD, or "" when left blank. */
+  /** Order reference such as IOV-AB12CD, or "" when left blank. */
   reference: string;
   message: string;
 }
 
 const isTopic = (value: string): value is TopicId => topics.some(({ id }) => id === value);
 
-/** "iob ab12cd" → "IOB-AB12CD". */
+/** "iov ab12cd" → "IOV-AB12CD". */
 export const normalizeReference = (reference: string) => {
-  const code = reference.toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/^IOB/, "");
-  return code ? `IOB-${code}` : "";
+  const code = reference.toUpperCase().replace(/[^A-Z0-9]/g, "").replace(/^IOV/, "");
+  return code ? `IOV-${code}` : "";
 };
 
-const isValidReference = (reference: string) => /^IOB-[A-Z0-9]{6}$/.test(reference);
+const isValidReference = (reference: string) => /^IOV-[A-Z0-9]{6}$/.test(reference);
 
 /** Form fields another page can fill in through the URL, e.g. the checkout success screen. */
 export interface ContactPrefill {

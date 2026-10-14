@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "iObserver",
+  title: "iOverlay",
   description: "Your notes on screen. Invisible to everyone else.",
 };
 

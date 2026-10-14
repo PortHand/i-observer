@@ -9,7 +9,7 @@ import { intro } from "./content/signInContent";
 
 export const metadata: Metadata = {
   title: "Sign in",
-  description: "Sign in to iObserver with the username and password emailed after your purchase, or buy iObserver.",
+  description: "Sign in to iOverlay with the username and password emailed after your purchase, or buy iOverlay.",
 };
 
 export default function SignInView() {

@@ -3,7 +3,8 @@ import type { ContactMessage } from "@/app/(view)/(pview)/contact/helper/contact
 import { randomCode, withUniqueCode } from "@/server/core/randomCode";
 import type { MailService } from "@/server/features/mail/service/mailService";
 import type { ContactRepository } from "../repository/contactRepository";
-import { contactAcknowledgementTemplate, contactNotificationTemplate } from "../template/contactTemplates";
+import { contactAcknowledgementTemplate } from "../template/contactAcknowledgementTemplate";
+import { contactNotificationTemplate } from "../template/contactNotificationTemplate";
 
 export class ContactService {
   private readonly messages: ContactRepository;
@@ -39,13 +40,13 @@ export class ContactService {
    * they still get their ticket, and support can find the message in the database.
    */
   private async notify(ticket: string, message: ContactMessage) {
-    const data = { ticket, message };
+    const data = { ticket, message, receivedAt: new Date() };
     const results = await Promise.allSettled([
       this.mail.sendTemplate(contactNotificationTemplate, data, { to: this.mail.supportInbox, replyTo: message.email }),
       this.mail.sendTemplate(contactAcknowledgementTemplate, data, { to: message.email }),
     ]);
     for (const result of results) {
-      if (result.status === "rejected") console.error(`[contact] Couldn't send an email for ${ticket}:`, result.reason);
+      if (result.status === "rejected") console.error(`[contact] ${ticket}:`, result.reason);
     }
   }
 }

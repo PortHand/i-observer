@@ -1,8 +1,8 @@
 // Static content for the Sign in page.
 
 import { checkoutLink } from "@/helper/route";
-import { pricePlans } from "../../get-iobserver/content/getContent";
-import { formatAmount } from "../../get-iobserver/helper/getHelper";
+import { pricePlans } from "../../get-ioverlay/content/getContent";
+import { formatAmount } from "../../get-ioverlay/helper/getHelper";
 import { contactLink } from "../../contact/helper/contactHelper";
 import { appInfo } from "../../home/content/homeContent";
 
@@ -22,7 +22,7 @@ export const loginHelp = {
     },
     {
       title: "Can't find the email?",
-      text: "Check your spam and promotions folders, then contact support with your order reference (IOB-XXXXXX).",
+      text: "Check your spam and promotions folders, then contact support with your order reference (IOV-XXXXXX).",
       link: { href: contactLink({ topic: "login" }), label: "Contact support" },
     },
     {
@@ -53,11 +53,11 @@ export const form = {
 
 const lowestPrice = Math.min(...pricePlans.map((plan) => plan.amount));
 
-/** "Don't have iObserver?" block under the form. */
+/** "Don't have iOverlay?" block under the form. */
 export const buy = {
-  divider: "Don't have iObserver?",
+  divider: "Don't have iOverlay?",
   text: "Pick a plan, pay by UPI and get your username and password by email within 24 hours.",
   price: `Plans from ${formatAmount(lowestPrice)}`,
-  cta: "Buy iObserver",
+  cta: "Buy iOverlay",
   href: checkoutLink,
 };

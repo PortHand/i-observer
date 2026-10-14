@@ -1,4 +1,4 @@
-// API calls for the "Get iObserver" page. There is no backend yet, so these are placeholders:
+// API calls for the "Get iOverlay" page. There is no backend yet, so these are placeholders:
 // they succeed locally without sending anything. Replace them before taking real payments.
 
 import type { PlanId } from "../content/getContent";
@@ -32,7 +32,7 @@ const REFERENCE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const makeReference = () => {
   const bytes = crypto.getRandomValues(new Uint8Array(6));
   const code = Array.from(bytes, (byte) => REFERENCE_ALPHABET[byte % REFERENCE_ALPHABET.length]).join("");
-  return `IOB-${code}`;
+  return `IOV-${code}`;
 };
 
 /** Saves the plan and contact details before the QR code is shown, so we can follow up on unfinished payments. */

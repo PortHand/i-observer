@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CreditCard } from "lucide-react";
 import { buy } from "../content/signInContent";
 
-/** "Don't have iObserver?" block under the sign-in form, linking to checkout. */
+/** "Don't have iOverlay?" block under the sign-in form, linking to checkout. */
 export default function BuyPanel() {
   return (
     <div className="sign-in__buy">

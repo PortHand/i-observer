@@ -9,7 +9,7 @@ import { intro } from "./content/contactContent";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Email iObserver support, send a message, or find answers about payments, logins and the app.",
+  description: "Email iOverlay support, send a message, or find answers about payments, logins and the app.",
 };
 
 export default function ContactView() {

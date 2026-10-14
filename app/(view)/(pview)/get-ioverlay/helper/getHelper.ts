@@ -38,7 +38,7 @@ export const getPlan = (id: PlanId) =>
 
 export const planTitle = (id: PlanId) => {
   const plan = getPlan(id);
-  return `iObserver ${plan.name} · ${plan.period}`;
+  return `iOverlay ${plan.name} · ${plan.period}`;
 };
 
 // URLSearchParams encodes spaces as "+", which some UPI apps show literally in the payment note.
@@ -52,7 +52,7 @@ export const buildUpiLink = (reference: string, planId: PlanId) =>
     pn: payment.payeeName,
     am: getPlan(planId).amount.toFixed(2),
     cu: payment.currency,
-    tn: `iObserver ${reference}`,
+    tn: `iOverlay ${reference}`,
   })}`;
 
 export interface TransactionSummary {

@@ -8,14 +8,14 @@ export type Orm = NodePgDatabase<typeof schema>;
 
 // `next dev` re-runs modules on every edit. Keeping the client on globalThis stops each reload
 // from opening a new connection pool.
-const cache = globalThis as typeof globalThis & { iobserverOrm?: Orm };
+const cache = globalThis as typeof globalThis & { ioverlayOrm?: Orm };
 
 export class Database {
   /** Connects on first use, so `next build` works without the DB_* settings. */
   static get orm(): Orm {
-    if (!cache.iobserverOrm) {
-      cache.iobserverOrm = drizzle({ client: new Pool({ connectionString: databaseUrl(), max: 10 }), schema });
+    if (!cache.ioverlayOrm) {
+      cache.ioverlayOrm = drizzle({ client: new Pool({ connectionString: databaseUrl(), max: 10 }), schema });
     }
-    return cache.iobserverOrm;
+    return cache.ioverlayOrm;
   }
 }

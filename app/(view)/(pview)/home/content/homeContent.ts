@@ -12,7 +12,7 @@ import {
 import { homeSection, routes } from "@/helper/route";
 
 export const appInfo = {
-  name: "iObserver",
+  name: "iOverlay",
   version: "1.0.0",
   tagline: "Invisible to screen share",
   utility: "Private screen overlay",
@@ -23,8 +23,8 @@ export const appInfo = {
 // Pages only; the link matching the current page is marked active.
 export const navLinks = [
   { href: routes.home, label: "Home" },
-  { href: routes.whatIsIObserver, label: "What is iObserver?" },
-  { href: routes.getIObserver, label: "Get iObserver" },
+  { href: routes.whatIsIOverlay, label: "What is iOverlay?" },
+  { href: routes.getIOverlay, label: "Get iOverlay" },
   { href: routes.contact, label: "Contact" },
 ];
 
@@ -33,15 +33,15 @@ export const hero = {
   titleStart: "You see it.",
   titleAccent: "They",
   titleEnd: "don't.",
-  lead: "iObserver puts a private window on top of your screen for your notes, docs or any website. Share your screen in Zoom, Meet or Teams and that window stays out of the picture.",
-  primaryCta: { href: routes.whatIsIObserver, label: "What is iObserver?" },
+  lead: "iOverlay puts a private window on top of your screen for your notes, docs or any website. Share your screen in Zoom, Meet or Teams and that window stays out of the picture.",
+  primaryCta: { href: routes.whatIsIOverlay, label: "What is iOverlay?" },
   demoCta: { href: homeSection("demo"), label: "Watch the demo" },
   fineprint: "Windows · macOS · Linux · Login within 24 hours",
 };
 
 export const heroExplainer = {
   label: "During a screen share",
-  overlayTitle: "iObserver",
+  overlayTitle: "iOverlay",
   notes: ["Open with the Q3 numbers", "Revenue up 18% YoY", "Ask about the rollout date"],
   yours: "On your screen",
   theirs: "What they see",
@@ -80,15 +80,15 @@ export const questionsSection = {
 export const questions = [
   {
     label: "Basics",
-    title: "What is iObserver?",
+    title: "What is iOverlay?",
     description: "A floating window only you can see, even while you share your screen.",
-    link: { href: routes.whatIsIObserver, label: "Read the overview" },
+    link: { href: routes.whatIsIOverlay, label: "Read the overview" },
   },
   {
     label: "Setup",
     title: "How do I get it?",
     description: "Pay by UPI, upload the screenshot and get your login within 24 hours.",
-    link: { href: routes.getIObserver, label: "See the steps" },
+    link: { href: routes.getIOverlay, label: "See the steps" },
   },
   {
     label: "Platforms",
@@ -120,7 +120,7 @@ export const stats = [
 export const closing = {
   title: "Ready to present privately?",
   lead: "Pay by UPI, upload the screenshot and your login arrives within 24 hours.",
-  cta: { href: routes.getIObserver, label: "Get iObserver" },
+  cta: { href: routes.getIOverlay, label: "Get iOverlay" },
 };
 
 export const demo = {
@@ -129,7 +129,7 @@ export const demo = {
   lead: "A short walkthrough of the overlay, from sign-in to screen share.",
   /** YouTube video id (the part after `watch?v=` in its URL). */
   videoId: "aqz-KE-bpKQ",
-  videoTitle: "iObserver demo",
+  videoTitle: "iOverlay demo",
 };
 
 export interface Plan {

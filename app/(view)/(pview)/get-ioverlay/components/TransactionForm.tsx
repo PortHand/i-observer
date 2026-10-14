@@ -23,7 +23,7 @@ export default function TransactionForm({
 }: TransactionFormProps) {
   const { transaction } = checkout;
   const mailto = supportMailto(
-    `iObserver payment ${order.reference}`,
+    `iOverlay payment ${order.reference}`,
     [
       planTitle(order.planId),
       `Reference: ${order.reference}`,

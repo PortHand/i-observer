@@ -45,7 +45,7 @@ export const renderReceiptPdf = async (summary: TransactionSummary, screenshot: 
   let y = MARGIN + 4;
   doc.setFont("courier", "bold").setFontSize(9);
   text(colors.accent);
-  doc.text("IOBSERVER", MARGIN, y);
+  doc.text("IOVERLAY", MARGIN, y);
 
   y += 11;
   doc.setFont("helvetica", "bold").setFontSize(24);
@@ -144,4 +144,4 @@ export const renderReceiptPdf = async (summary: TransactionSummary, screenshot: 
   return doc.output("blob");
 };
 
-export const receiptFileName = (reference: string) => `iobserver-receipt-${reference}.pdf`;
+export const receiptFileName = (reference: string) => `ioverlay-receipt-${reference}.pdf`;

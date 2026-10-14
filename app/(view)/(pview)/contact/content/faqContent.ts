@@ -1,9 +1,9 @@
 // FAQ section of the Contact page. Facts mirror the other pages: plans and prices come from the
-// checkout content, systems and limits from the "What is iObserver?" page.
+// checkout content, systems and limits from the "What is iOverlay?" page.
 
 import { appInfo } from "../../home/content/homeContent";
-import { pricePlans } from "../../get-iobserver/content/getContent";
-import { formatAmount } from "../../get-iobserver/helper/getHelper";
+import { pricePlans } from "../../get-ioverlay/content/getContent";
+import { formatAmount } from "../../get-ioverlay/helper/getHelper";
 import { checkoutLink, routes } from "@/helper/route";
 import { sectionIds } from "./contactContent";
 
@@ -52,10 +52,10 @@ export const faqs: Faq[] = [
   {
     id: "what-is-it",
     category: "basics",
-    question: "What is iObserver?",
+    question: "What is iOverlay?",
     answer:
       "A desktop app that puts a private window on top of your screen. You can read it while you present, but screen shares, recordings and screenshots leave it out.",
-    link: { href: routes.whatIsIObserver, label: "Read the overview" },
+    link: { href: routes.whatIsIOverlay, label: "Read the overview" },
   },
   {
     id: "who-for",
@@ -76,7 +76,7 @@ export const faqs: Faq[] = [
     category: "privacy",
     question: "Which apps is the overlay hidden from?",
     answer:
-      "Zoom, Google Meet, Microsoft Teams, screen recordings and screenshots. iObserver asks your operating system to leave the window out of every capture, so it works with any app that captures the screen the normal way.",
+      "Zoom, Google Meet, Microsoft Teams, screen recordings and screenshots. iOverlay asks your operating system to leave the window out of every capture, so it works with any app that captures the screen the normal way.",
   },
   {
     id: "linux",
@@ -111,7 +111,7 @@ export const faqs: Faq[] = [
     category: "payment",
     question: "Which plans are there?",
     answer: `${planList}. Pick one at checkout; you can see the full price before you pay.`,
-    link: { href: routes.getIObserver, label: "Compare plans" },
+    link: { href: routes.getIOverlay, label: "Compare plans" },
   },
   {
     id: "how-pay",
@@ -147,7 +147,7 @@ export const faqs: Faq[] = [
     category: "payment",
     question: "What is the order reference?",
     answer:
-      "A short code like IOB-AB12CD that we create for your order. It's added to the UPI payment note and printed on your receipt. Quote it whenever you contact us about a payment.",
+      "A short code like IOV-AB12CD that we create for your order. It's added to the UPI payment note and printed on your receipt. Quote it whenever you contact us about a payment.",
   },
   {
     id: "when-login",

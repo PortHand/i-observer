@@ -13,7 +13,7 @@ export const contactMessages = pgTable(
     email: text("email").notNull(),
     phone: text("phone"),
     topic: text("topic").$type<TopicId>().notNull(),
-    /** Order reference such as IOB-AB12CD, when the customer gave one. */
+    /** Order reference such as IOV-AB12CD, when the customer gave one. */
     reference: text("reference"),
     message: text("message").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
