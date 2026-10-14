@@ -4,7 +4,12 @@ import type { Order, OrderRequest } from "@/app/(view)/(pview)/get-ioverlay/serv
 import { HttpError } from "@/server/core/httpError";
 import { randomCode, withUniqueCode } from "@/server/core/randomCode";
 import { paiseToRupees, type PricingService } from "@/server/features/pricing/service/pricingService";
+import type { OtpKey } from "@/server/features/otp/repository/otpRepository";
+import type { OtpService } from "@/server/features/otp/service/otpService";
 import type { OrderChanges, OrderRepository, OrderRow } from "../repository/orderRepository";
+
+/** The OTP that proves the customer owns the order's email. */
+const checkoutEmail = (email: string): OtpKey => ({ channel: "email", target: email, purpose: "checkout" });
 
 const messages = {
   plan: "This plan isn't available any more. Choose another.",
@@ -15,14 +20,20 @@ const messages = {
 export class OrderService {
   private readonly orders: OrderRepository;
   private readonly pricing: PricingService;
+  private readonly otp: OtpService;
 
-  constructor(orders: OrderRepository, pricing: PricingService) {
+  constructor(orders: OrderRepository, pricing: PricingService, otp: OtpService) {
     this.orders = orders;
     this.pricing = pricing;
+    this.otp = otp;
   }
 
-  /** Saves the order with the plan's current price and the active UPI account, before the QR code is shown. */
-  async create(request: OrderRequest): Promise<Order> {
+  /**
+   * Saves the order with the plan's current price and the active UPI account, before the QR code is
+   * shown. `emailToken` proves the customer owns the email (see OtpService).
+   */
+  async create(request: OrderRequest, emailToken: string | null): Promise<Order> {
+    await this.otp.assertVerified(checkoutEmail(request.email), emailToken);
     const details = await this.snapshot(request);
     const row = await withUniqueCode(
       () => `IOV-${randomCode(6)}`,
@@ -31,8 +42,11 @@ export class OrderService {
     return this.toOrder(row);
   }
 
-  /** Changes the plan or contact details of an unpaid order, refreshing its price and payee. */
-  async update(reference: string, request: OrderRequest): Promise<Order> {
+  /** Changes the plan or contact details of an unpaid order, refreshing its price and payee. A new email needs a new token. */
+  async update(reference: string, request: OrderRequest, emailToken: string | null): Promise<Order> {
+    const current = await this.orders.find(reference);
+    if (!current) throw HttpError.notFound(messages.notFound);
+    if (current.email !== request.email) await this.otp.assertVerified(checkoutEmail(request.email), emailToken);
     const row = await this.orders.updatePending(reference, await this.snapshot(request));
     if (!row) throw await this.unchangeable(reference);
     return this.toOrder(row);

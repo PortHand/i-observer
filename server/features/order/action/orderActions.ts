@@ -30,14 +30,21 @@ const readOrder = (input: OrderRequest): OrderRequest => {
   return { planId, email, phone };
 };
 
-/** Saves the order with the plan's current price and the active UPI account, before the QR code is shown. */
-export async function createOrder(input: OrderRequest) {
-  return runAction(async () => ({ order: await orderService.create(readOrder(input)) }));
+const readToken = (token: unknown) => (typeof token === "string" && token ? token : null);
+
+/**
+ * Saves the order with the plan's current price and the active UPI account, before the QR code is
+ * shown. `emailToken` comes from verifyEmailOtp for the same email.
+ */
+export async function createOrder(input: OrderRequest, emailToken: string | null) {
+  return runAction(async () => ({ order: await orderService.create(readOrder(input), readToken(emailToken)) }));
 }
 
-/** Changes the plan or contact details of an unpaid order, refreshing its price and payee. */
-export async function updateOrder(reference: string, input: OrderRequest) {
-  return runAction(async () => ({ order: await orderService.update(String(reference), readOrder(input)) }));
+/** Changes the plan or contact details of an unpaid order. Changing the email needs a fresh `emailToken`. */
+export async function updateOrder(reference: string, input: OrderRequest, emailToken: string | null) {
+  return runAction(async () => ({
+    order: await orderService.update(String(reference), readOrder(input), readToken(emailToken)),
+  }));
 }
 
 /** Records the customer's UTR, so the payment can be checked against the bank statement. */

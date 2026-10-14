@@ -2,6 +2,7 @@
 // calls are Server Actions (server/features/order/action/orderActions.ts), so there's no API route.
 
 import * as orderActions from "@/server/features/order/action/orderActions";
+import * as otpActions from "@/server/features/otp/action/otpActions";
 
 export type PlanId = string;
 
@@ -41,7 +42,14 @@ export interface Order extends OrderRequest {
   payee: Payee;
 }
 
-export type OrderResult = { ok: true; order: Order } | { ok: false; error: string };
+/** Failures may name the fields at fault, e.g. { code: "That code isn't right. 2 tries left." }. */
+type Failure = { ok: false; error: string; fields?: Partial<Record<string, string>> };
+
+export type OrderResult = { ok: true; order: Order } | Failure;
+
+export type SendCodeResult = { ok: true; resendAfter: number; expiresInMinutes: number } | Failure;
+
+export type VerifyCodeResult = { ok: true; token: string } | Failure;
 
 export interface TransactionRequest {
   reference: string;
@@ -52,12 +60,20 @@ export type SubmitTransactionResult =
   | { ok: true; submittedAt: string }
   | { ok: false; error: string };
 
+/** Emails a 6-digit code that proves the customer owns `email`. */
+export const sendEmailOtp = (email: string): Promise<SendCodeResult> => otpActions.sendEmailOtp(email, "checkout");
+
+/** Checks the code. The token it returns is passed to createOrder (and to updateOrder for a new email). */
+export const verifyEmailOtp = (email: string, code: string): Promise<VerifyCodeResult> =>
+  otpActions.verifyEmailOtp(email, "checkout", code);
+
 /** Saves the order before the QR code is shown. The server issues the reference and fixes the price and payee. */
-export const createOrder = (request: OrderRequest): Promise<OrderResult> => orderActions.createOrder(request);
+export const createOrder = (request: OrderRequest, emailToken: string | null): Promise<OrderResult> =>
+  orderActions.createOrder(request, emailToken);
 
 /** Changes the plan or contact details of an unpaid order. Keeps the reference; refreshes the price and payee. */
-export const updateOrder = (reference: string, request: OrderRequest): Promise<OrderResult> =>
-  orderActions.updateOrder(reference, request);
+export const updateOrder = (reference: string, request: OrderRequest, emailToken: string | null): Promise<OrderResult> =>
+  orderActions.updateOrder(reference, request, emailToken);
 
 /** Sends the UTR. We check it against the bank statement and email the login. */
 // TODO: upload the payment screenshot too, once it has somewhere to go (a private storage bucket).

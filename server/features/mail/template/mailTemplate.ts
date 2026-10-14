@@ -25,6 +25,8 @@ export interface MailTemplate<Data> {
   id: `${string}.${string}`;
   /** Feature the email belongs to, e.g. "contact" or "payment". Selects MAIL_BCC_<FEATURE> in .env. */
   feature: string;
+  /** True for emails holding a secret, such as a login code: no BCC copies, not even MAIL_BCC. */
+  secret?: boolean;
   render: (data: Data) => MailContent;
 }
 

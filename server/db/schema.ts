@@ -5,3 +5,4 @@
 export * from "../features/contact/schema/contactSchema";
 export * from "../features/pricing/schema/pricingSchema";
 export * from "../features/order/schema/orderSchema";
+export * from "../features/otp/schema/otpSchema";

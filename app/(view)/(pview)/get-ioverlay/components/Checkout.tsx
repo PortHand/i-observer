@@ -67,11 +67,20 @@ export default function Checkout({ plans }: CheckoutProps) {
                   plans={plans}
                   planId={co.planId}
                   order={co.order}
+                  draft={co.draft}
+                  codeSentTo={co.codeSentTo}
+                  emailVerified={co.emailVerified}
+                  resendIn={co.resendIn}
+                  notice={co.notice}
                   error={co.error}
                   submitting={co.submitting}
                   headingRef={co.headingRef}
+                  emailRef={co.emailRef}
+                  codeRef={co.codeRef}
                   onPlanChange={co.setPlanId}
                   onSubmit={co.handleContact}
+                  onResendCode={co.handleResendCode}
+                  onChangeEmail={co.handleChangeEmail}
                 />
               )}
               {co.step === "pay" && co.order && (

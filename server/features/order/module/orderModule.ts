@@ -3,7 +3,8 @@
 
 import "server-only";
 import { pricingService } from "@/server/features/pricing/module/pricingModule";
+import { otpService } from "@/server/features/otp/module/otpModule";
 import { OrderRepository } from "../repository/orderRepository";
 import { OrderService } from "../service/orderService";
 
-export const orderService = new OrderService(new OrderRepository(), pricingService);
+export const orderService = new OrderService(new OrderRepository(), pricingService, otpService);

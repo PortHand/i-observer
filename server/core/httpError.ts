@@ -28,4 +28,8 @@ export class HttpError extends Error {
   static conflict(message: string) {
     return new HttpError(409, message);
   }
+
+  static tooManyRequests(message: string) {
+    return new HttpError(429, message);
+  }
 }

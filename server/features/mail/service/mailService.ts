@@ -52,7 +52,7 @@ export class MailService {
     message: Omit<MailMessage, "subject" | "text" | "html">,
   ): Promise<void> {
     try {
-      await this.deliver({ ...message, ...template.render(data) }, template.feature);
+      await this.deliver({ ...message, ...template.render(data) }, template.feature, template.secret);
     } catch (error) {
       const to = asList(message.to).join(", ");
       throw new Error(`Email "${template.id}" to ${to} failed: ${error instanceof Error ? error.message : error}`, {
@@ -62,8 +62,8 @@ export class MailService {
   }
 
   /** Adds the sender, BCC copies and embedded images, then hands the message to the transport. */
-  private async deliver(message: MailMessage, feature?: string) {
-    const bcc = this.bccFor(message, feature);
+  private async deliver(message: MailMessage, feature?: string, secret = false) {
+    const bcc = secret ? [] : this.bccFor(message, feature);
     const attachments = [...(message.attachments ?? []), ...(message.html ? inlineImages(message.html) : [])];
     await this.transport().send({
       from: this.settings.from,
