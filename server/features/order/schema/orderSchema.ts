@@ -1,5 +1,6 @@
-import { index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { plans } from "@/server/features/pricing/schema/pricingSchema";
+import { users } from "@/server/features/user/schema/userSchema";
 
 export type OrderStatus = "pending" | "submitted";
 
@@ -16,6 +17,8 @@ export const orders = pgTable(
     amountPaise: integer("amount_paise").notNull(),
     upiId: text("upi_id").notNull(),
     payeeName: text("payee_name").notNull(),
+    /** The customer's account, created at checkout once the email is verified. Null on older orders. */
+    userId: uuid("user_id").references(() => users.id),
     /** Lower-cased, so lookups can match exactly. */
     email: text("email").notNull(),
     /** 10-digit Indian mobile number without the country code. */
@@ -31,6 +34,8 @@ export const orders = pgTable(
   (table) => [
     // Everything one customer has ordered.
     index("orders_email_idx").on(table.email),
+    // Everything one account has ordered.
+    index("orders_user_id_idx").on(table.userId),
     // Payments to check, oldest first.
     index("orders_status_created_at_idx").on(table.status, table.createdAt),
     // Matching a bank statement line to its order.

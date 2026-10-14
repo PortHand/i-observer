@@ -6,6 +6,7 @@ import { randomCode, withUniqueCode } from "@/server/core/randomCode";
 import { paiseToRupees, type PricingService } from "@/server/features/pricing/service/pricingService";
 import type { OtpKey } from "@/server/features/otp/repository/otpRepository";
 import type { OtpService } from "@/server/features/otp/service/otpService";
+import type { UserService } from "@/server/features/user/service/userService";
 import type { OrderChanges, OrderRepository, OrderRow } from "../repository/orderRepository";
 
 /** The OTP that proves the customer owns the order's email. */
@@ -21,16 +22,19 @@ export class OrderService {
   private readonly orders: OrderRepository;
   private readonly pricing: PricingService;
   private readonly otp: OtpService;
+  private readonly users: UserService;
 
-  constructor(orders: OrderRepository, pricing: PricingService, otp: OtpService) {
+  constructor(orders: OrderRepository, pricing: PricingService, otp: OtpService, users: UserService) {
     this.orders = orders;
     this.pricing = pricing;
     this.otp = otp;
+    this.users = users;
   }
 
   /**
    * Saves the order with the plan's current price and the active UPI account, before the QR code is
-   * shown. `emailToken` proves the customer owns the email (see OtpService).
+   * shown. `emailToken` proves the customer owns the email (see OtpService); the customer's account
+   * is then created, or updated for a returning customer.
    */
   async create(request: OrderRequest, emailToken: string | null): Promise<Order> {
     await this.otp.assertVerified(checkoutEmail(request.email), emailToken);
@@ -63,7 +67,9 @@ export class OrderService {
     const plan = await this.pricing.findActivePlan(planId);
     if (!plan) throw HttpError.badRequest(messages.plan, { planId: messages.plan });
     const payee = await this.pricing.getPayee();
-    return { planId, email, phone, amountPaise: plan.amountPaise, upiId: payee.upiId, payeeName: payee.name };
+    // Only reached with a verified email: create() and a changed email in update() check the OTP first.
+    const user = await this.users.ensure({ email, phone, planId });
+    return { planId, email, phone, userId: user.id, amountPaise: plan.amountPaise, upiId: payee.upiId, payeeName: payee.name };
   }
 
   private async unchangeable(reference: string) {
