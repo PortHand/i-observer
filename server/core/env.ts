@@ -1,0 +1,99 @@
+// Every environment variable the server reads, in one place. See .env.example for what each does.
+//
+//   import { env } from "@/server/core/env";
+//   if (env.toTest) …
+//
+// Values are getters, read when used rather than on import, so `next build` works without them and
+// drizzle-kit (which loads the .env files after importing its config) sees the right ones. No
+// "server-only" or "@/" alias here: databaseConfig.ts imports this, and drizzle-kit runs it too.
+// Browser code can't use this file; it reads NEXT_PUBLIC_* variables directly (see helper/http.ts).
+
+/** The variable's value, or undefined when it's unset or empty. */
+const optional = (name: string): string | undefined => process.env[name] || undefined;
+
+/** "true" turns a flag on; unset or empty keeps the default. */
+const flag = (name: string, fallback = false): boolean => {
+  const value = optional(name);
+  return value === undefined ? fallback : value === "true";
+};
+
+const MAIL_BCC_PREFIX = "MAIL_BCC_";
+
+export const env = {
+  get isProduction() {
+    return process.env.NODE_ENV === "production";
+  },
+
+  /** TO_TEST=true: OTPs are printed to the server log instead of being sent. */
+  get toTest() {
+    return flag("TO_TEST");
+  },
+
+  /** Public address of the site, for absolute links in emails. */
+  get siteUrl() {
+    return (optional("SITE_URL") ?? "https://i-overlay.com").replace(/\/$/, "");
+  },
+
+  /** Postgres connection. databaseConfig.ts checks the required ones and builds the URL. */
+  db: {
+    get host() {
+      return optional("DB_HOST");
+    },
+    get port() {
+      return optional("DB_PORT") ?? "5432";
+    },
+    get user() {
+      return optional("DB_USER");
+    },
+    /** May be empty, for local Postgres set up without one. */
+    get password() {
+      return optional("DB_PASSWORD");
+    },
+    get name() {
+      return optional("DB_NAME");
+    },
+    get ssl() {
+      return flag("DB_SSL");
+    },
+  },
+
+  /** Outgoing email. Without smtp.host, development prints emails and production refuses to send. */
+  mail: {
+    smtp: {
+      get host() {
+        return optional("SMTP_HOST");
+      },
+      get port() {
+        return Number(optional("SMTP_PORT") ?? 587);
+      },
+      /** SMTP_SECURE when set; otherwise TLS from the start only on port 465. */
+      get secure() {
+        return flag("SMTP_SECURE", env.mail.smtp.port === 465);
+      },
+      get user() {
+        return optional("SMTP_USER");
+      },
+      get password() {
+        return optional("SMTP_PASSWORD");
+      },
+    },
+    get from() {
+      return optional("MAIL_FROM");
+    },
+    get supportInbox() {
+      return optional("SUPPORT_INBOX");
+    },
+    /** MAIL_BCC: comma-separated addresses copied on every email. */
+    get bcc() {
+      return optional("MAIL_BCC");
+    },
+    /** MAIL_BCC_<FEATURE> variables, keyed by lower-cased feature: MAIL_BCC_CONTACT → { contact: "…" }. */
+    get bccByFeature(): Record<string, string> {
+      return Object.fromEntries(
+        Object.entries(process.env)
+          .filter((entry): entry is [string, string] => entry[0].startsWith(MAIL_BCC_PREFIX) && Boolean(entry[1]))
+          .map(([name, value]) => [name.slice(MAIL_BCC_PREFIX.length).toLowerCase(), value]),
+      );
+    },
+  },
+};

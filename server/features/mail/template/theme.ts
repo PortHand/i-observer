@@ -2,6 +2,8 @@
 // backgrounds, ink text, one red accent, square corners, 1px ink rules and hairlines, heavy
 // condensed uppercase headlines and uppercase monospace labels. Change the email look here.
 
+import { env } from "@/server/core/env";
+
 // Design tokens from app/globals.css. Hairline is the 22% ink border flattened onto paper,
 // since some email clients ignore transparent colors.
 export const color = {
@@ -26,7 +28,7 @@ export const label = (size = 11, weight = 700, tint = color.muted) =>
   `font-family:${font.mono};font-size:${size}px;font-weight:${weight};letter-spacing:.06em;text-transform:uppercase;color:${tint}`;
 
 /** Website links in emails must be absolute. Set SITE_URL when the site moves. */
-export const siteUrl = (process.env.SITE_URL ?? "https://i-overlay.com").replace(/\/$/, "");
+export const siteUrl = env.siteUrl;
 
 export const siteLink = (path = "/") => `${siteUrl}${path}`;
 
