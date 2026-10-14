@@ -1,13 +1,16 @@
 import { connection } from "next/server";
-import { getPlans } from "@/server/features/pricing/module/pricingModule";
+import { getPlansOrNone } from "@/server/features/pricing/module/pricingModule";
 import { checkout, checkoutSectionId, payment } from "../content/getContent";
 import Checkout from "./Checkout";
 
-/** Reads the plans from the database (cached for a minute) and renders the checkout. Render inside <Suspense>. */
+/**
+ * Reads the plans from the database (cached for a minute) and renders the checkout. With no plans,
+ * or a database it can't reach, it shows the "checkout is paused" notice. Render inside <Suspense>.
+ */
 export default async function CheckoutLoader() {
   // Prices come from the database, so read them per request (cached a minute), never at build time.
   await connection();
-  const plans = await getPlans();
+  const plans = await getPlansOrNone();
   if (plans.length > 0) return <Checkout plans={plans} />;
 
   const [before, after] = checkout.unavailable.split("{supportEmail}");

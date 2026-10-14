@@ -23,3 +23,17 @@ export async function getPlans(): Promise<Plan[]> {
   cacheTag(plansCacheTag);
   return pricingService.listPlans();
 }
+
+/**
+ * getPlans for pages that should still render when the database is unreachable (e.g. DB_* not set
+ * on the host): logs the real error on the server and returns no plans, so the page shows its
+ * "unavailable" state instead of failing the whole render.
+ */
+export async function getPlansOrNone(): Promise<Plan[]> {
+  try {
+    return await getPlans();
+  } catch (error) {
+    console.error("[pricing] Couldn't load plans, so checkout is shown as unavailable:", error);
+    return [];
+  }
+}
