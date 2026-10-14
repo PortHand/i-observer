@@ -7,13 +7,16 @@ export class HttpError extends Error {
   readonly fields?: FieldErrors;
   /** For 429s: seconds until the request may be retried, so the page can show a countdown. */
   readonly retryAfter?: number;
+  /** Machine-readable reason the page can act on, e.g. "verification_required" opens the OTP modal. */
+  readonly code?: string;
 
-  constructor(status: number, message: string, fields?: FieldErrors, retryAfter?: number) {
+  constructor(status: number, message: string, fields?: FieldErrors, extra: { retryAfter?: number; code?: string } = {}) {
     super(message);
     this.name = "HttpError";
     this.status = status;
     this.fields = fields;
-    this.retryAfter = retryAfter;
+    this.retryAfter = extra.retryAfter;
+    this.code = extra.code;
   }
 
   static badRequest(message: string, fields?: FieldErrors) {
@@ -33,6 +36,6 @@ export class HttpError extends Error {
   }
 
   static tooManyRequests(message: string, retryAfter?: number) {
-    return new HttpError(429, message, undefined, retryAfter);
+    return new HttpError(429, message, undefined, { retryAfter });
   }
 }

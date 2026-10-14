@@ -11,15 +11,16 @@ import {
   normalizePhone,
   normalizeUtr,
   readAsDataUrl,
+  ORDER_NOT_FOUND,
   type TransactionSummary,
+  VERIFICATION_REQUIRED,
 } from "../helper/getHelper";
 import { receiptFileName, renderReceiptPdf } from "../helper/receiptPdf";
 import * as getService from "../services/getService";
 
-// Progress survives a reload: phones often reload the tab after switching to the UPI or email app.
-const STORAGE_KEY = "ioverlay.checkout";
-// Kept apart from the rest: a large screenshot may not fit in storage, and that's fine.
-const SCREENSHOT_KEY = "ioverlay.checkout.screenshot";
+// Checkout keeps nothing in the browser: a reload starts again from step 1. These keys were used by
+// earlier versions and are deleted on load so nothing lingers.
+const LEGACY_STORAGE_KEYS = ["ioverlay.checkout", "ioverlay.checkout.screenshot"];
 
 /** Email ownership proven with an emailed code; the token goes with createOrder. */
 export interface VerifiedEmail {
@@ -27,61 +28,11 @@ export interface VerifiedEmail {
   token: string;
 }
 
-/** Details typed before the order exists, so the form refills after a reload while waiting for the code. */
+/** Details typed in step 1, kept in memory so the form refills when going back from a later step. */
 export interface ContactDraft {
   email: string;
   phone: string;
 }
-
-interface SavedCheckout {
-  step: CheckoutStep;
-  order: getService.Order | null;
-  summary: TransactionSummary | null;
-  /** Email the latest verification code went to, while the code field is showing. */
-  codeSentTo?: string | null;
-  /** When "Resend code" unlocks (ms since epoch), so the countdown survives a reload. */
-  resendAt?: number;
-  draft?: ContactDraft | null;
-  verified?: VerifiedEmail | null;
-}
-
-const loadSaved = (): SavedCheckout | null => {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    const saved = raw ? (JSON.parse(raw) as SavedCheckout) : null;
-    // Progress saved before orders carried a fixed price and payee can't build a QR code, so start over.
-    if ((saved?.order && !saved.order.payee?.upiId) || (saved?.summary && typeof saved.summary.amount !== "number")) return null;
-    return saved;
-  } catch {
-    return null;
-  }
-};
-
-const save = (state: SavedCheckout | null) => {
-  try {
-    if (state) sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    else sessionStorage.removeItem(STORAGE_KEY);
-  } catch {
-    // Storage blocked: the flow still works, it just won't survive a reload.
-  }
-};
-
-const saveScreenshot = (dataUrl: string | null) => {
-  try {
-    if (dataUrl) sessionStorage.setItem(SCREENSHOT_KEY, dataUrl);
-    else sessionStorage.removeItem(SCREENSHOT_KEY);
-  } catch {
-    // Too large or storage blocked: the PDF still works until the page is reloaded.
-  }
-};
-
-const loadScreenshot = () => {
-  try {
-    return sessionStorage.getItem(SCREENSHOT_KEY);
-  } catch {
-    return null;
-  }
-};
 
 export type CopyTarget = "upi" | "reference";
 
@@ -110,33 +61,15 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
   const [downloadError, setDownloadError] = useState("");
   const headingRef = useRef<HTMLHeadingElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
-  const restored = useRef(false);
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
-    const saved = loadSaved();
-    restored.current = true;
-    if (!saved) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- sessionStorage is only readable after hydration.
-    setOrder(saved.order);
-    setCodeSentTo(saved.codeSentTo ?? null);
-    setDraft(saved.draft ?? null);
-    setVerified(saved.verified ?? null);
-    setResendAt(saved.resendAt ?? 0);
-    setNow(Date.now());
-    // A code was pending when the page reloaded (e.g. after switching to the mail app): ask for it again.
-    if (saved.codeSentTo && saved.step === "contact") setOtpOpen(true);
-    if (saved.order) setPlanId(saved.order.planId);
-    setSummary(saved.summary);
-    if (saved.summary?.screenshotName) setScreenshotUrl(loadScreenshot());
-    setStep(saved.step);
+    try {
+      for (const key of LEGACY_STORAGE_KEYS) sessionStorage.removeItem(key);
+    } catch {
+      // Storage blocked: there's nothing to clean up then.
+    }
   }, []);
-
-  useEffect(() => {
-    if (!restored.current) return;
-    const empty = step === "contact" && !order && !codeSentTo && !verified;
-    save(empty ? null : { step, order, summary, codeSentTo, resendAt, draft, verified });
-  }, [step, order, summary, codeSentTo, resendAt, draft, verified]);
 
   // Tick once a second while "Resend code" is locked, to show the countdown.
   useEffect(() => {
@@ -177,19 +110,38 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     return { sent: result.ok };
   };
 
-  /** Creates the order, or updates it when editing (same reference; the server re-prices it), then shows the QR code. */
-  const saveOrder = async (request: getService.OrderRequest, token: string | null) => {
-    const result = order
-      ? await getService.updateOrder(order.reference, request, token)
+  /**
+   * Creates the order, or updates it when editing (same reference; the server re-prices it), then
+   * shows the QR code. Returns false, without showing an error, when the server wants an OTP first.
+   */
+  const saveOrder = async (
+    request: getService.OrderRequest,
+    token: string | null,
+    existing: getService.Order | null = order,
+  ): Promise<boolean> => {
+    const result = existing
+      ? await getService.updateOrder(existing.reference, request, token)
       : await getService.createOrder(request, token);
-    if (!result.ok) return setError(result.fields?.email ?? result.error);
+    // The remembered order is gone (e.g. saved on an earlier visit, before a database reset): start a new one.
+    if (!result.ok && result.code === ORDER_NOT_FOUND && existing) {
+      setOrder(null);
+      return saveOrder(request, token, null);
+    }
+    if (!result.ok && result.code === VERIFICATION_REQUIRED) return false;
+    if (!result.ok) {
+      setError(result.fields?.phone ?? result.fields?.email ?? result.error);
+      return true;
+    }
     setOrder(result.order);
     goTo("pay");
+    return true;
   };
 
   /**
-   * Step 1 submit ("Generate QR code"). A verified email goes straight to the QR code; otherwise a
-   * code is emailed and the OTP modal opens. Editing an order only needs a code if the email changes.
+   * Step 1 submit ("Generate QR code"). The order is tried first: a verified email, or a returning
+   * customer (account with this email and phone), goes straight to the QR code; an email or phone
+   * registered to another account shows an error. For a new customer the server asks for an OTP, so
+   * a code is emailed and the OTP modal opens.
    */
   const handleContact = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -206,7 +158,9 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     setDraft({ email, phone });
     try {
       const token = verified?.email === email ? verified.token : null;
-      if (token || order?.email === email) return await saveOrder({ planId, email, phone }, token);
+      // Always ask the server first: it lets returning customers through and rejects an email or
+      // phone registered to another account before any code is sent.
+      if (await saveOrder({ planId, email, phone }, token)) return;
 
       setOtpError("");
       setNotice("");
@@ -287,7 +241,6 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
       if (!result.ok) return setError(result.error);
       const dataUrl = screenshot ? await readAsDataUrl(screenshot).catch(() => null) : null;
       setScreenshotUrl(dataUrl);
-      saveScreenshot(dataUrl);
       setSummary({ ...order, utr, submittedAt: result.submittedAt, screenshotName: screenshot?.name ?? null });
       goTo("done");
     } finally {

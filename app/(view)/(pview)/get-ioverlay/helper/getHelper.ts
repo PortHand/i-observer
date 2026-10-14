@@ -1,6 +1,16 @@
 import { payment, receipt } from "../content/getContent";
 import type { Order, Payee, Plan, PlanId } from "../services/getService";
 
+/**
+ * Failure code meaning the email must be verified with an OTP first: the checkout opens the OTP
+ * modal. Shared with the server (otpService), so it lives here rather than in services/getService.ts,
+ * which loads the Server Actions and would make the server import itself in a circle.
+ */
+export const VERIFICATION_REQUIRED = "verification_required";
+
+/** Failure code for an order reference the server doesn't have, e.g. one remembered from an old visit. */
+export const ORDER_NOT_FOUND = "order_not_found";
+
 export { isValidEmail } from "../../home/helper/homeHelper";
 
 const SCREENSHOT_TYPES = ["image/png", "image/jpeg"];
@@ -99,7 +109,7 @@ export const receiptRows = (summary: TransactionSummary) => {
 export const receiptFooter = () =>
   receipt.footer.map((line) => line.replace("{supportEmail}", payment.supportEmail));
 
-/** Reads an uploaded image as a data URL, so it can be kept for the PDF and survive a reload. */
+/** Reads an uploaded image as a data URL, so it can be embedded in the PDF receipt. */
 export const readAsDataUrl = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();

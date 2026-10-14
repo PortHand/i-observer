@@ -1,5 +1,5 @@
 import "server-only";
-import { planTitle } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
+import { ORDER_NOT_FOUND, planTitle } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import type { Order, OrderRequest } from "@/app/(view)/(pview)/get-ioverlay/services/getService";
 import { HttpError } from "@/server/core/httpError";
 import { randomCode, withUniqueCode } from "@/server/core/randomCode";
@@ -11,6 +11,8 @@ import type { OrderChanges, OrderRepository, OrderRow } from "../repository/orde
 
 /** The OTP that proves the customer owns the order's email. */
 const checkoutEmail = (email: string): OtpKey => ({ channel: "email", target: email, purpose: "checkout" });
+
+const orderNotFound = () => new HttpError(404, messages.notFound, undefined, { code: ORDER_NOT_FOUND });
 
 const messages = {
   plan: "This plan isn't available any more. Choose another.",
@@ -33,11 +35,11 @@ export class OrderService {
 
   /**
    * Saves the order with the plan's current price and the active UPI account, before the QR code is
-   * shown. `emailToken` proves the customer owns the email (see OtpService); the customer's account
-   * is then created, or updated for a returning customer.
+   * shown. A returning customer (same email and phone) goes straight through; anyone else needs
+   * `emailToken` from an OTP (see OtpService). The account is then created, or updated.
    */
   async create(request: OrderRequest, emailToken: string | null): Promise<Order> {
-    await this.otp.assertVerified(checkoutEmail(request.email), emailToken);
+    await this.assertCustomer(request, emailToken);
     const details = await this.snapshot(request);
     const row = await withUniqueCode(
       () => `IOV-${randomCode(6)}`,
@@ -46,11 +48,11 @@ export class OrderService {
     return this.toOrder(row);
   }
 
-  /** Changes the plan or contact details of an unpaid order, refreshing its price and payee. A new email needs a new token. */
+  /** Changes the plan or contact details of an unpaid order, refreshing its price and payee. Same checks as create(). */
   async update(reference: string, request: OrderRequest, emailToken: string | null): Promise<Order> {
     const current = await this.orders.find(reference);
-    if (!current) throw HttpError.notFound(messages.notFound);
-    if (current.email !== request.email) await this.otp.assertVerified(checkoutEmail(request.email), emailToken);
+    if (!current) throw orderNotFound();
+    await this.assertCustomer(request, emailToken);
     const row = await this.orders.updatePending(reference, await this.snapshot(request));
     if (!row) throw await this.unchangeable(reference);
     return this.toOrder(row);
@@ -63,11 +65,20 @@ export class OrderService {
     return { submittedAt: row.submittedAt.toISOString() };
   }
 
+  /**
+   * Email and phone must both match one account, or both be new (409 otherwise, before any OTP).
+   * A returning customer goes through; a new one needs an OTP token (throws "verification_required").
+   */
+  private async assertCustomer({ email, phone }: OrderRequest, emailToken: string | null) {
+    if ((await this.users.match(email, phone)) === "returning") return;
+    await this.otp.assertVerified(checkoutEmail(email), emailToken);
+  }
+
   private async snapshot({ planId, email, phone }: OrderRequest): Promise<OrderChanges> {
     const plan = await this.pricing.findActivePlan(planId);
     if (!plan) throw HttpError.badRequest(messages.plan, { planId: messages.plan });
     const payee = await this.pricing.getPayee();
-    // Only reached with a verified email: create() and a changed email in update() check the OTP first.
+    // Only reached for a verified email or a returning customer: see assertCustomer.
     const user = await this.users.ensure({ email, phone, planId });
     return { planId, email, phone, userId: user.id, amountPaise: plan.amountPaise, upiId: payee.upiId, payeeName: payee.name };
   }
@@ -75,7 +86,7 @@ export class OrderService {
   private async unchangeable(reference: string) {
     return (await this.orders.find(reference))
       ? HttpError.conflict(messages.alreadySubmitted)
-      : HttpError.notFound(messages.notFound);
+      : orderNotFound();
   }
 
   private async toOrder(row: OrderRow): Promise<Order> {

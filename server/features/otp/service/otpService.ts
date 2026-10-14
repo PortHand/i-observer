@@ -1,5 +1,6 @@
 import "server-only";
 import { createHash, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
+import { VERIFICATION_REQUIRED } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import { HttpError } from "@/server/core/httpError";
 import type { OtpKey, OtpRepository } from "../repository/otpRepository";
 import type { OtpChannel } from "../schema/otpSchema";
@@ -107,7 +108,7 @@ export class OtpService {
     const row = token ? await this.otps.findByToken(key, sha256(token), since) : null;
     if (!row) {
       const message = messages.unverified(key.channel);
-      throw HttpError.badRequest(message, { [key.channel]: message });
+      throw new HttpError(400, message, { [key.channel]: message }, { code: VERIFICATION_REQUIRED });
     }
   }
 }
