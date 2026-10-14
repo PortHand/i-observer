@@ -1,0 +1,31 @@
+/** Field name → message, shown next to the matching form field. */
+export type FieldErrors = Partial<Record<string, string>>;
+
+/** An error the client caused or should see. BaseController turns it into a JSON response with this status. */
+export class HttpError extends Error {
+  readonly status: number;
+  readonly fields?: FieldErrors;
+
+  constructor(status: number, message: string, fields?: FieldErrors) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+    this.fields = fields;
+  }
+
+  static badRequest(message: string, fields?: FieldErrors) {
+    return new HttpError(400, message, fields);
+  }
+
+  static unauthorized(message: string) {
+    return new HttpError(401, message);
+  }
+
+  static notFound(message: string) {
+    return new HttpError(404, message);
+  }
+
+  static conflict(message: string) {
+    return new HttpError(409, message);
+  }
+}
