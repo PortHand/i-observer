@@ -12,6 +12,7 @@ import type {
 import { HttpError } from "@/server/core/httpError";
 import type { MailService } from "@/server/features/mail/service/mailService";
 import { paiseToRupees, type PricingService } from "@/server/features/pricing/service/pricingService";
+import type { StorageService } from "@/server/features/storage/service/storageService";
 import type { UserService } from "@/server/features/user/service/userService";
 import type { OrderItemRow, OrderRepository, OrderRow } from "../repository/orderRepository";
 import type { OrderStatus } from "../schema/orderSchema";
@@ -22,6 +23,9 @@ import type { OrderService } from "./orderService";
 export const ORDER_STATUSES: OrderStatus[] = ["submitted", "pending", "verified", "rejected", "refunded"];
 
 const PAGE_SIZE = 25;
+
+/** How long a receipt link on the order page works, in seconds. */
+const RECEIPT_LINK_SECONDS = 15 * 60;
 
 /** Rows in each dashboard panel. */
 const PANEL_SIZE = 5;
@@ -57,13 +61,22 @@ export class OrderReviewService {
   private readonly pricing: PricingService;
   private readonly users: UserService;
   private readonly mail: MailService;
+  private readonly receipts: StorageService;
 
-  constructor(orders: OrderRepository, orderService: OrderService, pricing: PricingService, users: UserService, mail: MailService) {
+  constructor(
+    orders: OrderRepository,
+    orderService: OrderService,
+    pricing: PricingService,
+    users: UserService,
+    mail: MailService,
+    receipts: StorageService,
+  ) {
     this.orders = orders;
     this.orderService = orderService;
     this.pricing = pricing;
     this.users = users;
     this.mail = mail;
+    this.receipts = receipts;
   }
 
   /** Orders per status, and in total, matching `search` (all orders without one). */
@@ -127,6 +140,9 @@ export class OrderReviewService {
       lines,
       payee: { upiId: row.upiId, name: row.payeeName },
       reviewNote: row.reviewNote,
+      receipt: row.receiptPath
+        ? { url: await this.receipts.signedUrl(row.receiptPath, RECEIPT_LINK_SECONDS), fileName: row.receiptPath.split("/").pop()! }
+        : null,
       customer: user && {
         username: user.username,
         accessUntil: user.accessUntil?.toISOString() ?? null,
@@ -189,6 +205,7 @@ export class OrderReviewService {
       amount: paiseToRupees(row.amountPaise),
       planLabel: orderLabel(lines),
       utr: row.utr,
+      hasReceipt: row.receiptPath !== null,
       createdAt: row.createdAt.toISOString(),
       submittedAt: row.submittedAt?.toISOString() ?? null,
       reviewedAt: row.reviewedAt?.toISOString() ?? null,

@@ -245,7 +245,7 @@ export const useCheckoutHandler = (plans: getService.Plan[], initialPlanId: getS
     setSubmitting(true);
     setError("");
     try {
-      const result = await getService.submitTransaction({ reference: order.reference, utr });
+      const result = await getService.submitTransaction({ reference: order.reference, utr, screenshot });
       if (!result.ok) return setError(result.error);
       const dataUrl = screenshot ? await readAsDataUrl(screenshot).catch(() => null) : null;
       setScreenshotUrl(dataUrl);

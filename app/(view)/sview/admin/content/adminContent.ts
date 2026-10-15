@@ -48,6 +48,7 @@ export const list = {
   searchPlaceholder: "Reference, email or UTR",
   search: "Search",
   clear: "Clear",
+  hasReceipt: "Screenshot attached",
   columns: { reference: "Order", customer: "Customer", plan: "Plan", amount: "Amount", utr: "UTR", date: "Date", status: "Status" },
   count: "{count} orders",
   countOne: "1 order",
@@ -62,7 +63,14 @@ export const list = {
 
 export const detail = {
   back: "All orders",
-  sections: { customer: "Customer", payment: "Payment", plans: "Plans", review: "Review" },
+  sections: { customer: "Customer", payment: "Payment", plans: "Plans", review: "Review", receipt: "Payment screenshot" },
+  receipt: {
+    alt: "Payment screenshot sent by the customer for {reference}",
+    open: "Open full size",
+    expires: "Link works for 15 minutes. Reload the page for a new one.",
+    none: "The customer didn't attach a screenshot.",
+    unavailable: "A screenshot was saved but can't be shown. Check the Supabase settings (SUPABASE_URL, SUPABASE_SECRET_KEY) and the server log.",
+  },
   labels: {
     email: "Email",
     phone: "Phone",

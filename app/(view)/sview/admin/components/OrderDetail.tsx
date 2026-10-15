@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { formatAmount, formatPhone } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import { requireUser } from "@/server/features/auth/guard/authGuard";
 import { orderReviewService } from "@/server/features/order/module/orderModule";
@@ -106,6 +106,31 @@ export default async function OrderDetail({ params }: { params: PageProps<"/svie
             )}
             {idle && <p className="text-muted">{detail.noActions[order.status as keyof typeof detail.noActions]}</p>}
             <ReviewPanel reference={order.reference} available={available} />
+          </section>
+
+          <section className="card order-card--receipt">
+            <h2 className="section-label">{sections.receipt}</h2>
+            {!order.receipt ? (
+              <p className="text-muted">{detail.receipt.none}</p>
+            ) : order.receipt.url ? (
+              <figure className="receipt">
+                <a href={order.receipt.url} target="_blank" rel="noopener noreferrer" className="receipt__frame">
+                  {/* A signed link to a private bucket: not something next/image can optimise. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={order.receipt.url} alt={detail.receipt.alt.replace("{reference}", order.reference)} />
+                </a>
+                <figcaption className="receipt__caption">
+                  <span className="code">{order.receipt.fileName}</span>
+                  <a href={order.receipt.url} target="_blank" rel="noopener noreferrer" className="panel__link mono">
+                    {detail.receipt.open}
+                    <ExternalLink className="icon icon--sm" strokeWidth={1.75} />
+                  </a>
+                </figcaption>
+                <p className="text-muted receipt__note">{detail.receipt.expires}</p>
+              </figure>
+            ) : (
+              <p className="text-muted">{detail.receipt.unavailable}</p>
+            )}
           </section>
 
           <section className="card order-card--plans">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Paperclip } from "lucide-react";
 import { formatAmount, formatPhone } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import { adminOrderLink } from "@/helper/route";
 import { list } from "../content/adminContent";
@@ -39,7 +40,15 @@ export default function OrderTable({ orders, searching }: { orders: AdminOrderSu
               </td>
               <td>{order.planLabel}</td>
               <td className="admin-table__number mono">{formatAmount(order.amount)}</td>
-              <td className="mono">{order.utr ?? "—"}</td>
+              <td className="mono admin-table__nowrap">
+                {order.utr ?? "—"}
+                {order.hasReceipt && (
+                  <span className="admin-table__receipt" title={list.hasReceipt}>
+                    <Paperclip className="icon icon--sm" strokeWidth={1.75} aria-hidden="true" />
+                    <span className="visually-hidden">{list.hasReceipt}</span>
+                  </span>
+                )}
+              </td>
               <td className="text-muted admin-table__nowrap">
                 {order.submittedAt
                   ? list.submitted.replace("{date}", formatIst(order.submittedAt))

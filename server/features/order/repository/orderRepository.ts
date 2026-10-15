@@ -8,7 +8,7 @@ export type OrderRow = typeof orders.$inferSelect;
 export type OrderItemRow = typeof orderItems.$inferSelect;
 export type NewOrder = Omit<
   typeof orders.$inferInsert,
-  "status" | "utr" | "createdAt" | "updatedAt" | "submittedAt" | "reviewedAt" | "reviewNote"
+  "status" | "utr" | "receiptPath" | "createdAt" | "updatedAt" | "submittedAt" | "reviewedAt" | "reviewNote"
 >;
 export type OrderChanges = Omit<NewOrder, "reference">;
 export type NewOrderItem = Omit<typeof orderItems.$inferInsert, "id" | "orderReference">;
@@ -115,12 +115,12 @@ export class OrderRepository extends BaseRepository {
     });
   }
 
-  /** Records the UTR. Returns null if the order doesn't exist or was already submitted. */
-  async submit(reference: string, utr: string): Promise<OrderRow | null> {
+  /** Records the UTR and receipt path. Returns null if the order doesn't exist or was already submitted. */
+  async submit(reference: string, utr: string, receiptPath: string | null): Promise<OrderRow | null> {
     const now = new Date();
     const [row] = await this.db
       .update(orders)
-      .set({ status: "submitted", utr, submittedAt: now, updatedAt: now })
+      .set({ status: "submitted", utr, receiptPath, submittedAt: now, updatedAt: now })
       .where(and(eq(orders.reference, reference), eq(orders.status, "pending")))
       .returning();
     return row ?? null;

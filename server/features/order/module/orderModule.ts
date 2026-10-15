@@ -5,6 +5,7 @@ import "server-only";
 import { entitlementService } from "@/server/features/entitlement/module/entitlementModule";
 import { mailService } from "@/server/features/mail/module/mailModule";
 import { pricingService } from "@/server/features/pricing/module/pricingModule";
+import { receiptStorage } from "@/server/features/storage/module/storageModule";
 import { otpService } from "@/server/features/otp/module/otpModule";
 import { userService } from "@/server/features/user/module/userModule";
 import { OrderRepository } from "../repository/orderRepository";
@@ -19,6 +20,14 @@ export const orderService = new OrderService(
   otpService,
   userService,
   entitlementService,
+  receiptStorage,
 );
 
-export const orderReviewService = new OrderReviewService(orderRepository, orderService, pricingService, userService, mailService);
+export const orderReviewService = new OrderReviewService(
+  orderRepository,
+  orderService,
+  pricingService,
+  userService,
+  mailService,
+  receiptStorage,
+);

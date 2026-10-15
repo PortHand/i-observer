@@ -19,6 +19,8 @@ export interface AdminOrderSummary {
   /** Every line's label, e.g. "iOverlay Yearly · 12 months". */
   planLabel: string;
   utr: string | null;
+  /** The customer attached a payment screenshot. */
+  hasReceipt: boolean;
   /** ISO timestamps. */
   createdAt: string;
   submittedAt: string | null;
@@ -29,6 +31,8 @@ export interface AdminOrderDetail extends AdminOrderSummary {
   lines: OrderLine[];
   payee: Payee;
   reviewNote: string | null;
+  /** The payment screenshot, if attached. `url` is a signed link that expires; null if it couldn't be made. */
+  receipt: { url: string | null; fileName: string } | null;
   /** The customer's account. Null on orders saved before accounts existed. */
   customer: { username: string; accessUntil: string | null; lifetimeAccess: boolean } | null;
 }

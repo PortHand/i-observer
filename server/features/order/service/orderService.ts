@@ -8,7 +8,9 @@ import type { EntitlementService } from "@/server/features/entitlement/service/e
 import { paiseToRupees, type PricingService } from "@/server/features/pricing/service/pricingService";
 import type { OtpKey } from "@/server/features/otp/repository/otpRepository";
 import type { OtpService } from "@/server/features/otp/service/otpService";
+import type { StorageService } from "@/server/features/storage/service/storageService";
 import type { UserService } from "@/server/features/user/service/userService";
+import { receiptPath, type ReceiptFile } from "../helper/receiptFile";
 import type { OrderStatus } from "../schema/orderSchema";
 import type { NewOrderItem, OrderChanges, OrderItemRow, OrderRepository, OrderRow } from "../repository/orderRepository";
 
@@ -22,6 +24,7 @@ const messages = {
   tooMany: (plan: string, max: number) => `${plan} can be bought at most ${max} at a time.`,
   notFound: "We couldn't find this order. Start again from step 1.",
   alreadySubmitted: "This order's payment was already submitted. Contact support to change it.",
+  uploadFailed: "We couldn't upload your screenshot. Try again, or send the UTR without it.",
 };
 
 /** What an order's saved state looks like before it's written: the order row and its lines. */
@@ -42,6 +45,7 @@ export class OrderService {
   private readonly otp: OtpService;
   private readonly users: UserService;
   private readonly entitlements: EntitlementService;
+  private readonly receipts: StorageService;
 
   constructor(
     orders: OrderRepository,
@@ -49,12 +53,14 @@ export class OrderService {
     otp: OtpService,
     users: UserService,
     entitlements: EntitlementService,
+    receipts: StorageService,
   ) {
     this.orders = orders;
     this.pricing = pricing;
     this.otp = otp;
     this.users = users;
     this.entitlements = entitlements;
+    this.receipts = receipts;
   }
 
   /**
@@ -83,9 +89,16 @@ export class OrderService {
     return this.toOrder(row);
   }
 
-  /** Records the customer's UTR, so the payment can be checked against the bank statement. */
-  async submit(reference: string, utr: string): Promise<{ submittedAt: string }> {
-    const row = await this.orders.submit(reference, utr);
+  /**
+   * Records the customer's UTR, so the payment can be checked against the bank statement, and
+   * stores their payment screenshot, if any, in the receipts bucket under their email's folder.
+   */
+  async submit(reference: string, utr: string, receipt: ReceiptFile | null): Promise<{ submittedAt: string }> {
+    const order = await this.orders.find(reference);
+    // Checked before uploading, so a finished order can't be used to store files.
+    if (!order || order.status !== "pending") throw await this.unchangeable(reference);
+    const path = receipt ? await this.storeReceipt(order.email, utr, receipt) : null;
+    const row = await this.orders.submit(reference, utr, path);
     if (!row?.submittedAt) throw await this.unchangeable(reference);
     return { submittedAt: row.submittedAt.toISOString() };
   }
@@ -162,6 +175,16 @@ export class OrderService {
       order: { email, phone, userId: user.id, amountPaise, upiId: payee.upiId, payeeName: payee.name },
       items: lines,
     };
+  }
+
+  /** Uploads the screenshot. Null when uploads are off (development without Supabase). */
+  private async storeReceipt(email: string, utr: string, receipt: ReceiptFile): Promise<string | null> {
+    try {
+      return await this.receipts.upload(receiptPath(email, utr, receipt.extension), receipt.bytes, receipt.contentType);
+    } catch (error) {
+      console.error("[order] Receipt upload failed:", error);
+      throw new HttpError(502, messages.uploadFailed);
+    }
   }
 
   private async unchangeable(reference: string) {

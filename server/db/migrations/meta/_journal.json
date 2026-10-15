@@ -57,6 +57,13 @@
       "when": 1792050353160,
       "tag": "0007_user_roles",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792053776454,
+      "tag": "0008_order_receipts",
+      "breakpoints": true
     }
   ]
 }

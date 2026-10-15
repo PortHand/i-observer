@@ -31,6 +31,12 @@ export const orders = pgTable(
     status: text("status").$type<OrderStatus>().notNull().default("pending"),
     /** 12-digit UPI transaction reference the customer sent. */
     utr: text("utr"),
+    /**
+     * The payment screenshot the customer sent with the UTR, as its path in the private receipts
+     * bucket (client/<email>/<utr>_<date>.png). Null when none was attached. Shown to admins through
+     * a short-lived signed link, never a public one.
+     */
+    receiptPath: text("receipt_path"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
     submittedAt: timestamp("submitted_at", { withTimezone: true }),

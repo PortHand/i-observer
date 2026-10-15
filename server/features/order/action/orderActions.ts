@@ -12,7 +12,8 @@ import {
 } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import type { OrderItemRequest, OrderRequest } from "@/app/(view)/(pview)/get-ioverlay/services/getService";
 import { assertValid, runAction } from "@/server/core/baseAction";
-import type { FieldErrors } from "@/server/core/httpError";
+import { HttpError, type FieldErrors } from "@/server/core/httpError";
+import { readReceipt } from "../helper/receiptFile";
 import { orderService } from "../module/orderModule";
 
 /** More lines than any order needs, so a bad request can't make the server look up hundreds of plans. */
@@ -61,11 +62,16 @@ export async function updateOrder(reference: string, input: OrderRequest, emailT
   }));
 }
 
-/** Records the customer's UTR, so the payment can be checked against the bank statement. */
-export async function submitTransaction(reference: string, utr: string) {
+/**
+ * Records the customer's UTR, so the payment can be checked against the bank statement, with the
+ * payment screenshot when one is attached (PNG or JPG up to 5 MB; null for none).
+ */
+export async function submitTransaction(reference: string, utr: string, screenshot: File | null) {
   return runAction(async () => {
     const normalized = normalizeUtr(String(utr ?? ""));
     assertValid(isValidUtr(normalized) ? {} : { utr: checkout.transaction.invalidUtr });
-    return orderService.submit(String(reference), normalized);
+    const { invalidScreenshot } = checkout.transaction;
+    const receipt = await readReceipt(screenshot, () => HttpError.badRequest(invalidScreenshot, { screenshot: invalidScreenshot }));
+    return orderService.submit(String(reference), normalized, receipt);
   });
 }

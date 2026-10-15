@@ -58,6 +58,25 @@ export const env = {
     },
   },
 
+  /** Supabase Storage, for payment receipts. Without url and secret key, development skips uploads and production refuses them. */
+  supabase: {
+    /** Project URL, e.g. https://<project-ref>.supabase.co. */
+    get url() {
+      return optional("SUPABASE_URL")?.replace(/\/$/, "");
+    },
+    /**
+     * Secret key (sb_secret_…), or the legacy service_role key: full access, so server only. Never
+     * NEXT_PUBLIC_, and never the publishable key, which can't write to a private bucket.
+     */
+    get secretKey() {
+      return optional("SUPABASE_SECRET_KEY") ?? optional("SUPABASE_SERVICE_ROLE_KEY");
+    },
+    /** Private bucket holding the receipts. */
+    get receiptsBucket() {
+      return optional("SUPABASE_RECEIPTS_BUCKET") ?? "i-overlay";
+    },
+  },
+
   /** Postgres connection. databaseConfig.ts checks the required ones and builds the URL. */
   db: {
     get host() {

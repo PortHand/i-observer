@@ -81,6 +81,8 @@ export type VerifyCodeResult = { ok: true; token: string } | Failure;
 export interface TransactionRequest {
   reference: string;
   utr: string;
+  /** Optional payment screenshot, PNG or JPG up to 5 MB. Stored privately for the admin to check. */
+  screenshot: File | null;
 }
 
 export type SubmitTransactionResult =
@@ -103,7 +105,6 @@ export const createOrder = (request: OrderRequest, emailToken: string | null): P
 export const updateOrder = (reference: string, request: OrderRequest, emailToken: string | null): Promise<OrderResult> =>
   orderActions.updateOrder(reference, request, emailToken);
 
-/** Sends the UTR. We check it against the bank statement and email the login. */
-// TODO: upload the payment screenshot too, once it has somewhere to go (a private storage bucket).
-export const submitTransaction = ({ reference, utr }: TransactionRequest): Promise<SubmitTransactionResult> =>
-  orderActions.submitTransaction(reference, utr);
+/** Sends the UTR and screenshot. We check them against the bank statement and email the login. */
+export const submitTransaction = ({ reference, utr, screenshot }: TransactionRequest): Promise<SubmitTransactionResult> =>
+  orderActions.submitTransaction(reference, utr, screenshot);
