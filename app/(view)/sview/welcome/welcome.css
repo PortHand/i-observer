@@ -1,0 +1,27 @@
+/* Signed-in pages. Layout and sections come from ../../(pview)/home/home.css (loaded by ../layout.tsx). */
+
+.welcome {
+  display: grid;
+  gap: var(--space-8);
+  max-width: 560px;
+  padding-top: 88px;
+  padding-bottom: 96px;
+}
+
+.welcome .page-hero {
+  padding: 0;
+}
+
+.welcome__card {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.welcome__role {
+  margin-left: auto;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border-strong);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}

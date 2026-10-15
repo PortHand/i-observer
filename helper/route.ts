@@ -1,9 +1,10 @@
 // Page paths and home-page section links, shared by every view.
 // Kept outside app/: a route.ts inside app/ would be treated as a Route Handler.
 //
-// Routes come from the folders in app/(view): (pview) holds public pages, (sview) pages that need
-// sign-in. The parenthesised group names are not part of the URL, so
-// app/(view)/(pview)/get-ioverlay/page.tsx is served at /get-ioverlay. Keep these paths in sync
+// Routes come from the folders in app/(view): (pview) holds public pages, sview pages that need
+// sign-in. Parenthesised group names are not part of the URL, so
+// app/(view)/(pview)/get-ioverlay/page.tsx is served at /get-ioverlay. sview is a plain folder, so
+// it is: app/(view)/sview/welcome/page.tsx is served at /sview/welcome. Keep these paths in sync
 // with those folder names.
 
 export const routes = {
@@ -12,7 +13,26 @@ export const routes = {
   getIOverlay: "/get-ioverlay",
   contact: "/contact",
   signIn: "/sign-in",
+  /** Signed-in pages, in app/(view)/sview. */
+  welcome: "/sview/welcome",
+  admin: "/sview/admin",
 } as const;
+
+/**
+ * Every page under this path needs sign-in: the app/(view)/sview folder. proxy.ts sends signed-out
+ * visitors to the sign-in page, so a new folder there is protected without listing it anywhere.
+ */
+export const secureRoot = "/sview";
+
+/** Pages only admins may open. Other signed-in users are sent to their home route. */
+export const adminRoutes: readonly string[] = [routes.admin];
+
+/** Where a role lands after signing in. */
+export const homeRouteFor = (role: "customer" | "admin") => (role === "admin" ? routes.admin : routes.welcome);
+
+/** True when `pathname` is one of `list`, or a page below one. */
+export const isUnder = (pathname: string, list: readonly string[]) =>
+  list.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
 /** Anchor ids of the home page sections that other pages link to. */
 export const homeSections = {

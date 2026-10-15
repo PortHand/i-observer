@@ -1,8 +1,9 @@
 // Builds the Postgres connection URL from the DB_* settings in env.ts (see .env.example).
-// Shared by the app (database.ts) and drizzle-kit (drizzle.config.ts), so it can't import
-// "server-only" or use the "@/" path alias.
+// Shared by the app (database.ts), drizzle-kit (drizzle.config.ts) and scripts/seed-admin.mjs, so it
+// can't import "server-only" or use the "@/" path alias. The ".ts" in the import below lets plain
+// Node load this file too.
 
-import { env } from "./env";
+import { env } from "./env.ts";
 
 export const databaseUrl = () => {
   const { host, port, user, password, name, ssl } = env.db;

@@ -44,7 +44,7 @@ export const form = {
   submit: "Sign in",
   errors: {
     usernameMissing: "Enter your username.",
-    usernameInvalid: "Usernames are 3–32 characters: letters, numbers, dots, dashes or underscores.",
+    usernameInvalid: "Enter the username from your login email. It's usually your email address.",
     passwordMissing: "Enter your password.",
   },
 };

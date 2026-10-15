@@ -8,8 +8,8 @@ export interface SignInCredentials {
   password: string;
 }
 
-/** Letters, digits, dot, dash and underscore; 3–32 characters. */
-const USERNAME_PATTERN = /^[a-z0-9._-]{3,32}$/;
+/** Letters, digits, dot, dash, underscore, plus and @ (customer usernames are their email); 3–254 characters. */
+const USERNAME_PATTERN = /^[a-z0-9._@+-]{3,254}$/;
 
 export const normalizeUsername = (username: string) => username.trim().toLowerCase();
 

@@ -2,7 +2,6 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { routes } from "@/helper/route";
 import { parseSignInForm, type SignInField } from "../helper/signInHelper";
 import * as signInService from "../services/signInService";
 
@@ -31,8 +30,11 @@ export const useSignInHandler = () => {
     setSubmitting(true);
     try {
       const response = await signInService.signIn(result.credentials);
-      if (!response.ok) return setSignInError(response.error);
-      router.push(routes.home);
+      if (!response.ok) {
+        if (response.fields) setErrors(response.fields);
+        return setSignInError(response.fields ? "" : response.error);
+      }
+      router.replace(response.redirectTo);
     } finally {
       setSubmitting(false);
     }

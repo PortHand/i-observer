@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CircleUser } from "lucide-react";
-import { homeSection, routes } from "@/helper/route";
+import { routes } from "@/helper/route";
 import { appInfo, auth, navLinks } from "../content/homeContent";
 
 export default function SiteHeader({ signedIn, current }: { signedIn: boolean; current?: string }) {
@@ -37,7 +37,7 @@ export default function SiteHeader({ signedIn, current }: { signedIn: boolean; c
             ))}
           </nav>
           <Link
-            href={signedIn ? homeSection("top") : routes.signIn}
+            href={signedIn ? routes.welcome : routes.signIn}
             className="button button--secondary button--sm"
             aria-current={!signedIn && current === routes.signIn ? "page" : undefined}
           >

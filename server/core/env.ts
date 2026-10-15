@@ -5,7 +5,8 @@
 //
 // Values are getters, read when used rather than on import, so `next build` works without them and
 // drizzle-kit (which loads the .env files after importing its config) sees the right ones. No
-// "server-only" or "@/" alias here: databaseConfig.ts imports this, and drizzle-kit runs it too.
+// "server-only", "@/" alias or imports here: databaseConfig.ts imports this, drizzle-kit runs it,
+// and scripts/seed-admin.mjs loads it with plain Node.
 // Browser code can't use this file; it reads NEXT_PUBLIC_* variables directly (see helper/http.ts).
 
 /** The variable's value, or undefined when it's unset or empty. */
@@ -32,6 +33,29 @@ export const env = {
   /** Public address of the site, for absolute links in emails. */
   get siteUrl() {
     return (optional("SITE_URL") ?? "https://i-overlay.com").replace(/\/$/, "");
+  },
+
+  /** Signs the sign-in cookie. At least 32 characters; changing it signs everyone out. */
+  get sessionSecret() {
+    return optional("SESSION_SECRET");
+  },
+
+  /** The admin account `npm run db:seed-admin` creates or updates. Not read by the running app. */
+  admin: {
+    /** Login name. Default "admin". */
+    get username() {
+      return (optional("ADMIN_USERNAME") ?? "admin").trim().toLowerCase();
+    },
+    get email() {
+      return optional("ADMIN_EMAIL")?.trim().toLowerCase();
+    },
+    /** Unique and required on every account; admins don't buy, so a placeholder is fine. */
+    get phone() {
+      return (optional("ADMIN_PHONE") ?? "0000000000").trim();
+    },
+    get password() {
+      return optional("ADMIN_PASSWORD");
+    },
   },
 
   /** Postgres connection. databaseConfig.ts checks the required ones and builds the URL. */

@@ -16,6 +16,16 @@ export const isUniqueViolation = (error: unknown): boolean => {
 };
 
 export class UserRepository extends BaseRepository {
+  async findById(id: string): Promise<UserRow | null> {
+    const [row] = await this.db.select().from(users).where(eq(users.id, id));
+    return row ?? null;
+  }
+
+  async findByUsername(username: string): Promise<UserRow | null> {
+    const [row] = await this.db.select().from(users).where(eq(users.username, username));
+    return row ?? null;
+  }
+
   async findByEmail(email: string): Promise<UserRow | null> {
     const [row] = await this.db.select().from(users).where(eq(users.email, email));
     return row ?? null;

@@ -50,6 +50,13 @@
       "when": 1792046218583,
       "tag": "0006_drop_replaced_plan_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792050353160,
+      "tag": "0007_user_roles",
+      "breakpoints": true
     }
   ]
 }
