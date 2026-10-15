@@ -59,6 +59,7 @@ export const list = {
   open: "Open",
   copyUtr: "Copy UTR",
   copied: "Copied",
+  loading: "Loading orders…",
   keysHint: "Arrow keys to move · Enter to open",
   showing: "Showing {from}–{to} of {total}",
   count: "{count} orders",

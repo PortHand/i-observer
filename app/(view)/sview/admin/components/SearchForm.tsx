@@ -1,35 +1,77 @@
-import Link from "next/link";
-import { Search } from "lucide-react";
-import { routes } from "@/helper/route";
-import { list } from "../content/adminContent";
-import { ordersLink, type ListQuery } from "../helper/adminHelper";
+"use client";
 
-/** A plain GET form: the search lands in the URL (?q=), so it works without JavaScript and can be shared. */
-export default function SearchForm({ query }: { query: ListQuery }) {
+import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { LoaderCircle, Search, X } from "lucide-react";
+import { list } from "../content/adminContent";
+import type { ListQuery } from "../helper/adminHelper";
+
+/** How long typing pauses before the list updates, in milliseconds. */
+const DEBOUNCE_MS = 300;
+
+interface SearchFormProps {
+  query: ListQuery;
+  /** Results are loading: the search icon becomes a spinner. */
+  pending: boolean;
+  onSearch: (text: string) => void;
+}
+
+/** Searches as you type: the list updates once typing pauses (or on Enter), in place. */
+export default function SearchForm({ query, pending, onSearch }: SearchFormProps) {
+  const [value, setValue] = useState(query.search);
+  /** The text last searched for, so a pause after Enter or Clear doesn't search for it again. */
+  const searched = useRef(query.search);
+
+  const search = (text: string) => {
+    searched.current = text.trim();
+    onSearch(searched.current);
+  };
+  const onPause = useEffectEvent(() => {
+    if (value.trim() !== searched.current) search(value);
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(onPause, DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [value]);
+
   return (
-    <form className="admin-search" action={routes.adminOrders} method="get" role="search">
-      {query.status !== "submitted" && <input type="hidden" name="status" value={query.status} />}
+    <form
+      className="admin-search"
+      role="search"
+      onSubmit={(event) => {
+        event.preventDefault();
+        search(value);
+      }}
+    >
       <label className="input-group admin-search__field">
         <span className="visually-hidden">{list.searchLabel}</span>
-        <Search className="icon" strokeWidth={1.75} />
+        {pending ? <LoaderCircle className="icon admin-search__spinner" strokeWidth={1.75} /> : <Search className="icon" strokeWidth={1.75} />}
         <input
           className="input"
           type="search"
-          name="q"
-          defaultValue={query.search}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
           placeholder={list.searchPlaceholder}
           autoComplete="off"
           spellCheck={false}
         />
+        {value && (
+          <button
+            type="button"
+            className="admin-search__clear"
+            aria-label={list.clear}
+            onClick={() => {
+              setValue("");
+              search("");
+            }}
+          >
+            <X className="icon icon--sm" strokeWidth={1.75} />
+          </button>
+        )}
       </label>
       <button type="submit" className="button button--secondary">
         {list.search}
       </button>
-      {query.search && (
-        <Link className="text-link mono" href={ordersLink({ status: query.status })}>
-          {list.clear}
-        </Link>
-      )}
     </form>
   );
 }

@@ -108,6 +108,12 @@ export type ReviewAction = "verify" | "reject" | "refund" | "resend";
 
 export type ReviewResult = Awaited<ReturnType<typeof reviewActions.reviewOrder>>;
 
+export type ListResult = Awaited<ReturnType<typeof reviewActions.listOrders>>;
+
 /** Approves, rejects or refunds an order, or emails a verified customer their login again. */
 export const reviewOrder = (reference: string, action: ReviewAction, note: string): Promise<ReviewResult> =>
   reviewActions.reviewOrder(reference, action, note);
+
+/** One page of orders in this status (or all) matching `search`, read without a page load. */
+export const listOrders = (status: StatusFilter, search: string, page: number): Promise<ListResult> =>
+  reviewActions.listOrders(status, search, page);

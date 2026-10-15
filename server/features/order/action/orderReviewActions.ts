@@ -3,15 +3,21 @@
 // Server Actions for the admin portal's payment reviews. Anyone can call a Server Action, so each
 // one checks the admin role on the server before doing anything.
 
-import type { ReviewAction } from "@/app/(view)/sview/admin/services/adminService";
+import type { ReviewAction, StatusFilter } from "@/app/(view)/sview/admin/services/adminService";
 import { assertValid, runAction } from "@/server/core/baseAction";
 import { assertAdmin } from "@/server/features/auth/guard/authGuard";
 import { orderReviewService } from "../module/orderModule";
+import { ORDER_STATUSES } from "../service/orderReviewService";
 
 const ACTIONS: ReviewAction[] = ["verify", "reject", "refund", "resend"];
 
 /** Longest review note kept with the order. */
 const MAX_NOTE = 500;
+
+const FILTERS: StatusFilter[] = [...ORDER_STATUSES, "all"];
+
+/** Search text longer than this is cut, so a pasted essay can't become a huge query. */
+const MAX_SEARCH = 100;
 
 /**
  * Verifies, rejects or refunds an order's payment, or emails a verified customer their login
@@ -26,5 +32,19 @@ export async function reviewOrder(reference: string, action: ReviewAction, note:
       ...(text.length > MAX_NOTE && { note: `Keep the note under ${MAX_NOTE} characters.` }),
     });
     return { outcome: await orderReviewService.review(String(reference ?? ""), action, text || null) };
+  });
+}
+
+/**
+ * One page of the order list for the admin portal's in-page search, tabs and paging, so the list
+ * can change without a page load. Unknown statuses fall back to "submitted", bad pages to 1.
+ */
+export async function listOrders(status: StatusFilter, search: string, page: number) {
+  return runAction(async () => {
+    await assertAdmin();
+    const filter = FILTERS.includes(status) ? status : "submitted";
+    const text = String(search ?? "").trim().slice(0, MAX_SEARCH);
+    const number = Number.isInteger(page) && page > 0 ? page : 1;
+    return { list: await orderReviewService.list(filter, text, number) };
   });
 }

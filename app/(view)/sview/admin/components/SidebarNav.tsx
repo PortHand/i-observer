@@ -1,11 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { CircleCheck, CircleX, Clock, ExternalLink, Inbox, LayoutDashboard, List, Undo2, type LucideIcon } from "lucide-react";
 import { routes } from "@/helper/route";
 import { portal, statusTabs } from "../content/adminContent";
-import { ordersLink, parseListQuery } from "../helper/adminHelper";
+import { orderListEvents, ordersLink, parseListQuery } from "../helper/adminHelper";
 import type { AdminOrderPage, StatusFilter } from "../services/adminService";
 
 const icons: Record<StatusFilter, LucideIcon> = {
@@ -21,8 +22,23 @@ const icons: Record<StatusFilter, LucideIcon> = {
 export default function SidebarNav({ counts }: { counts: AdminOrderPage["counts"] }) {
   const pathname = usePathname();
   const params = useSearchParams();
+  const onList = pathname === routes.adminOrders;
+  // The order list changes status in place, without the URL, and announces each change.
+  const [shown, setShown] = useState<StatusFilter | null>(null);
+  useEffect(() => {
+    const onChange = (event: Event) => setShown((event as CustomEvent<StatusFilter>).detail);
+    window.addEventListener(orderListEvents.changed, onChange);
+    return () => window.removeEventListener(orderListEvents.changed, onChange);
+  }, []);
   // Only the list itself has a current status; an order's own page marks none.
-  const current = pathname === routes.adminOrders ? parseListQuery(Object.fromEntries(params)).status : null;
+  const current = onList ? (shown ?? parseListQuery(Object.fromEntries(params)).status) : null;
+
+  /** On the list, a status link switches it in place; elsewhere (or with a modifier key) it's a normal link. */
+  const selectInPlace = (status: StatusFilter) => (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!onList || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    window.dispatchEvent(new CustomEvent(orderListEvents.select, { detail: status }));
+  };
 
   return (
     <nav className="admin-nav" aria-label={portal.navLabel}>
@@ -46,6 +62,7 @@ export default function SidebarNav({ counts }: { counts: AdminOrderPage["counts"
             <li key={tab.id}>
               <Link
                 href={ordersLink({ status: tab.id })}
+                onClick={selectInPlace(tab.id)}
                 className="admin-nav__link"
                 aria-current={tab.id === current ? "page" : undefined}
               >

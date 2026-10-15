@@ -1,24 +1,30 @@
-import Link from "next/link";
 import { list, statusTabs } from "../content/adminContent";
-import { ordersLink, type ListQuery } from "../helper/adminHelper";
-import type { AdminOrderPage } from "../services/adminService";
+import type { AdminOrderPage, StatusFilter } from "../services/adminService";
 
-/** One tab per status with its count (matching the search, which the tabs keep). */
-export default function StatusTabs({ query, counts }: { query: ListQuery; counts: AdminOrderPage["counts"] }) {
+interface StatusTabsProps {
+  current: StatusFilter;
+  /** Per status, matching the current search (which switching keeps). */
+  counts: AdminOrderPage["counts"];
+  onSelect: (status: StatusFilter) => void;
+}
+
+/** One tab per status with its count. Switching changes the list in place. */
+export default function StatusTabs({ current, counts, onSelect }: StatusTabsProps) {
   return (
     <nav className="status-tabs" aria-label={list.tabsLabel}>
       {statusTabs.map((tab) => (
-        <Link
+        <button
           key={tab.id}
+          type="button"
           className="status-tabs__tab"
-          href={ordersLink({ status: tab.id, search: query.search })}
-          aria-current={tab.id === query.status ? "page" : undefined}
+          aria-current={tab.id === current ? "page" : undefined}
+          onClick={() => tab.id !== current && onSelect(tab.id)}
         >
           {tab.label}
           <span className={`status-tabs__count${tab.id === "submitted" && counts.submitted > 0 ? " status-tabs__count--attention" : ""}`}>
             {counts[tab.id]}
           </span>
-        </Link>
+        </button>
       ))}
     </nav>
   );

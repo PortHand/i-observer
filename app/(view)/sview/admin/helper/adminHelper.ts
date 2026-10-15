@@ -25,6 +25,13 @@ export const parseListQuery = (params: Record<string, string | string[] | undefi
   };
 };
 
+/**
+ * Window events that keep the sidebar and the order list in step without touching the URL: the
+ * list announces the status it shows (`changed`), and the sidebar asks it to show one (`select`).
+ * Both carry the StatusFilter as `detail`.
+ */
+export const orderListEvents = { changed: "admin:orders-status", select: "admin:orders-select" } as const;
+
 /** The order list with these filters, leaving defaults out of the URL. */
 export const ordersLink = ({ status, search, page }: Partial<ListQuery>) => {
   const query = new URLSearchParams();
