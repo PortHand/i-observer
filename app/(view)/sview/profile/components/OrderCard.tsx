@@ -18,16 +18,16 @@ export default function OrderCard({ order }: { order: CustomerOrder }) {
   const contactLink = `${routes.contact}?topic=payment&reference=${encodeURIComponent(order.reference)}#message`;
 
   return (
-    <li className={`card order-card order-card--${order.status}`}>
-      <header className="order-card__header">
+    <li className={`card my-order my-order--${order.status}`}>
+      <header className="my-order__header">
         <div className="stack-sm">
-          <span className="mono order-card__ref">{order.reference}</span>
+          <span className="mono my-order__ref">{order.reference}</span>
           <span className={`badge badge--${order.status}`}>{status.label}</span>
         </div>
-        <span className="order-card__amount">{formatAmount(order.amount)}</span>
+        <span className="my-order__amount">{formatAmount(order.amount)}</span>
       </header>
 
-      <p className="text-muted order-card__status-text">{status.text}</p>
+      <p className="text-muted my-order__status-text">{status.text}</p>
 
       <ol className={`order-track order-track--${order.status}`}>
         {trackSteps(order).map((step) => (
@@ -41,12 +41,12 @@ export default function OrderCard({ order }: { order: CustomerOrder }) {
         ))}
       </ol>
 
-      <dl className="order-card__details">
+      <dl className="my-order__details">
         <div>
           <dt className="section-label">{copy.columns.plan}</dt>
           <dd>
             {order.lines.map((line) => (
-              <span key={line.planId} className="order-card__line">
+              <span key={line.planId} className="my-order__line">
                 <span>{line.label}</span>
                 <span className="mono">{formatAmount(line.amount)}</span>
               </span>
@@ -55,17 +55,18 @@ export default function OrderCard({ order }: { order: CustomerOrder }) {
         </div>
         <div>
           <dt className="section-label">{copy.columns.utr}</dt>
-          <dd className="mono">{order.utr ?? "—"}</dd>
+          <dd className="mono my-order__utr">{order.utr ?? "—"}</dd>
         </div>
         <div>
           <dt className="section-label">{copy.columns.receipt}</dt>
-          <dd>
-            <Paperclip className="icon icon--sm" strokeWidth={1.75} /> {order.hasReceipt ? copy.receiptAttached : copy.receiptMissing}
+          <dd className={order.hasReceipt ? "my-order__receipt" : "my-order__receipt my-order__receipt--missing"}>
+            <Paperclip className="icon icon--sm" strokeWidth={1.75} />
+            {order.hasReceipt ? copy.receiptAttached : copy.receiptMissing}
           </dd>
         </div>
       </dl>
 
-      <footer className="order-card__footer">
+      <footer className="my-order__footer">
         {order.status === "pending" ? (
           <Link href={checkoutLink} className="button button--primary button--sm">
             {copy.pay}

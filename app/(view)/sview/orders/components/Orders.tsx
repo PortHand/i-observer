@@ -47,7 +47,7 @@ export default async function Orders() {
             </Link>
           </div>
         ) : (
-          <ul className="order-cards">
+          <ul className="my-orders">
             {orders.map((order) => (
               <OrderCard key={order.reference} order={order} />
             ))}
