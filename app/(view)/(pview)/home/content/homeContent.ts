@@ -71,6 +71,16 @@ export const auth = {
   },
   navSignedOut: "Sign in",
   navSignedIn: "Account",
+  /** The account menu in the header, for signed-in visitors. */
+  menu: {
+    signedInAs: "Signed in as",
+    roles: { customer: "Customer", admin: "Admin" },
+    download: "Download app",
+    profile: "Profile",
+    orders: "Orders & payments",
+    admin: "Admin dashboard",
+    signOut: "Sign out",
+  },
 };
 
 export const questionsSection = {

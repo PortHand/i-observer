@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 export default function WhatIsView() {
   return (
     <>
-      <SiteHeader signedIn={false} current={routes.whatIsIOverlay} />
+      <SiteHeader current={routes.whatIsIOverlay} />
       <main>
         <Intro />
         <Inside />

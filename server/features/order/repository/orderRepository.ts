@@ -51,6 +51,11 @@ export class OrderRepository extends BaseRepository {
     return row ?? null;
   }
 
+  /** Every order of one account, newest first. */
+  listForUser(userId: string): Promise<OrderRow[]> {
+    return this.db.select().from(orders).where(eq(orders.userId, userId)).orderBy(desc(orders.createdAt));
+  }
+
   /**
    * A page of orders, newest first. Submitted orders are the ones to review, so a status filter of
    * "submitted" lists them oldest first instead: the longest-waiting customer comes first.

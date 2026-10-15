@@ -1,5 +1,5 @@
 import "server-only";
-import { formatAmount, orderLabel, orderLineLabel } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
+import { formatAmount, orderLabel } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import type { OrderLine } from "@/app/(view)/(pview)/get-ioverlay/services/getService";
 import type {
   AdminDashboard,
@@ -18,6 +18,7 @@ import type { StorageService } from "@/server/features/storage/service/storageSe
 import type { UserService } from "@/server/features/user/service/userService";
 import type { OrderItemRow, OrderRepository, OrderRow } from "../repository/orderRepository";
 import type { OrderStatus } from "../schema/orderSchema";
+import { labelOrderLines } from "../helper/orderLines";
 import { paymentRejectedTemplate } from "../template/paymentRejectedTemplate";
 import { paymentVerifiedTemplate } from "../template/paymentVerifiedTemplate";
 import type { OrderService } from "./orderService";
@@ -241,20 +242,7 @@ export class OrderReviewService {
     };
   }
 
-  /** Labels every line, grouped by order reference. */
-  private async toLines(items: OrderItemRow[]): Promise<Map<string, OrderLine[]>> {
-    const plans = await this.pricing.findPlans(items.map((item) => item.planId));
-    const byOrder = new Map<string, OrderLine[]>();
-    for (const item of items) {
-      const plan = plans.get(item.planId);
-      const line: OrderLine = {
-        planId: item.planId,
-        quantity: item.quantity,
-        label: plan ? orderLineLabel(plan, item.quantity) : item.planId,
-        amount: paiseToRupees(item.linePaise),
-      };
-      byOrder.set(item.orderReference, [...(byOrder.get(item.orderReference) ?? []), line]);
-    }
-    return byOrder;
+  private toLines(items: OrderItemRow[]): Promise<Map<string, OrderLine[]>> {
+    return labelOrderLines(this.pricing, items);
   }
 }

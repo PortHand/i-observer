@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function GetIOverlayView({ searchParams }: PageProps<"/get-ioverlay">) {
   return (
     <>
-      <SiteHeader signedIn={false} current={routes.getIOverlay} />
+      <SiteHeader current={routes.getIOverlay} />
       <main>
         <Steps />
         <Suspense fallback={<CheckoutNotice>{checkout.loading}</CheckoutNotice>}>

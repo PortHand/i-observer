@@ -1,9 +1,38 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { CircleUser } from "lucide-react";
 import { routes } from "@/helper/route";
+import { getCurrentUser } from "@/server/features/auth/guard/authGuard";
 import { appInfo, auth, navLinks } from "../content/homeContent";
+import AccountMenu from "./AccountMenu";
 
-export default function SiteHeader({ signedIn, current }: { signedIn: boolean; current?: string }) {
+const SignInLink = ({ current }: { current?: string }) => (
+  <Link
+    href={routes.signIn}
+    className="button button--secondary button--sm"
+    aria-current={current === routes.signIn ? "page" : undefined}
+  >
+    <CircleUser className="icon icon--sm" strokeWidth={1.75} />
+    <span>{auth.navSignedOut}</span>
+  </Link>
+);
+
+/** Stands in for the account menu while the session is read, so the header doesn't jump. */
+const AccountPlaceholder = () => (
+  <span className="account-menu__trigger account-menu__trigger--placeholder" aria-hidden="true" />
+);
+
+/** The account menu for a signed-in visitor, else "Sign in". Reads the session and the account, so it streams in. */
+async function AccountSlot({ current }: { current?: string }) {
+  const user = await getCurrentUser();
+  return user ? <AccountMenu email={user.email} role={user.role} current={current} /> : <SignInLink current={current} />;
+}
+
+/**
+ * The site's top bar. The right-hand button follows the visitor's session: "Sign in", or the
+ * account menu. Signed-in pages pass `signedIn` so the placeholder shown meanwhile matches.
+ */
+export default function SiteHeader({ signedIn = false, current }: { signedIn?: boolean; current?: string }) {
   return (
     <>
       <div className="utility-bar mono">
@@ -36,14 +65,9 @@ export default function SiteHeader({ signedIn, current }: { signedIn: boolean; c
               </Link>
             ))}
           </nav>
-          <Link
-            href={signedIn ? routes.welcome : routes.signIn}
-            className="button button--secondary button--sm"
-            aria-current={!signedIn && current === routes.signIn ? "page" : undefined}
-          >
-            <CircleUser className="icon icon--sm" strokeWidth={1.75} />
-            <span>{signedIn ? auth.navSignedIn : auth.navSignedOut}</span>
-          </Link>
+          <Suspense fallback={signedIn ? <AccountPlaceholder /> : <SignInLink current={current} />}>
+            <AccountSlot current={current} />
+          </Suspense>
         </div>
       </header>
     </>

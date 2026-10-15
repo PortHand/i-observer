@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function ContactView() {
   return (
     <>
-      <SiteHeader signedIn={false} current={routes.contact} />
+      <SiteHeader current={routes.contact} />
       <main>
         <section className="band" id={homeSections.top}>
           <div className="container page-hero animate-in">

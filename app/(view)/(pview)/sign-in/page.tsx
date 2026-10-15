@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function SignInView() {
   return (
     <>
-      <SiteHeader signedIn={false} current={routes.signIn} />
+      <SiteHeader current={routes.signIn} />
       <main>
         <section className="band">
           <div className="container sign-in">

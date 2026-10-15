@@ -3,8 +3,7 @@
 .welcome {
   display: grid;
   gap: var(--space-8);
-  max-width: 560px;
-  padding-top: 88px;
+  padding-top: var(--space-8);
   padding-bottom: 96px;
 }
 
@@ -12,9 +11,12 @@
   padding: 0;
 }
 
-.welcome__card {
-  display: grid;
-  gap: var(--space-6);
+.welcome .page-hero__lead {
+  max-width: 680px;
+}
+
+.welcome--loading {
+  min-height: 520px;
 }
 
 .welcome__role {
@@ -24,4 +26,173 @@
   font-size: var(--text-xs);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+}
+
+/* Download: the ink card for this computer, the other installers beside it */
+
+.download-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.download {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.download--locked {
+  max-width: 640px;
+}
+
+.download__header {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.download__title {
+  font-size: var(--text-2xl);
+}
+
+.download__detail {
+  font-size: var(--text-sm);
+}
+
+.download__status {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font-weight: var(--weight-bold);
+}
+
+.download__status--ok {
+  color: var(--color-success);
+}
+
+.download__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.download__timer {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.download__meter {
+  display: block;
+  height: 3px;
+  background: var(--color-border);
+}
+
+.download__meter > span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+  transition: width 1s linear;
+}
+
+.installers {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.installers__list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.installer {
+  display: flex;
+  width: 100%;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-2);
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.installer:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+
+.installer:disabled {
+  cursor: progress;
+}
+
+.installer[aria-current="true"] {
+  box-shadow: inset 2px 0 0 var(--color-accent);
+}
+
+.installer__text {
+  display: grid;
+  gap: 2px;
+}
+
+.installer__name {
+  font-weight: var(--weight-bold);
+}
+
+.installer__detail {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+
+  .download__meter > span {
+    transition: none;
+  }
+}
+
+/* How to use */
+
+.step__icon {
+  margin-right: var(--space-2);
+  color: var(--color-accent-text);
+  vertical-align: -2px;
+}
+
+.first-run {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 860px;
+}
+
+@media (max-width: 980px) {
+  .download-wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .download__actions > .button {
+    flex: 1 1 100%;
+  }
 }

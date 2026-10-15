@@ -63,8 +63,11 @@ export class StorageService {
     return path;
   }
 
-  /** A link to the file that works for `expiresIn` seconds, or null when it can't be made. */
-  async signedUrl(path: string, expiresIn: number): Promise<string | null> {
+  /**
+   * A link to the file that works for `expiresIn` seconds, or null when it can't be made (e.g. no
+   * file at `path`). With `downloadAs`, the browser saves it under that name instead of opening it.
+   */
+  async signedUrl(path: string, expiresIn: number, downloadAs?: string): Promise<string | null> {
     if (!this.configured) return null;
     try {
       const response = await this.request(`/object/sign/${this.settings.bucket}/${encodePath(path)}`, {
@@ -74,7 +77,9 @@ export class StorageService {
       });
       if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
       const { signedURL } = (await response.json()) as { signedURL?: string };
-      return signedURL ? `${this.settings.url}/storage/v1${signedURL}` : null;
+      if (!signedURL) return null;
+      const download = downloadAs ? `&download=${encodeURIComponent(downloadAs)}` : "";
+      return `${this.settings.url}/storage/v1${signedURL}${download}`;
     } catch (error) {
       console.error(`[storage] Couldn't sign a link to ${path}:`, error);
       return null;

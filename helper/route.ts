@@ -15,6 +15,10 @@ export const routes = {
   signIn: "/sign-in",
   /** Signed-in pages, in app/(view)/sview. */
   welcome: "/sview/welcome",
+  /** The customer's account, plan and feedback. */
+  profile: "/sview/profile",
+  /** The customer's orders and payments. */
+  orders: "/sview/orders",
   /** Admin dashboard; the order list is below it. */
   admin: "/sview/admin",
   adminOrders: "/sview/admin/orders",
