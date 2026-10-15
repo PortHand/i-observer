@@ -8,6 +8,8 @@ export interface StorageSettings {
   bucket: string;
   /** Development without settings: log and skip uploads instead of failing. */
   optional: boolean;
+  /** TO_TEST=true: print what would be saved instead of uploading. */
+  testMode: boolean;
 }
 
 /**
@@ -37,9 +39,14 @@ export class StorageService {
 
   /**
    * Saves `bytes` at `path` in the bucket, replacing a file already there. Returns the path, or
-   * null in development when Supabase isn't set up (the upload is skipped and logged).
+   * null when nothing was stored: in test mode (printed instead), or in development when Supabase
+   * isn't set up (skipped and logged). Null keeps orders from pointing at files that don't exist.
    */
   async upload(path: string, bytes: Uint8Array, contentType: string): Promise<string | null> {
+    if (this.settings.testMode) {
+      console.log(`[storage] TO_TEST: saved ${this.settings.bucket}/${path} (${contentType}, ${bytes.byteLength} bytes). Not uploaded.`);
+      return null;
+    }
     if (!this.configured) {
       if (this.settings.optional) {
         console.warn(`[storage] SUPABASE_URL / SUPABASE_SECRET_KEY not set: skipped uploading ${path}.`);

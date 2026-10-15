@@ -25,7 +25,7 @@ export const env = {
     return process.env.NODE_ENV === "production";
   },
 
-  /** TO_TEST=true: OTPs are printed to the server log instead of being sent. */
+  /** TO_TEST=true: OTPs and payment screenshots are printed to the server log instead of being sent or stored. */
   get toTest() {
     return flag("TO_TEST");
   },
