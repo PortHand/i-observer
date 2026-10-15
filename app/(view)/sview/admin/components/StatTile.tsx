@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { formatChange } from "../helper/adminHelper";
-import Sparkline from "./Sparkline";
+import Sparkline, { type SparkPoint } from "./Sparkline";
 
 interface StatTileProps {
   label: string;
@@ -9,8 +9,8 @@ interface StatTileProps {
   caption?: ReactNode;
   /** Change against the previous period (0.25 is +25%), with what it's compared to. Null change: nothing to compare. */
   delta?: { change: number | null; versus: string; none: string };
-  /** Values over the period, oldest first, drawn as a sparkline. */
-  trend?: number[];
+  /** Values over the period, oldest first, drawn as a sparkline with a tooltip per day. */
+  trend?: SparkPoint[];
 }
 
 /** A headline number: label, value, and what gives it context (a caption, a change, a trend). */
@@ -38,7 +38,7 @@ export default function StatTile({ label, value, caption, delta, trend }: StatTi
         </p>
       )}
       {caption && <p className="kpi__caption text-muted">{caption}</p>}
-      {trend && <Sparkline values={trend} />}
+      {trend && <Sparkline points={trend} />}
     </div>
   );
 }

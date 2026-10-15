@@ -48,9 +48,6 @@ export const parseRange = (params: Record<string, string | string[] | undefined>
   return DASHBOARD_RANGES.find((range) => range === days) ?? 30;
 };
 
-/** The dashboard over the last `range` days, leaving the default out of the URL. */
-export const dashboardLink = (range: DashboardRange) => (range === 30 ? routes.admin : `${routes.admin}?range=${range}`);
-
 /** Admins work in India, so times show in IST whatever the server's time zone. */
 export const formatIst = (iso: string) =>
   new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(iso));

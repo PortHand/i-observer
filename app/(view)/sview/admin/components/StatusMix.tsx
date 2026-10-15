@@ -21,11 +21,20 @@ export default function StatusMix({ counts }: { counts: AdminDashboard["counts"]
         <p className="panel__empty text-muted">{mix.empty}</p>
       ) : (
         <>
+          {/* Hovering a segment shows its figures. */}
           <div className="mix__bar" aria-hidden="true">
             {rows
               .filter((row) => counts[row.id] > 0)
               .map((row) => (
-                <span key={row.id} className={`mix__segment mix--${row.id}`} style={{ flexGrow: counts[row.id] } as CSSProperties} />
+                <span key={row.id} className={`mix__segment mix--${row.id}`} style={{ flexGrow: counts[row.id] } as CSSProperties}>
+                  <span className="chart-tip">
+                    <span className="chart-tip__title">{row.label}</span>
+                    <span className="chart-tip__row">
+                      <strong>{orderCount(counts[row.id], dashboard.orders)}</strong>
+                      <span>{formatPercent(counts[row.id], total)}</span>
+                    </span>
+                  </span>
+                </span>
               ))}
           </div>
           <ul className="mix__list">

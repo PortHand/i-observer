@@ -110,6 +110,8 @@ export type ReviewResult = Awaited<ReturnType<typeof reviewActions.reviewOrder>>
 
 export type ListResult = Awaited<ReturnType<typeof reviewActions.listOrders>>;
 
+export type DashboardResult = Awaited<ReturnType<typeof reviewActions.loadDashboard>>;
+
 /** Approves, rejects or refunds an order, or emails a verified customer their login again. */
 export const reviewOrder = (reference: string, action: ReviewAction, note: string): Promise<ReviewResult> =>
   reviewActions.reviewOrder(reference, action, note);
@@ -117,3 +119,6 @@ export const reviewOrder = (reference: string, action: ReviewAction, note: strin
 /** One page of orders in this status (or all) matching `search`, read without a page load. */
 export const listOrders = (status: StatusFilter, search: string, page: number): Promise<ListResult> =>
   reviewActions.listOrders(status, search, page);
+
+/** The dashboard's figures over the last `range` days, read without a page load. */
+export const loadDashboard = (range: DashboardRange): Promise<DashboardResult> => reviewActions.loadDashboard(range);

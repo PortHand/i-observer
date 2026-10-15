@@ -1,17 +1,21 @@
-import Link from "next/link";
 import { dashboard } from "../content/adminContent";
-import { dashboardLink } from "../helper/adminHelper";
 import { DASHBOARD_RANGES, type DashboardRange } from "../services/adminService";
 
-/** How many days the dashboard looks back over. Plain links, so the range lives in the URL. */
-export default function RangePicker({ current }: { current: DashboardRange }) {
+/** How many days the dashboard looks back over. Changing it updates the figures in place. */
+export default function RangePicker({ current, onSelect }: { current: DashboardRange; onSelect: (range: DashboardRange) => void }) {
   return (
-    <nav className="segmented mono" aria-label={dashboard.rangeLabel}>
+    <div className="segmented mono" role="group" aria-label={dashboard.rangeLabel}>
       {DASHBOARD_RANGES.map((range) => (
-        <Link key={range} className="segmented__option" href={dashboardLink(range)} aria-current={range === current ? "page" : undefined}>
+        <button
+          key={range}
+          type="button"
+          className="segmented__option"
+          aria-pressed={range === current}
+          onClick={() => onSelect(range)}
+        >
           {dashboard.ranges[range]}
-        </Link>
+        </button>
       ))}
-    </nav>
+    </div>
   );
 }

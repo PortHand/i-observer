@@ -195,6 +195,10 @@
 
 .segmented__option {
   display: inline-flex;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
   align-items: center;
   height: 36px;
   padding: 0 var(--space-4);
@@ -218,7 +222,7 @@
   color: var(--color-text);
 }
 
-.segmented__option[aria-current="page"] {
+.segmented__option[aria-pressed="true"] {
   background: var(--color-text);
   color: var(--color-bg);
 }
@@ -306,6 +310,44 @@
 .skeleton--badge {
   width: 56px;
   height: 22px;
+}
+
+.skeleton--value {
+  width: 110px;
+  height: 34px;
+}
+
+.skeleton--spark {
+  height: 28px;
+  margin-top: auto;
+}
+
+.skeleton--segmented {
+  width: 280px;
+  height: 38px;
+}
+
+/* KPI skeletons match the tiles' height so the row doesn't jump. */
+.kpi--skeleton {
+  gap: var(--space-3);
+  min-height: 186px;
+}
+
+/* Columns of varied height standing in for the daily chart. */
+.chart-skeleton {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  height: 240px;
+  padding-left: 56px;
+}
+
+.chart-skeleton .skeleton {
+  flex: 1;
+}
+
+.metrics__item .skeleton + .skeleton {
+  margin-top: var(--space-1);
 }
 
 .skeleton--title {
@@ -411,12 +453,22 @@
   margin-top: auto;
 }
 
+/* Sparkline: the line, plus one hover zone per day that shows that day's tooltip. */
 .sparkline {
+  position: relative;
+  height: 32px;
+  margin-top: auto;
+}
+
+.kpi .sparkline {
+  margin-top: auto;
+  padding-top: 0;
+}
+
+.sparkline__svg {
   display: block;
   width: 100%;
-  height: 36px;
-  margin-top: auto;
-  padding-top: var(--space-2);
+  height: 100%;
   overflow: visible;
 }
 
@@ -432,6 +484,87 @@
 .sparkline__area {
   fill: var(--color-text);
   opacity: 0.08;
+}
+
+.sparkline__zone {
+  position: absolute;
+  top: -8px;
+  bottom: 0;
+}
+
+.sparkline__zone .chart-tip {
+  bottom: calc(100% + 4px);
+  left: var(--x);
+}
+
+.sparkline__zone--start .chart-tip {
+  left: 0;
+  transform: none;
+}
+
+.sparkline__zone--end .chart-tip {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.sparkline__zone:hover .chart-tip {
+  opacity: 1;
+}
+
+/*
+ * Chart tooltips, shared by every graph: a paper card with an ink border, a mono label on top,
+ * then label/value rows. Hidden until its mark is hovered.
+ */
+.chart-tip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: var(--space-1);
+  min-width: 120px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  box-shadow: 0 4px 12px rgb(36 35 33 / 12%);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity var(--duration-fast) var(--easing);
+}
+
+.chart-tip__title {
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.chart-tip__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+.chart-tip__row strong,
+.chart-tip__value {
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-tip__value {
+  font-size: var(--text-base);
 }
 
 /* Chart cards: a header (label + one line of context), then the plot */
@@ -574,10 +707,6 @@
   background: var(--color-accent);
 }
 
-.trend__col:hover .trend__bar {
-  background: var(--color-text-muted);
-}
-
 .trend__label {
   position: absolute;
   top: calc(100% + var(--space-2));
@@ -595,30 +724,8 @@
 }
 
 .trend__tip {
-  position: absolute;
   bottom: calc(var(--value) + var(--space-2));
   left: 50%;
-  z-index: 1;
-  display: grid;
-  gap: 2px;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-surface);
-  box-shadow: 0 4px 12px rgb(36 35 33 / 12%);
-  font-size: var(--text-sm);
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateX(-50%);
-  transition: opacity var(--duration-fast) var(--easing);
-}
-
-.trend__tip strong {
-  font-size: var(--text-base);
-}
-
-.trend__tip span {
-  color: var(--color-text-muted);
 }
 
 .trend__col--start .trend__tip {
@@ -645,9 +752,31 @@
 }
 
 .mix__segment {
+  position: relative;
   flex-basis: 0;
   min-width: 4px;
 }
+
+.mix__segment .chart-tip {
+  bottom: calc(100% + var(--space-2));
+  left: 50%;
+}
+
+.mix__segment:last-child .chart-tip {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.mix__segment:first-child:not(:last-child) .chart-tip {
+  left: 0;
+  transform: none;
+}
+
+.mix__segment:hover .chart-tip {
+  opacity: 1;
+}
+
 
 .mix--submitted {
   background: var(--color-warning);

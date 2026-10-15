@@ -1,19 +1,13 @@
 import type { CSSProperties } from "react";
 import { formatAmount } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import { dashboard } from "../content/adminContent";
-import { formatCompactAmount, formatDay, niceScale, orderCount } from "../helper/adminHelper";
+import { formatCompactAmount, formatDay, niceScale } from "../helper/adminHelper";
 import type { DashboardDay } from "../services/adminService";
 
 const TICKS = 4;
 
 /** How many columns apart the day labels sit, so about six fit under the chart, even on a phone. */
 const labelEvery = (days: number) => Math.max(1, Math.ceil(days / 6));
-
-/** The tooltip text for one day. */
-const tipFor = (day: DashboardDay) =>
-  dashboard.trend.tip
-    .replace("{orders}", orderCount(day.approved, dashboard.payments))
-    .replace("{placed}", String(day.orders));
 
 /**
  * Approved revenue per day as columns: one series, so the title names it and there's no legend.
@@ -60,10 +54,23 @@ export default function TrendChart({ days, caption }: { days: DashboardDay[]; ca
                   style={{ "--value": `${(day.revenue / scale.max) * 100}%` } as CSSProperties}
                 >
                   <span className="trend__bar" />
-                  <span className="trend__tip">
-                    <strong>{formatAmount(day.revenue)}</strong>
-                    <span>{last ? trend.today : formatDay(day.day)}</span>
-                    <span>{tipFor(day)}</span>
+                  <span className="chart-tip trend__tip">
+                    <span className="chart-tip__title">
+                      {formatDay(day.day)}
+                      {last && ` · ${trend.today}`}
+                    </span>
+                    <span className="chart-tip__row">
+                      <span>{trend.columns.revenue}</span>
+                      <strong>{formatAmount(day.revenue)}</strong>
+                    </span>
+                    <span className="chart-tip__row">
+                      <span>{trend.columns.approved}</span>
+                      <strong>{day.approved}</strong>
+                    </span>
+                    <span className="chart-tip__row">
+                      <span>{trend.columns.orders}</span>
+                      <strong>{day.orders}</strong>
+                    </span>
                   </span>
                   {(days.length - 1 - index) % every === 0 && <span className="trend__label mono">{formatDay(day.day)}</span>}
                 </li>

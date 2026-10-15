@@ -158,6 +158,7 @@ export const dashboard = {
   title: "Dashboard",
   lead: "Payments waiting on you, and how sales are going. Days are in IST.",
   asOf: "Updated {time}",
+  loading: "Loading…",
   rangeLabel: "Period",
   /** Range picker labels, by number of days. */
   ranges: { 7: "7 days", 30: "30 days", 90: "90 days" },
@@ -182,7 +183,6 @@ export const dashboard = {
     viewTable: "View as table",
     tableCaption: "Approved revenue and orders placed per day",
     columns: { day: "Day", revenue: "Approved", approved: "Payments", orders: "Orders placed" },
-    tip: "{orders} · {placed} placed",
     today: "Today",
   },
   mix: {
