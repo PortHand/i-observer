@@ -5,6 +5,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { homeRouteFor, routes } from "@/helper/route";
+import { HttpError } from "@/server/core/httpError";
 import type { UserRole } from "@/server/features/user/schema/userSchema";
 import { authService } from "../module/authModule";
 import type { SessionUser } from "../service/authService";
@@ -24,5 +25,16 @@ export const requireUser = async (role?: UserRole): Promise<SessionUser> => {
   const user = await getCurrentUser();
   if (!user) redirect(routes.signIn);
   if (role && user.role !== role) redirect(homeRouteFor(user.role));
+  return user;
+};
+
+/**
+ * For Server Actions, which anyone can call directly: the signed-in admin, else a 401 or 403 that
+ * runAction turns into a failed result (a redirect would be swallowed there).
+ */
+export const assertAdmin = async (): Promise<SessionUser> => {
+  const user = await getCurrentUser();
+  if (!user) throw HttpError.unauthorized("Your session has ended. Sign in again.");
+  if (user.role !== "admin") throw HttpError.forbidden("Only admins can do this.");
   return user;
 };

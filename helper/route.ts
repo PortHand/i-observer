@@ -24,6 +24,9 @@ export const routes = {
  */
 export const secureRoot = "/sview";
 
+/** One order in the admin portal: "/sview/admin/orders/IOV-AB12CD". */
+export const adminOrderLink = (reference: string) => `${routes.admin}/orders/${encodeURIComponent(reference)}`;
+
 /** Pages only admins may open. Other signed-in users are sent to their home route. */
 export const adminRoutes: readonly string[] = [routes.admin];
 

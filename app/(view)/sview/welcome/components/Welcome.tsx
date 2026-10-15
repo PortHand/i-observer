@@ -1,18 +1,12 @@
 import { LogOut } from "lucide-react";
 import { requireUser } from "@/server/features/auth/guard/authGuard";
 import { signOut } from "@/server/features/auth/action/authActions";
-import type { UserRole } from "@/server/features/user/schema/userSchema";
 import { welcome } from "../content/welcomeContent";
 
-interface WelcomeProps {
-  /** Only this role may see it; others are redirected. Omit for any signed-in account. */
-  role?: UserRole;
-  copy?: { eyebrow: string; title: string; lead: string };
-}
-
 /** Greeting and account card. Reads the session, so render inside <Suspense>. */
-export default async function Welcome({ role, copy = welcome }: WelcomeProps) {
-  const user = await requireUser(role);
+export default async function Welcome() {
+  const user = await requireUser();
+  const copy = welcome;
 
   return (
     <div className="welcome">

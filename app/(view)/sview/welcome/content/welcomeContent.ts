@@ -8,9 +8,3 @@ export const welcome = {
   roles: { customer: "Customer", admin: "Admin" },
   signOut: "Sign out",
 };
-
-export const adminPage = {
-  eyebrow: "Admin",
-  title: "Welcome to i-observer, admin",
-  lead: "Only admins can open this page. Admin tools will appear here.",
-};

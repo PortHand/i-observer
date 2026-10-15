@@ -5,6 +5,7 @@
 // Same shared styles as the public pages; see app/(view)/(pview)/layout.tsx for why they load here.
 import "../(pview)/home/home.css";
 import "./welcome/welcome.css";
+import "./admin/admin.css";
 
 export default function SignedInLayout({ children }: LayoutProps<"/">) {
   return children;

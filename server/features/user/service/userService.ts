@@ -26,6 +26,10 @@ export class UserService {
     this.users = users;
   }
 
+  async find(id: string): Promise<UserRow | null> {
+    return this.users.findById(id);
+  }
+
   /**
    * Checks an email and phone against the accounts. A registered email or phone must come with the
    * other half of the same account; a mix of two accounts, or a known email with a new phone (or
