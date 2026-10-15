@@ -14,7 +14,6 @@ export interface CheckoutCustomer {
   /** Lower-cased. Verified by OTP for a new customer. */
   email: string;
   phone: string;
-  planId: string;
 }
 
 /** "returning": an account has exactly this email and phone. "new": neither is registered. */
@@ -41,17 +40,15 @@ export class UserService {
 
   /**
    * Finds or creates the account at checkout, after match() and, for a new customer, the OTP. A
-   * returning customer keeps their password and gets the new plan. Throws match()'s 409s.
+   * returning customer keeps their password. Access is only given once the payment is verified
+   * (see EntitlementService). Throws match()'s 409s.
    */
   async ensure(customer: CheckoutCustomer, retried = false): Promise<UserRow> {
-    const { email, phone, planId } = customer;
+    const { email, phone } = customer;
     try {
-      if ((await this.match(email, phone)) === "returning") {
-        const user = (await this.users.findByEmail(email))!;
-        return await this.users.update(user.id, { planId });
-      }
+      if ((await this.match(email, phone)) === "returning") return (await this.users.findByEmail(email))!;
       // Readable random password, e.g. "K7MPQ2XRTA": no 0/O or 1/I, so it can be typed from an email.
-      return await this.users.create({ email, username: email, phone, password: randomCode(PASSWORD_LENGTH), planId });
+      return await this.users.create({ email, username: email, phone, password: randomCode(PASSWORD_LENGTH) });
     } catch (error) {
       // Another checkout registered the same email or phone between match() and this write: check
       // again, so the customer is treated as returning or gets the right conflict.

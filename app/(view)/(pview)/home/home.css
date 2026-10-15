@@ -379,8 +379,9 @@ a {
   font-size: 64px;
 }
 
+/* Pricing.tsx sets --plan-count to the number of plans on sale. */
 .plans {
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--plan-count, 3), 1fr);
 }
 
 .plan {

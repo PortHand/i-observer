@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { checkout, type CheckoutStep } from "../content/getContent";
 import {
-  defaultPlan,
+  getPlan,
   isValidEmail,
   isValidPhone,
   isValidScreenshot,
@@ -36,10 +36,13 @@ export interface ContactDraft {
 
 export type CopyTarget = "upi" | "reference";
 
-/** `plans` are the active plans from the database; there is always at least one. */
-export const useCheckoutHandler = (plans: getService.Plan[]) => {
+/**
+ * `plans` are the active plans from the database; there is always at least one. `initialPlanId`
+ * is pre-selected when it's one of them, else the default plan.
+ */
+export const useCheckoutHandler = (plans: getService.Plan[], initialPlanId: getService.PlanId | null = null) => {
   const [step, setStep] = useState<CheckoutStep>("contact");
-  const [planId, setPlanId] = useState<getService.PlanId>(defaultPlan(plans).id);
+  const [planId, setPlanId] = useState<getService.PlanId>(getPlan(plans, initialPlanId ?? "").id);
   const [order, setOrder] = useState<getService.Order | null>(null);
   const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
   const [draft, setDraft] = useState<ContactDraft | null>(null);
@@ -111,6 +114,12 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     return { sent: result.ok && result.sent };
   };
 
+  /** The order for the chosen plan. The server takes several plans per order; the form offers one for now. */
+  const orderRequest = (contact: ContactDraft): getService.OrderRequest => ({
+    items: [{ planId, quantity: 1 }],
+    ...contact,
+  });
+
   /**
    * Creates the order, or updates it when editing (same reference; the server re-prices it), then
    * shows the QR code. Returns false, without showing an error, when the server wants an OTP first.
@@ -130,7 +139,7 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     }
     if (!result.ok && result.code === VERIFICATION_REQUIRED) return false;
     if (!result.ok) {
-      setError(result.fields?.phone ?? result.fields?.email ?? result.error);
+      setError(result.fields?.items ?? result.fields?.phone ?? result.fields?.email ?? result.error);
       return true;
     }
     setOrder(result.order);
@@ -161,7 +170,7 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
       const token = verified?.email === email ? verified.token : null;
       // Always ask the server first: it lets returning customers through and rejects an email or
       // phone registered to another account before any code is sent.
-      if (await saveOrder({ planId, email, phone }, token)) return;
+      if (await saveOrder(orderRequest({ email, phone }), token)) return;
 
       setOtpError("");
       setNotice("");
@@ -190,7 +199,7 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
       setVerified({ email: draft.email, token: result.token });
       setCodeSentTo(null);
       setOtpOpen(false);
-      await saveOrder({ planId, ...draft }, result.token);
+      await saveOrder(orderRequest(draft), result.token);
     } finally {
       setSubmitting(false);
     }

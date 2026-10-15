@@ -14,14 +14,14 @@ export const metadata: Metadata = {
     "Share your contact details, pay by UPI QR code and send the transaction ID. Your iOverlay login arrives by email within 24 hours.",
 };
 
-export default function GetIOverlayView() {
+export default function GetIOverlayView({ searchParams }: PageProps<"/get-ioverlay">) {
   return (
     <>
       <SiteHeader signedIn={false} current={routes.getIOverlay} />
       <main>
         <Steps />
         <Suspense fallback={<CheckoutNotice>{checkout.loading}</CheckoutNotice>}>
-          <CheckoutLoader />
+          <CheckoutLoader searchParams={searchParams} />
         </Suspense>
       </main>
       <SiteFooter />

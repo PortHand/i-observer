@@ -6,7 +6,7 @@ import * as otpActions from "@/server/features/otp/action/otpActions";
 
 export type PlanId = string;
 
-/** A plan from the plans table. Prices are edited in the database, not in code. */
+/** A plan from the plans table, with its price now (plan_prices). Prices are edited in the database, not in code. */
 export interface Plan {
   id: PlanId;
   name: string;
@@ -17,10 +17,19 @@ export interface Plan {
   badge: string | null;
   /** Pre-selected at checkout. */
   isDefault: boolean;
+  /** Most units of this plan one order may hold. */
+  maxQuantity: number;
+}
+
+/** One plan in an order, and how many units of it. */
+export interface OrderItemRequest {
+  planId: PlanId;
+  quantity: number;
 }
 
 export interface OrderRequest {
-  planId: PlanId;
+  /** One entry per plan; at least one. */
+  items: OrderItemRequest[];
   email: string;
   /** 10-digit Indian mobile number without the country code. */
   phone: string;
@@ -32,12 +41,21 @@ export interface Payee {
   name: string;
 }
 
+/** A line of a saved order, priced when the order was saved. */
+export interface OrderLine extends OrderItemRequest {
+  /** e.g. "iOverlay Monthly · 1 month × 2". */
+  label: string;
+  /** Rupees for the whole line (unit price × quantity). */
+  amount: number;
+}
+
 export interface Order extends OrderRequest {
   /** Short code added to the UPI payment note so the payment can be matched to this order. */
   reference: string;
-  /** e.g. "iOverlay Yearly · 12 months". */
+  items: OrderLine[];
+  /** Every line's label, e.g. "iOverlay Yearly · 12 months" or "… + iOverlay Monthly · 1 month". */
   planLabel: string;
-  /** Rupees, fixed when the order was saved, so a later price change doesn't affect it. */
+  /** Total in rupees, fixed when the order was saved, so a later price change doesn't affect it. */
   amount: number;
   payee: Payee;
 }
@@ -81,7 +99,7 @@ export const verifyEmailOtp = (email: string, code: string): Promise<VerifyCodeR
 export const createOrder = (request: OrderRequest, emailToken: string | null): Promise<OrderResult> =>
   orderActions.createOrder(request, emailToken);
 
-/** Changes the plan or contact details of an unpaid order. Keeps the reference; refreshes the price and payee. */
+/** Changes the plans or contact details of an unpaid order. Keeps the reference; refreshes the prices and payee. */
 export const updateOrder = (reference: string, request: OrderRequest, emailToken: string | null): Promise<OrderResult> =>
   orderActions.updateOrder(reference, request, emailToken);
 

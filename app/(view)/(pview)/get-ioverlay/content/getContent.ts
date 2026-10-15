@@ -128,6 +128,8 @@ export const checkout = {
     changeEmail: "Change email",
     invalidCode: "Enter the 6-digit code from the email.",
     planMissing: "Choose a plan.",
+    planRepeated: "Each plan can only be added once. Change its quantity instead.",
+    invalidQuantity: "Choose a quantity of at least 1.",
     invalidEmail: "Enter a valid email address.",
     invalidPhone: "Enter a 10-digit Indian mobile number.",
   },

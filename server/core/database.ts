@@ -6,6 +6,9 @@ import { databaseUrl } from "./databaseConfig";
 
 export type Orm = NodePgDatabase<typeof schema>;
 
+/** An open transaction. Repository methods that take one run inside it; see Database.transaction. */
+export type Tx = Parameters<Parameters<Orm["transaction"]>[0]>[0];
+
 // `next dev` re-runs modules on every edit. Keeping the client on globalThis stops each reload
 // from opening a new connection pool.
 const cache = globalThis as typeof globalThis & { ioverlayOrm?: Orm };
@@ -17,5 +20,10 @@ export class Database {
       cache.ioverlayOrm = drizzle({ client: new Pool({ connectionString: databaseUrl(), max: 10 }), schema });
     }
     return cache.ioverlayOrm;
+  }
+
+  /** Runs `work` in one transaction: everything it writes is saved together, or nothing is. */
+  static transaction<T>(work: (tx: Tx) => Promise<T>): Promise<T> {
+    return Database.orm.transaction(work);
   }
 }

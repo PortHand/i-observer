@@ -46,4 +46,4 @@ CREATE INDEX "orders_utr_idx" ON "orders" USING btree ("utr");--> statement-brea
 INSERT INTO "plans" ("id", "name", "amount_paise", "period", "description", "badge", "sort_order", "is_default") VALUES
 	('monthly', 'Monthly', 49900, '1 month', 'Try it for an interview season or a busy month.', NULL, 1, false),
 	('yearly', 'Yearly', 399900, '12 months', 'Two-thirds off the monthly price for regular presenters.', 'Best value', 2, true),
-	('lifetime', 'Lifetime', 799900, 'One-time', 'Pay once, including every future update.', NULL, 3, false);
+	('lifetime', 'Lifetime', 999900, 'One-time', 'Pay once, including every future update.', NULL, 3, false);

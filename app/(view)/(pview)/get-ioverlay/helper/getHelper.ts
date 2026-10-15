@@ -1,5 +1,5 @@
 import { payment, receipt } from "../content/getContent";
-import type { Order, Payee, Plan, PlanId } from "../services/getService";
+import type { Order, OrderLine, Payee, Plan, PlanId } from "../services/getService";
 
 /**
  * Failure code meaning the email must be verified with an OTP first: the checkout opens the OTP
@@ -51,6 +51,13 @@ export const getPlan = (plans: Plan[], id: PlanId) => plans.find((plan) => plan.
 
 export const planTitle = (plan: Pick<Plan, "name" | "period">) => `iOverlay ${plan.name} · ${plan.period}`;
 
+/** "iOverlay Monthly · 1 month", with "× 2" when more than one unit is bought. */
+export const orderLineLabel = (plan: Pick<Plan, "name" | "period">, quantity: number) =>
+  quantity > 1 ? `${planTitle(plan)} × ${quantity}` : planTitle(plan);
+
+/** All of an order's lines in one label, for the QR panel and the receipt. */
+export const orderLabel = (items: Pick<OrderLine, "label">[]) => items.map((item) => item.label).join(" + ");
+
 // URLSearchParams encodes spaces as "+", which some UPI apps show literally in the payment note.
 const toQuery = (params: Record<string, string>) =>
   new URLSearchParams(params).toString().replace(/\+/g, "%20");
@@ -67,7 +74,7 @@ export const buildUpiLink = ({ reference, amount, payee }: Order) =>
 
 export interface TransactionSummary {
   reference: string;
-  planId: PlanId;
+  items: OrderLine[];
   email: string;
   phone: string;
   utr: string;

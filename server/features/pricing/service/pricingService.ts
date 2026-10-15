@@ -1,17 +1,18 @@
 import "server-only";
 import type { Payee, Plan } from "@/app/(view)/(pview)/get-ioverlay/services/getService";
-import type { PlanRow, PricingRepository } from "../repository/pricingRepository";
+import type { PlanRow, PricedPlan, PricingRepository } from "../repository/pricingRepository";
 
 export const paiseToRupees = (paise: number) => paise / 100;
 
-export const toPlan = (row: PlanRow): Plan => ({
-  id: row.id,
-  name: row.name,
-  amount: paiseToRupees(row.amountPaise),
-  period: row.period,
-  description: row.description,
-  badge: row.badge,
-  isDefault: row.isDefault,
+export const toPlan = ({ plan, price }: PricedPlan): Plan => ({
+  id: plan.id,
+  name: plan.name,
+  amount: paiseToRupees(price.amountPaise),
+  period: plan.period,
+  description: plan.description,
+  badge: plan.badge,
+  isDefault: plan.isDefault,
+  maxQuantity: plan.maxQuantity,
 });
 
 export class PricingService {
@@ -22,17 +23,17 @@ export class PricingService {
   }
 
   async listPlans(): Promise<Plan[]> {
-    return (await this.pricing.listActivePlans()).map(toPlan);
+    return (await this.pricing.listPlansOnSale()).map(toPlan);
   }
 
-  /** A plan customers can order, with its price in paise, or null if there's no such active plan. */
-  findActivePlan(id: string): Promise<PlanRow | null> {
-    return this.pricing.findActivePlan(id);
+  /** A plan customers can order now, with its current price row, or null if it can't be ordered. */
+  findPlanOnSale(id: string): Promise<PricedPlan | null> {
+    return this.pricing.findPlanOnSale(id);
   }
 
-  /** Any plan, active or not, for showing an existing order. */
-  findPlan(id: string): Promise<PlanRow | null> {
-    return this.pricing.findPlan(id);
+  /** Plans by id, active or not, for showing existing orders. */
+  async findPlans(ids: string[]): Promise<Map<string, PlanRow>> {
+    return new Map((await this.pricing.findPlans([...new Set(ids)])).map((plan) => [plan.id, plan]));
   }
 
   /** The UPI account new orders pay. Throws, so the customer sees a server error, when none is active. */

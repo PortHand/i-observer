@@ -5,7 +5,6 @@ import { users } from "../schema/userSchema";
 
 export type UserRow = typeof users.$inferSelect;
 export type NewUser = Omit<typeof users.$inferInsert, "id" | "createdAt" | "updatedAt">;
-export type UserChanges = Partial<Pick<NewUser, "phone" | "planId">>;
 
 /** Postgres error code for a broken unique constraint. */
 const UNIQUE_VIOLATION = "23505";
@@ -29,15 +28,6 @@ export class UserRepository extends BaseRepository {
 
   async create(user: NewUser): Promise<UserRow> {
     const [row] = await this.db.insert(users).values(user).returning();
-    return row;
-  }
-
-  async update(id: string, changes: UserChanges): Promise<UserRow> {
-    const [row] = await this.db
-      .update(users)
-      .set({ ...changes, updatedAt: new Date() })
-      .where(eq(users.id, id))
-      .returning();
     return row;
   }
 }

@@ -7,3 +7,4 @@ export * from "../features/pricing/schema/pricingSchema";
 export * from "../features/order/schema/orderSchema";
 export * from "../features/otp/schema/otpSchema";
 export * from "../features/user/schema/userSchema";
+export * from "../features/entitlement/schema/entitlementSchema";

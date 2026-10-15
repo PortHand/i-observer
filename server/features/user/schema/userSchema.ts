@@ -1,5 +1,4 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { plans } from "@/server/features/pricing/schema/pricingSchema";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 /**
  * Customers. Created at checkout once the email is verified with an OTP; one account per email and
@@ -18,8 +17,14 @@ export const users = pgTable("users", {
    * customer. Anyone who can read this table can read every password: keep database access tight.
    */
   password: text("password").notNull(),
-  /** The plan from the customer's latest order. */
-  planId: text("plan_id").references(() => plans.id),
+  /**
+   * End of the customer's paid time: the latest ends_at of their active entitlements, kept up to
+   * date by EntitlementService. They have access while it's in the future, or lifetimeAccess is set.
+   * Null: no time plan was ever verified.
+   */
+  accessUntil: timestamp("access_until", { withTimezone: true }),
+  /** An active lifetime entitlement exists. */
+  lifetimeAccess: boolean("lifetime_access").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

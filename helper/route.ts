@@ -34,3 +34,10 @@ export const getIOverlaySections = {
 
 /** Link straight to the checkout form on the Get iOverlay page: "/get-ioverlay#checkout". */
 export const checkoutLink = `${routes.getIOverlay}#${getIOverlaySections.checkout}`;
+
+/** Query parameter that pre-selects a plan at checkout. */
+export const checkoutPlanParam = "plan";
+
+/** The checkout with this plan already chosen: "/get-ioverlay?plan=yearly#checkout". */
+export const checkoutPlanLink = (planId: string) =>
+  `${routes.getIOverlay}?${checkoutPlanParam}=${encodeURIComponent(planId)}#${getIOverlaySections.checkout}`;

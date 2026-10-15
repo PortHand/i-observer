@@ -1,11 +1,12 @@
-// Static content for the Home page, mirroring iobserver-app. Pricing and demo values are placeholders.
+// Static content for the Home page, mirroring iobserver-app. Demo values are placeholders; plans and
+// prices come from the database (plans and plan_prices tables).
 
 import {
   Eye,
+  Gem,
   MousePointerClick,
   Power,
   Sparkles,
-  Users,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -132,51 +133,18 @@ export const demo = {
   videoTitle: "iOverlay demo",
 };
 
-export interface Plan {
-  name: string;
-  icon: LucideIcon;
-  price: string;
-  period: string;
-  description: string;
-  features: string[];
-  highlighted?: boolean;
-}
-
 export const pricing = {
   eyebrow: "Pricing",
   title: "Simple plans.",
-  lead: "Start free. Upgrade when you need more devices and saved notes.",
-  badge: "Popular",
-  signInRequired: "Sign in to choose a plan.",
+  lead: "Pay once by UPI, with no auto-renewal. Buy again before your time runs out and the new time is added on, so you never lose days.",
+  /** Every plan is the full app; plans differ only in how long they last. */
+  features: ["Capture-protected overlay", "Global shortcuts", "Windows, macOS and Linux", "Login by email within 24 hours"],
+  /** Card icons, in plan order (repeating if there are more plans). Decorative only. */
+  icons: [Zap, Sparkles, Gem] as LucideIcon[],
+  choose: "Choose {plan}",
+  loading: "Loading plans…",
+  unavailable: "Plans can't be shown right now. Email {supportEmail} and we'll help you buy.",
 };
-
-export const plans: Plan[] = [
-  {
-    name: "Free",
-    icon: Sparkles,
-    price: "$0",
-    period: "forever",
-    description: "Try the overlay on a single device.",
-    features: ["1 device", "Capture-protected overlay", "Global shortcuts"],
-  },
-  {
-    name: "Pro",
-    icon: Zap,
-    price: "$12",
-    period: "per month",
-    description: "For people who present every day.",
-    features: ["3 devices", "Everything in Free", "Saved notes", "Priority support"],
-    highlighted: true,
-  },
-  {
-    name: "Team",
-    icon: Users,
-    price: "$29",
-    period: "per user / month",
-    description: "Shared setup for whole teams.",
-    features: ["Unlimited devices", "Everything in Pro", "Team management", "SSO"],
-  },
-];
 
 export interface OsSupport {
   name: string;

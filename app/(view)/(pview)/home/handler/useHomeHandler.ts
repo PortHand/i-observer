@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
-import { pricing, type Plan } from "../content/homeContent";
+import { useState, useSyncExternalStore, type FormEvent } from "react";
 import { detectPlatform, isValidEmail, type Platform } from "../helper/homeHelper";
 import * as homeService from "../services/homeService";
 
@@ -12,9 +11,7 @@ export const useHomeHandler = () => {
   const [user, setUser] = useState<homeService.User | null>(null);
   const [signInError, setSignInError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [pricingStatus, setPricingStatus] = useState("");
   const [overlayStatus, setOverlayStatus] = useState("");
-  const signInFormRef = useRef<HTMLFormElement>(null);
 
   const handleSignIn = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,33 +48,14 @@ export const useHomeHandler = () => {
     setOverlayStatus("Open the iOverlay desktop app to start the overlay.");
   };
 
-  const focusSignIn = () => {
-    const form = signInFormRef.current;
-    form?.scrollIntoView({ behavior: "smooth", block: "center" });
-    form?.querySelector("input")?.focus({ preventScroll: true });
-  };
-
-  const handleChoosePlan = (plan: Plan) => {
-    if (!user) {
-      setPricingStatus(pricing.signInRequired);
-      focusSignIn();
-      return;
-    }
-    // Placeholder until checkout is implemented.
-    setPricingStatus(`Checkout for ${plan.name} isn't available yet.`);
-  };
-
   return {
     platform,
     user,
     signInError,
     submitting,
-    pricingStatus,
     overlayStatus,
-    signInFormRef,
     handleSignIn,
     handleSignOut,
     handleStartOverlay,
-    handleChoosePlan,
   };
 };

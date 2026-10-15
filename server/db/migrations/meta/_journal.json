@@ -36,6 +36,20 @@
       "when": 1792001460411,
       "tag": "0004_users",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792046197782,
+      "tag": "0005_plan_prices_items_entitlements",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792046218583,
+      "tag": "0006_drop_replaced_plan_columns",
+      "breakpoints": true
     }
   ]
 }

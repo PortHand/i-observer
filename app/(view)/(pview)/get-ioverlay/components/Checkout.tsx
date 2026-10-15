@@ -14,10 +14,12 @@ import TransactionForm from "./TransactionForm";
 interface CheckoutProps {
   /** Active plans from the database. Must not be empty: CheckoutLoader shows a notice instead. */
   plans: Plan[];
+  /** Plan to pre-select, e.g. from ?plan=; the default plan when it's null or not on sale. */
+  initialPlanId: string | null;
 }
 
-export default function Checkout({ plans }: CheckoutProps) {
-  const co = useCheckoutHandler(plans);
+export default function Checkout({ plans, initialPlanId }: CheckoutProps) {
+  const co = useCheckoutHandler(plans, initialPlanId);
   const { summary } = checkout;
   // "done" isn't in the list, so every step counts as complete then.
   const stepIndex = checkout.progress.findIndex(({ step }) => step === co.step);
