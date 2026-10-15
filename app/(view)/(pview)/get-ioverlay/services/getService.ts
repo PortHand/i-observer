@@ -55,7 +55,8 @@ type Failure = {
 
 export type OrderResult = { ok: true; order: Order } | Failure;
 
-export type SendCodeResult = { ok: true; resendAfter: number; expiresInMinutes: number } | Failure;
+/** sent: false means the latest code is still active and was kept (nothing was emailed). */
+export type SendCodeResult = { ok: true; sent: boolean; resendAfter: number; expiresInMinutes: number } | Failure;
 
 export type VerifyCodeResult = { ok: true; token: string } | Failure;
 
@@ -68,8 +69,9 @@ export type SubmitTransactionResult =
   | { ok: true; submittedAt: string }
   | { ok: false; error: string };
 
-/** Emails a 6-digit code that proves the customer owns `email`. */
-export const sendEmailOtp = (email: string): Promise<SendCodeResult> => otpActions.sendEmailOtp(email, "checkout");
+/** Makes sure `email` has a working code: the server keeps an active one or emails a new one. `resend` forces a new one. */
+export const sendEmailOtp = (email: string, resend = false): Promise<SendCodeResult> =>
+  otpActions.sendEmailOtp(email, "checkout", resend);
 
 /** Checks the code. The token it returns is passed to createOrder (and to updateOrder for a new email). */
 export const verifyEmailOtp = (email: string, code: string): Promise<VerifyCodeResult> =>

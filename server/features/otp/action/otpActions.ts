@@ -18,9 +18,12 @@ const emailKey = (email: unknown, purpose: unknown): OtpKey => {
   return { channel: "email", target, purpose: purpose as OtpPurpose };
 };
 
-/** Emails a 6-digit OTP to `email` for `purpose`, e.g. "checkout". */
-export async function sendEmailOtp(email: string, purpose: OtpPurpose) {
-  return runAction(async () => otpService.sendCode(emailKey(email, purpose)));
+/**
+ * Makes sure `email` has a working 6-digit OTP for `purpose` (e.g. "checkout"): the server keeps
+ * the latest one while it's active, otherwise emails a new one. `resend` always asks for a new one.
+ */
+export async function sendEmailOtp(email: string, purpose: OtpPurpose, resend = false) {
+  return runAction(async () => otpService.sendCode(emailKey(email, purpose), { resend: resend === true }));
 }
 
 /** Checks the OTP. On success returns a token that proves the email to later actions, such as createOrder. */

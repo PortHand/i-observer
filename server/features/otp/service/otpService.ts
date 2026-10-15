@@ -38,9 +38,11 @@ const hashCode = ({ channel, target, purpose }: OtpKey, code: string) => sha256(
 const sameHash = (a: string, b: string) => a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
 export interface CodeSent {
+  /** True when a new code went out; false when the latest one is still active and was kept. */
+  sent: boolean;
   /** Seconds until the customer may ask for another code. */
   resendAfter: number;
-  /** Minutes the code stays valid. */
+  /** Minutes until the active code expires. */
   expiresInMinutes: number;
 }
 
@@ -57,18 +59,24 @@ export class OtpService {
     this.senders = senders;
   }
 
-  /** Sends a new code for `key`. */
-  async sendCode(key: OtpKey): Promise<CodeSent> {
-    const { resendAfterSeconds, maxCodesPerHour, codeLength, codeTtlMinutes } = otpLimits;
+  /**
+   * Makes sure the customer has a working code for `key`, checked against the otp table:
+   * - the latest code is still active (not expired, not used, not locked by wrong tries): it's
+   *   kept and nothing is sent, unless `resend` asks for a new one ("Resend code");
+   * - otherwise (none yet, expired, used or locked): a new code is sent, within the send limits.
+   */
+  async sendCode(key: OtpKey, { resend = false }: { resend?: boolean } = {}): Promise<CodeSent> {
+    const { resendAfterSeconds, maxCodesPerHour, codeLength, codeTtlMinutes, maxAttempts } = otpLimits;
     const now = Date.now();
 
     const latest = await this.otps.latest(key);
     const waited = latest ? (now - latest.createdAt.getTime()) / 1000 : Infinity;
-    if (waited < resendAfterSeconds) {
-      // The last code is still valid (it was sent under a minute ago), so the page can just ask for it.
-      const retryAfter = Math.ceil(resendAfterSeconds - waited);
-      throw HttpError.tooManyRequests(messages.wait(retryAfter), retryAfter);
+    const resendAfter = Math.max(0, Math.ceil(resendAfterSeconds - waited));
+    const active = latest && !latest.verifiedAt && latest.expiresAt.getTime() > now && latest.attempts < maxAttempts;
+    if (active && !resend) {
+      return { sent: false, resendAfter, expiresInMinutes: Math.ceil((latest.expiresAt.getTime() - now) / MINUTE) };
     }
+    if (resendAfter > 0) throw HttpError.tooManyRequests(messages.wait(resendAfter), resendAfter);
     if ((await this.otps.countSince(key, new Date(now - 60 * MINUTE))) >= maxCodesPerHour) {
       throw HttpError.tooManyRequests(messages.tooMany(key.channel));
     }
@@ -81,7 +89,7 @@ export class OtpService {
       await this.otps.delete(id);
       throw error;
     }
-    return { resendAfter: resendAfterSeconds, expiresInMinutes: codeTtlMinutes };
+    return { sent: true, resendAfter: resendAfterSeconds, expiresInMinutes: codeTtlMinutes };
   }
 
   /** Checks the latest code for `key`. Returns a token that proves the target in later requests. */

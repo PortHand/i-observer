@@ -96,18 +96,19 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
   };
 
   /**
-   * Emails a code to `email`. "Wait N seconds" counts as sent: a code went to this address under a
-   * minute ago and still works, so the modal opens with the countdown on "Resend code" (e.g. after
-   * "Change email" and back to the same address).
+   * Asks the server for a working code for `email`. The server decides from the otp table: it keeps
+   * the latest code while it's active (nothing is emailed) or sends a new one once it has expired;
+   * `resend` forces a new one. "Wait N seconds" on a resend still opens the modal, with the
+   * countdown on "Resend code".
    */
-  const sendCode = async (email: string): Promise<{ error: string } | { sent: boolean }> => {
-    const result = await getService.sendEmailOtp(email);
+  const sendCode = async (email: string, resend = false): Promise<{ error: string } | { sent: boolean }> => {
+    const result = await getService.sendEmailOtp(email, resend);
     const resendAfter = result.ok ? result.resendAfter : result.retryAfter;
     if (!result.ok && resendAfter === undefined) return { error: result.fields?.email ?? result.error };
     setCodeSentTo(email);
     setResendAt(Date.now() + (resendAfter ?? 0) * 1000);
     setNow(Date.now());
-    return { sent: result.ok };
+    return { sent: result.ok && result.sent };
   };
 
   /**
@@ -164,11 +165,9 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
 
       setOtpError("");
       setNotice("");
-      // A code already went to this address: reopen the modal instead of sending another.
-      if (codeSentTo !== email) {
-        const outcome = await sendCode(email);
-        if ("error" in outcome) return setError(outcome.error);
-      }
+      // The server keeps an active code (nothing emailed) or sends a new one if it has expired.
+      const outcome = await sendCode(email);
+      if ("error" in outcome) return setError(outcome.error);
       setOtpOpen(true);
     } finally {
       setSubmitting(false);
@@ -203,7 +202,7 @@ export const useCheckoutHandler = (plans: getService.Plan[]) => {
     setOtpError("");
     setNotice("");
     try {
-      const outcome = await sendCode(codeSentTo);
+      const outcome = await sendCode(codeSentTo, true);
       if ("error" in outcome) setOtpError(outcome.error);
       else if (outcome.sent) setNotice(checkout.contact.codeResent);
     } finally {
