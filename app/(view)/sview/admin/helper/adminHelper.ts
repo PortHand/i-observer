@@ -48,6 +48,10 @@ export const dashboardLink = (range: DashboardRange) => (range === 30 ? routes.a
 export const formatIst = (iso: string) =>
   new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(iso));
 
+/** Compact IST date and time for tables: "15 Oct, 2:24 pm". */
+export const formatIstShort = (iso: string) =>
+  new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }).format(new Date(iso));
+
 /** How long ago `iso` was, roughly: "5 min", "3 h", "2 days". */
 export const formatAge = (iso: string, now = Date.now()) => {
   const minutes = Math.max(0, Math.round((now - Date.parse(iso)) / 60000));
@@ -101,4 +105,16 @@ export const niceScale = (value: number, ticks = 4) => {
   const magnitude = 10 ** Math.floor(Math.log10(rough));
   const step = [1, 2, 5, 10].map((factor) => factor * magnitude).find((candidate) => candidate >= rough) ?? 10 * magnitude;
   return { max: step * ticks, step };
+};
+
+/** How urgent a payment waiting since `iso` is: under a day is fine, a day is late, three days overdue. */
+export const waitTone = (iso: string, now = Date.now()) => {
+  const hours = (now - Date.parse(iso)) / 3_600_000;
+  return hours >= 72 ? "overdue" : hours >= 24 ? "late" : "fresh";
+};
+
+/** A plan label ("iOverlay Monthly · 1 month × 2") as its name and the rest, for two-line display. */
+export const splitPlan = (label: string) => {
+  const at = label.indexOf(" · ");
+  return at === -1 ? { name: label, detail: "" } : { name: label.slice(0, at), detail: label.slice(at + 3) };
 };

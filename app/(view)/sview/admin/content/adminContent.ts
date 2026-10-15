@@ -49,7 +49,18 @@ export const list = {
   search: "Search",
   clear: "Clear",
   hasReceipt: "Screenshot attached",
-  columns: { reference: "Order", customer: "Customer", plan: "Plan", amount: "Amount", utr: "UTR", date: "Date", status: "Status" },
+  tabsLabel: "Order status",
+  columns: { reference: "Order", utr: "UTR" },
+  noUtr: "Not sent",
+  morePlans: "+{count}",
+  sentOn: "Sent {date}",
+  createdOn: "Created {date}",
+  review: "Review",
+  open: "Open",
+  copyUtr: "Copy UTR",
+  copied: "Copied",
+  keysHint: "Arrow keys to move · Enter to open",
+  showing: "Showing {from}–{to} of {total}",
   count: "{count} orders",
   countOne: "1 order",
   empty: "No orders here.",
@@ -57,8 +68,6 @@ export const list = {
   previous: "Previous",
   next: "Next",
   page: "Page {page} of {pages}",
-  submitted: "Sent {date}",
-  created: "Created {date}",
 };
 
 export const detail = {

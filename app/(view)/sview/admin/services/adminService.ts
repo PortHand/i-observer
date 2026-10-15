@@ -18,6 +18,8 @@ export interface AdminOrderSummary {
   amount: number;
   /** Every line's label, e.g. "iOverlay Yearly · 12 months". */
   planLabel: string;
+  /** The same labels one per line, for lists that show them separately. */
+  plans: string[];
   utr: string | null;
   /** The customer attached a payment screenshot. */
   hasReceipt: boolean;
@@ -41,12 +43,15 @@ export interface AdminOrderDetail extends AdminOrderSummary {
 export type StatusFilter = OrderStatus | "all";
 
 export interface AdminOrderPage {
+  /** When the list was read (ISO): waiting times count from here. */
+  asOf: string;
   orders: AdminOrderSummary[];
   /** Orders matching the search, per status and in total. */
   counts: Record<StatusFilter, number>;
   /** 1-based. */
   page: number;
   pageCount: number;
+  pageSize: number;
 }
 
 /** Days the dashboard can look back over. */

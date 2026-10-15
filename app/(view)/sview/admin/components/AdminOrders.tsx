@@ -2,9 +2,11 @@ import { requireUser } from "@/server/features/auth/guard/authGuard";
 import { orderReviewService } from "@/server/features/order/module/orderModule";
 import { list, listIntro, statusTabs } from "../content/adminContent";
 import { parseListQuery } from "../helper/adminHelper";
-import OrderTable from "./OrderTable";
+import OrderListKeys from "./OrderListKeys";
+import OrderCards from "./OrderCards";
 import Pagination from "./Pagination";
 import SearchForm from "./SearchForm";
+import StatusTabs from "./StatusTabs";
 
 /** The order list for the URL's filters. Reads the session and the database: render inside <Suspense>. */
 export default async function AdminOrders({ searchParams }: { searchParams: PageProps<"/sview/admin/orders">["searchParams"] }) {
@@ -24,8 +26,19 @@ export default async function AdminOrders({ searchParams }: { searchParams: Page
         </div>
         <SearchForm query={query} />
       </header>
-      <OrderTable orders={result.orders} searching={Boolean(query.search)} />
-      <Pagination query={query} page={result.page} pageCount={result.pageCount} />
+      <section className="order-list">
+        <StatusTabs query={query} counts={result.counts} />
+        {result.orders.length === 0 ? (
+          <p className="order-list__empty text-muted">{query.search ? list.emptySearch : list.empty}</p>
+        ) : (
+          <OrderListKeys>
+            <OrderCards orders={result.orders} waiting={query.status === "submitted"} asOf={result.asOf} />
+          </OrderListKeys>
+        )}
+        {total > 0 && (
+          <Pagination query={query} page={result.page} pageCount={result.pageCount} pageSize={result.pageSize} total={total} />
+        )}
+      </section>
     </div>
   );
 }

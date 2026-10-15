@@ -149,10 +149,12 @@ export class OrderReviewService {
     const rows = await this.orders.list(filter, PAGE_SIZE, (current - 1) * PAGE_SIZE);
     const lines = await this.toLines(await this.orders.findItemsFor(rows.map((row) => row.reference)));
     return {
+      asOf: new Date().toISOString(),
       orders: rows.map((row) => this.toSummary(row, lines.get(row.reference) ?? [])),
       counts,
       page: current,
       pageCount,
+      pageSize: PAGE_SIZE,
     };
   }
 
@@ -230,6 +232,7 @@ export class OrderReviewService {
       status: row.status,
       amount: paiseToRupees(row.amountPaise),
       planLabel: orderLabel(lines),
+      plans: lines.map((line) => line.label),
       utr: row.utr,
       hasReceipt: row.receiptPath !== null,
       createdAt: row.createdAt.toISOString(),
