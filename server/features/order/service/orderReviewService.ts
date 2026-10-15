@@ -2,6 +2,7 @@ import "server-only";
 import { formatAmount, orderLabel, orderLineLabel } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import type { OrderLine } from "@/app/(view)/(pview)/get-ioverlay/services/getService";
 import type {
+  AdminDashboard,
   AdminOrderDetail,
   AdminOrderPage,
   AdminOrderSummary,
@@ -21,6 +22,20 @@ import type { OrderService } from "./orderService";
 export const ORDER_STATUSES: OrderStatus[] = ["submitted", "pending", "verified", "rejected", "refunded"];
 
 const PAGE_SIZE = 25;
+
+/** Rows in each dashboard panel. */
+const PANEL_SIZE = 5;
+
+/** India has no daylight saving, so a fixed offset finds IST midnights. */
+const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000;
+
+/** IST midnight starting today, this month and last month, as instants. */
+const istPeriods = (now: Date) => {
+  const local = new Date(now.getTime() + IST_OFFSET_MS);
+  const [year, month, day] = [local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate()];
+  const at = (y: number, m: number, d: number) => new Date(Date.UTC(y, m, d) - IST_OFFSET_MS);
+  return { today: at(year, month, day), thisMonth: at(year, month, 1), lastMonth: at(year, month - 1, 1) };
+};
 
 /** What happened after a review: the order's new status, and whether the customer was emailed. */
 export interface ReviewOutcome {
@@ -51,12 +66,44 @@ export class OrderReviewService {
     this.mail = mail;
   }
 
+  /** Orders per status, and in total, matching `search` (all orders without one). */
+  async counts(search?: string): Promise<AdminOrderPage["counts"]> {
+    const byStatus = await this.orders.countByStatus(search || undefined);
+    const counts = Object.fromEntries(ORDER_STATUSES.map((value) => [value, byStatus[value] ?? 0])) as AdminOrderPage["counts"];
+    counts.all = ORDER_STATUSES.reduce((total, value) => total + counts[value], 0);
+    return counts;
+  }
+
+  /** Everything the admin dashboard shows, in one round of queries. */
+  async dashboard(now = new Date()): Promise<AdminDashboard> {
+    const periods = istPeriods(now);
+    const [counts, thisMonth, lastMonth, ordersToday, queueRows, recentRows] = await Promise.all([
+      this.counts(),
+      this.orders.verifiedBetween(periods.thisMonth),
+      this.orders.verifiedBetween(periods.lastMonth, periods.thisMonth),
+      this.orders.countCreatedSince(periods.today),
+      this.orders.list({ status: "submitted" }, PANEL_SIZE, 0),
+      this.orders.recentlyReviewed(PANEL_SIZE),
+    ]);
+    const lines = await this.toLines(await this.orders.findItemsFor([...queueRows, ...recentRows].map((row) => row.reference)));
+    const summary = (row: OrderRow) => this.toSummary(row, lines.get(row.reference) ?? []);
+    const money = ({ orders, paise }: { orders: number; paise: number }) => ({ orders, amount: paiseToRupees(paise) });
+    return {
+      asOf: now.toISOString(),
+      counts,
+      oldestWaitingSince: queueRows[0]?.submittedAt?.toISOString() ?? null,
+      thisMonth: money(thisMonth),
+      lastMonth: money(lastMonth),
+      ordersToday,
+      queue: queueRows.map(summary),
+      recent: recentRows.map(summary),
+    };
+  }
+
   /** One page of orders with this status (or all), matching `search`, plus the count per status. */
   async list(status: StatusFilter, search: string, page: number): Promise<AdminOrderPage> {
     const filter = { status: status === "all" ? undefined : status, search: search || undefined };
-    const byStatus = await this.orders.countByStatus(filter.search);
-    const counts = Object.fromEntries(ORDER_STATUSES.map((value) => [value, byStatus[value] ?? 0])) as AdminOrderPage["counts"];
-    counts.all = ORDER_STATUSES.reduce((total, value) => total + counts[value], 0);
+    const counts = await this.counts(filter.search);
 
     const pageCount = Math.max(1, Math.ceil(counts[status] / PAGE_SIZE));
     const current = Math.min(Math.max(1, page), pageCount);

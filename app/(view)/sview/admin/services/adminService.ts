@@ -45,6 +45,23 @@ export interface AdminOrderPage {
   pageCount: number;
 }
 
+/** The admin dashboard's figures. Months and days are counted in IST. */
+export interface AdminDashboard {
+  /** When the figures were read (ISO): ages such as "waiting 3 h" count from here. */
+  asOf: string;
+  counts: Record<StatusFilter, number>;
+  /** When the longest-waiting submitted order was sent (ISO), or null when none wait. */
+  oldestWaitingSince: string | null;
+  /** Approved this month so far, and all of last month: rupees and order counts. */
+  thisMonth: { amount: number; orders: number };
+  lastMonth: { amount: number; orders: number };
+  ordersToday: number;
+  /** Oldest submitted orders first: the next ones to review. */
+  queue: AdminOrderSummary[];
+  /** Latest reviews, newest first. */
+  recent: AdminOrderSummary[];
+}
+
 export type ReviewAction = "verify" | "reject" | "refund" | "resend";
 
 export type ReviewResult = Awaited<ReturnType<typeof reviewActions.reviewOrder>>;

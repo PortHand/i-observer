@@ -31,9 +31,22 @@ export const ordersLink = ({ status, search, page }: Partial<ListQuery>) => {
   if (search) query.set("q", search);
   if (page && page > 1) query.set("page", String(page));
   const text = query.toString();
-  return text ? `${routes.admin}?${text}` : routes.admin;
+  return text ? `${routes.adminOrders}?${text}` : routes.adminOrders;
 };
 
 /** Admins work in India, so times show in IST whatever the server's time zone. */
 export const formatIst = (iso: string) =>
   new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(iso));
+
+/** How long ago `iso` was, roughly: "5 min", "3 h", "2 days". */
+export const formatAge = (iso: string, now = Date.now()) => {
+  const minutes = Math.max(0, Math.round((now - Date.parse(iso)) / 60000));
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 48) return `${hours} h`;
+  return `${Math.round(hours / 24)} days`;
+};
+
+/** "1 order" or "12 orders". */
+export const orderCount = (count: number, text: { one: string; many: string }) =>
+  count === 1 ? text.one : text.many.replace("{count}", String(count));

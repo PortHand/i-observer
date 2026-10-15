@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, ilike, inArray, or, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lt, or, sum, type SQL } from "drizzle-orm";
 import { BaseRepository } from "@/server/core/baseRepository";
 import type { Tx } from "@/server/core/database";
 import { orderItems, orders, type OrderStatus } from "../schema/orderSchema";
@@ -65,6 +65,25 @@ export class OrderRepository extends BaseRepository {
       .where(filterWhere({ search }))
       .groupBy(orders.status);
     return Object.fromEntries(rows.map((row) => [row.status, row.total]));
+  }
+
+  /** Verified orders reviewed in [from, to): how many, and their total in paise. */
+  async verifiedBetween(from: Date, to?: Date): Promise<{ orders: number; paise: number }> {
+    const [row] = await this.db
+      .select({ orders: count(), paise: sum(orders.amountPaise).mapWith(Number) })
+      .from(orders)
+      .where(and(eq(orders.status, "verified"), gte(orders.reviewedAt, from), to ? lt(orders.reviewedAt, to) : undefined));
+    return { orders: row?.orders ?? 0, paise: row?.paise ?? 0 };
+  }
+
+  async countCreatedSince(from: Date): Promise<number> {
+    const [row] = await this.db.select({ total: count() }).from(orders).where(gte(orders.createdAt, from));
+    return row?.total ?? 0;
+  }
+
+  /** The latest reviews (verified, rejected or refunded), newest first. */
+  recentlyReviewed(limit: number): Promise<OrderRow[]> {
+    return this.db.select().from(orders).where(isNotNull(orders.reviewedAt)).orderBy(desc(orders.reviewedAt)).limit(limit);
   }
 
   /** The lines of several orders at once, for a list page. */

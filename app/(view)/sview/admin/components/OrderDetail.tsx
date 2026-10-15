@@ -7,7 +7,6 @@ import { orderReviewService } from "@/server/features/order/module/orderModule";
 import { detail } from "../content/adminContent";
 import { formatIst, ordersLink } from "../helper/adminHelper";
 import type { AdminOrderDetail, OrderStatus, ReviewAction } from "../services/adminService";
-import AdminBar from "./AdminBar";
 import ReviewPanel from "./ReviewPanel";
 import StatusBadge from "./StatusBadge";
 
@@ -35,7 +34,7 @@ const accessText = (customer: NonNullable<AdminOrderDetail["customer"]>) => {
 
 /** One order, with its review actions. Reads the session and the database: render inside <Suspense>. */
 export default async function OrderDetail({ params }: { params: PageProps<"/sview/admin/orders/[reference]">["params"] }) {
-  const user = await requireUser("admin");
+  await requireUser("admin");
   const { reference } = await params;
   const order = await orderReviewService.detail(decodeURIComponent(reference));
   if (!order) notFound();
@@ -44,77 +43,86 @@ export default async function OrderDetail({ params }: { params: PageProps<"/svie
   const idle = order.status === "pending" || order.status === "rejected" || order.status === "refunded";
 
   return (
-    <>
-      <AdminBar user={user} />
-      <Link className="text-link mono admin-back" href={ordersLink({ status: order.status })}>
-        <ArrowLeft className="icon icon--sm" strokeWidth={1.75} />
-        {detail.back}
-      </Link>
-      <header className="order-head">
-        <h1 className="display order-head__title">{order.reference}</h1>
-        <StatusBadge status={order.status} />
+    <div className="admin-page">
+      <header className="admin-page__header">
+        <div className="admin-page__heading">
+          <Link className="admin-back mono" href={ordersLink({ status: order.status })}>
+            <ArrowLeft className="icon icon--sm" strokeWidth={1.75} />
+            {detail.back}
+          </Link>
+          <div className="order-head">
+            <h1 className="admin-page__title">{order.reference}</h1>
+            <StatusBadge status={order.status} />
+          </div>
+          <p className="text-muted admin-page__lead">
+            {order.email} · {formatAmount(order.amount)} · {formatIst(order.createdAt)}
+          </p>
+        </div>
       </header>
 
       <div className="order-grid">
-        <section className="card">
-          <h2 className="section-label">{sections.payment}</h2>
-          <dl className="details">
-            <Row label={labels.amount}>
-              <span className="mono">{formatAmount(order.amount)}</span>
-            </Row>
-            <Row label={labels.utr}>{order.utr ? <span className="mono order-utr">{order.utr}</span> : <span className="text-muted">{detail.noUtr}</span>}</Row>
-            <Row label={labels.payee}>
-              {order.payee.name} · <span className="mono">{order.payee.upiId}</span>
-            </Row>
-            <Row label={labels.created}>{formatIst(order.createdAt)}</Row>
-            {order.submittedAt && <Row label={labels.submitted}>{formatIst(order.submittedAt)}</Row>}
-          </dl>
-        </section>
-
-        <section className="card">
-          <h2 className="section-label">{sections.customer}</h2>
-          <dl className="details">
-            <Row label={labels.email}>{order.email}</Row>
-            <Row label={labels.phone}>{formatPhone(order.phone)}</Row>
-            {order.customer ? (
-              <>
-                <Row label={labels.username}>{order.customer.username}</Row>
-                <Row label={labels.access}>{accessText(order.customer)}</Row>
-              </>
-            ) : (
-              <Row label={labels.username}>
-                <span className="text-muted">{labels.noAccount}</span>
-              </Row>
-            )}
-          </dl>
-        </section>
-
-        <section className="card">
-          <h2 className="section-label">{sections.plans}</h2>
-          <dl className="details">
-            {order.lines.map((line) => (
-              <Row key={line.planId} label={line.label}>
-                <span className="mono">{formatAmount(line.amount)}</span>
-              </Row>
-            ))}
-            <Row label={labels.total}>
-              <strong className="mono">{formatAmount(order.amount)}</strong>
-            </Row>
-          </dl>
-        </section>
-
-        <section className="card">
-          <h2 className="section-label">{sections.review}</h2>
-          {order.reviewedAt && (
+        <div className="order-col">
+          <section className="card order-card--payment">
+            <h2 className="section-label">{sections.payment}</h2>
             <dl className="details">
-              <Row label={labels.reviewed}>{formatIst(order.reviewedAt)}</Row>
-              {order.reviewNote && <Row label={labels.note}>{order.reviewNote}</Row>}
+              <Row label={labels.amount}>
+                <span className="mono">{formatAmount(order.amount)}</span>
+              </Row>
+              <Row label={labels.utr}>{order.utr ? <span className="mono order-utr">{order.utr}</span> : <span className="text-muted">{detail.noUtr}</span>}</Row>
+              <Row label={labels.payee}>
+                {order.payee.name} · <span className="code">{order.payee.upiId}</span>
+              </Row>
+              <Row label={labels.created}>{formatIst(order.createdAt)}</Row>
+              {order.submittedAt && <Row label={labels.submitted}>{formatIst(order.submittedAt)}</Row>}
             </dl>
-          )}
-          {idle && <p className="text-muted">{detail.noActions[order.status as keyof typeof detail.noActions]}</p>}
-          <ReviewPanel reference={order.reference} available={available} />
-        </section>
+          </section>
+
+          <section className="card order-card--customer">
+            <h2 className="section-label">{sections.customer}</h2>
+            <dl className="details">
+              <Row label={labels.email}>{order.email}</Row>
+              <Row label={labels.phone}>{formatPhone(order.phone)}</Row>
+              {order.customer ? (
+                <>
+                  <Row label={labels.username}>{order.customer.username}</Row>
+                  <Row label={labels.access}>{accessText(order.customer)}</Row>
+                </>
+              ) : (
+                <Row label={labels.username}>
+                  <span className="text-muted">{labels.noAccount}</span>
+                </Row>
+              )}
+            </dl>
+          </section>
+        </div>
+        <div className="order-col">
+          <section className="card order-card--review">
+            <h2 className="section-label">{sections.review}</h2>
+            {order.reviewedAt && (
+              <dl className="details">
+                <Row label={labels.reviewed}>{formatIst(order.reviewedAt)}</Row>
+                {order.reviewNote && <Row label={labels.note}>{order.reviewNote}</Row>}
+              </dl>
+            )}
+            {idle && <p className="text-muted">{detail.noActions[order.status as keyof typeof detail.noActions]}</p>}
+            <ReviewPanel reference={order.reference} available={available} />
+          </section>
+
+          <section className="card order-card--plans">
+            <h2 className="section-label">{sections.plans}</h2>
+            <dl className="details">
+              {order.lines.map((line) => (
+                <Row key={line.planId} label={line.label}>
+                  <span className="mono">{formatAmount(line.amount)}</span>
+                </Row>
+              ))}
+              <Row label={labels.total}>
+                <strong className="mono">{formatAmount(order.amount)}</strong>
+              </Row>
+            </dl>
+          </section>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

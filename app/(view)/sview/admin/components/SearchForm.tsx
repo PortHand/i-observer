@@ -7,7 +7,7 @@ import { ordersLink, type ListQuery } from "../helper/adminHelper";
 /** A plain GET form: the search lands in the URL (?q=), so it works without JavaScript and can be shared. */
 export default function SearchForm({ query }: { query: ListQuery }) {
   return (
-    <form className="admin-search" action={routes.admin} method="get" role="search">
+    <form className="admin-search" action={routes.adminOrders} method="get" role="search">
       {query.status !== "submitted" && <input type="hidden" name="status" value={query.status} />}
       <label className="input-group admin-search__field">
         <span className="visually-hidden">{list.searchLabel}</span>

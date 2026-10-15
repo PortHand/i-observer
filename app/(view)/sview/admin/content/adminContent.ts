@@ -3,11 +3,25 @@
 import type { ReviewAction, StatusFilter } from "../services/adminService";
 
 export const portal = {
-  eyebrow: "Admin portal",
-  title: "Orders & payments",
-  lead: "Check each submitted UTR against the bank statement, then approve or reject the payment.",
+  tagline: "Admin portal",
+  overviewHeading: "Overview",
+  dashboard: "Dashboard",
+  ordersHeading: "Orders",
+  siteHeading: "Site",
+  viewSite: "View website",
   signedInAs: "Signed in as",
   signOut: "Sign out",
+  navLabel: "Admin",
+};
+
+/** Heading and intro above the order list, per status. */
+export const listIntro: Record<StatusFilter, string> = {
+  submitted: "Customers who sent a UTR. Check each against the bank statement, then approve or reject it. Oldest first.",
+  pending: "Orders with a QR code shown but no UTR yet. Nothing to do until the customer pays.",
+  verified: "Payments you approved. The customer has access and got their login by email.",
+  rejected: "Payments with no match on the bank statement.",
+  refunded: "Payments sent back to the customer. Their access from these orders was removed.",
+  all: "Every order, newest first.",
 };
 
 /** Status tabs, in this order. "submitted" first: those are waiting on us. */
@@ -35,6 +49,8 @@ export const list = {
   search: "Search",
   clear: "Clear",
   columns: { reference: "Order", customer: "Customer", plan: "Plan", amount: "Amount", utr: "UTR", date: "Date", status: "Status" },
+  count: "{count} orders",
+  countOne: "1 order",
   empty: "No orders here.",
   emptySearch: "No orders match this search.",
   previous: "Previous",
@@ -117,4 +133,24 @@ export const review = {
   } satisfies Record<ReviewAction, string>,
   emailed: " The customer was emailed.",
   emailFailed: " But the email to the customer failed: check the server log, then use Resend.",
+};
+
+export const dashboard = {
+  eyebrow: "Overview",
+  title: "Dashboard",
+  lead: "Payments waiting on you, and how sales are going. Days and months are in IST.",
+  hero: {
+    label: "Payments to review",
+    waiting: "Oldest waiting {age}",
+    none: "Nothing waiting. You're all caught up.",
+    cta: "Review payments",
+  },
+  tiles: {
+    revenue: { label: "Approved this month", caption: "{orders} · last month {amount}" },
+    today: { label: "Orders today", caption: "Placed since midnight" },
+    pending: { label: "Awaiting payment", caption: "QR shown, no UTR yet" },
+  },
+  orders: { one: "1 order", many: "{count} orders" },
+  queue: { title: "Next to review", link: "View all", empty: "No payments waiting." },
+  recent: { title: "Recent decisions", link: "All orders", empty: "No payments reviewed yet." },
 };

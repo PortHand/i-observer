@@ -28,19 +28,19 @@ export default function OrderTable({ orders, searching }: { orders: AdminOrderSu
         <tbody>
           {orders.map((order) => (
             <tr key={order.reference}>
-              <td>
+              <td className="admin-table__nowrap">
                 <Link className="text-link mono" href={adminOrderLink(order.reference)}>
                   {order.reference}
                 </Link>
               </td>
-              <td>
+              <td className="admin-table__customer">
                 <span className="admin-table__primary">{order.email}</span>
                 <span className="text-muted">{formatPhone(order.phone)}</span>
               </td>
               <td>{order.planLabel}</td>
               <td className="admin-table__number mono">{formatAmount(order.amount)}</td>
               <td className="mono">{order.utr ?? "—"}</td>
-              <td className="text-muted">
+              <td className="text-muted admin-table__nowrap">
                 {order.submittedAt
                   ? list.submitted.replace("{date}", formatIst(order.submittedAt))
                   : list.created.replace("{date}", formatIst(order.createdAt))}
