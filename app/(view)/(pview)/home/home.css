@@ -10,6 +10,27 @@ body {
   background: var(--color-canvas);
 }
 
+/*
+ * Short pages (sign in, contact) keep the footer at the bottom of the window: the page is a
+ * column, <main> takes the leftover height, and its last band stretches to fill it, so the band's
+ * rule meets the footer rather than crossing the middle of the page. Only pages with the site
+ * footer, so the admin portal's own shell is untouched.
+ */
+body:has(> .page-footer) {
+  display: flex;
+  flex-direction: column;
+}
+
+body:has(> .page-footer) > main {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+}
+
+body:has(> .page-footer) > main > :last-child {
+  flex-grow: 1;
+}
+
 a {
   color: inherit;
   text-decoration: none;
