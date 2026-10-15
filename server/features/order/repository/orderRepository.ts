@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lt, or, sum, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lt, or, sql, sum, type SQL, type SQLWrapper } from "drizzle-orm";
 import { BaseRepository } from "@/server/core/baseRepository";
 import type { Tx } from "@/server/core/database";
 import { orderItems, orders, type OrderStatus } from "../schema/orderSchema";
@@ -23,6 +23,9 @@ export interface OrderFilter {
 
 /** `%`, `_` and `\` are wildcards in LIKE: escape them so a search matches them literally. */
 const likeTerm = (text: string) => `%${text.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
+
+/** The IST calendar day of a timestamp column, as "YYYY-MM-DD". */
+const istDay = (column: SQLWrapper) => sql<string>`to_char(${column} at time zone 'Asia/Kolkata', 'YYYY-MM-DD')`;
 
 const filterWhere = ({ status, search }: OrderFilter): SQL | undefined => {
   const term = search ? likeTerm(search) : null;
@@ -76,9 +79,46 @@ export class OrderRepository extends BaseRepository {
     return { orders: row?.orders ?? 0, paise: row?.paise ?? 0 };
   }
 
-  async countCreatedSince(from: Date): Promise<number> {
-    const [row] = await this.db.select({ total: count() }).from(orders).where(gte(orders.createdAt, from));
-    return row?.total ?? 0;
+  /** Orders created in [from, to): how many, and how many of those the customer paid (sent a UTR). */
+  async createdBetween(from: Date, to?: Date): Promise<{ orders: number; paid: number }> {
+    const [row] = await this.db
+      .select({ orders: count(), paid: count(orders.submittedAt) })
+      .from(orders)
+      .where(and(gte(orders.createdAt, from), to ? lt(orders.createdAt, to) : undefined));
+    return { orders: row?.orders ?? 0, paid: row?.paid ?? 0 };
+  }
+
+  /** Orders created per IST day since `from`. Days with none are left out. */
+  async createdPerDay(from: Date): Promise<{ day: string; orders: number }[]> {
+    const day = istDay(orders.createdAt);
+    return this.db.select({ day, orders: count() }).from(orders).where(gte(orders.createdAt, from)).groupBy(day);
+  }
+
+  /** Verified orders per IST day of review since `from`: how many, and their total in paise. Days with none are left out. */
+  async verifiedPerDay(from: Date): Promise<{ day: string; orders: number; paise: number }[]> {
+    const day = istDay(orders.reviewedAt);
+    const rows = await this.db
+      .select({ day, orders: count(), paise: sum(orders.amountPaise).mapWith(Number) })
+      .from(orders)
+      .where(and(eq(orders.status, "verified"), gte(orders.reviewedAt, from)))
+      .groupBy(day);
+    return rows.map((row) => ({ ...row, paise: row.paise ?? 0 }));
+  }
+
+  /**
+   * Payments decided (approved or rejected) since `from`, and the mean time from UTR to decision in
+   * seconds (null when none). Refunds are left out: their review time is when the money went back.
+   */
+  async decisionsSince(from: Date): Promise<{ verified: number; rejected: number; avgSeconds: number | null }> {
+    const [row] = await this.db
+      .select({
+        verified: count(sql`case when ${orders.status} = 'verified' then 1 end`),
+        rejected: count(sql`case when ${orders.status} = 'rejected' then 1 end`),
+        avgSeconds: sql<number | null>`avg(extract(epoch from ${orders.reviewedAt} - ${orders.submittedAt}))`.mapWith(Number),
+      })
+      .from(orders)
+      .where(and(inArray(orders.status, ["verified", "rejected"]), gte(orders.reviewedAt, from)));
+    return { verified: row?.verified ?? 0, rejected: row?.rejected ?? 0, avgSeconds: row?.avgSeconds ?? null };
   }
 
   /** The latest reviews (verified, rejected or refunded), newest first. */

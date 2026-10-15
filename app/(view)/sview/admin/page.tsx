@@ -7,11 +7,11 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-/** Admin home: what needs review, and how sales are going. Admins only. */
-export default function AdminDashboardView() {
+/** Admin home: what needs review, and how sales are going over ?range= days. Admins only. */
+export default function AdminDashboardView({ searchParams }: PageProps<"/sview/admin">) {
   return (
     <Suspense fallback={null}>
-      <Dashboard />
+      <Dashboard searchParams={searchParams} />
     </Suspense>
   );
 }

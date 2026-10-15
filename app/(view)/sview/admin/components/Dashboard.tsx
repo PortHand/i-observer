@@ -4,17 +4,34 @@ import { formatAmount } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper
 import { requireUser } from "@/server/features/auth/guard/authGuard";
 import { orderReviewService } from "@/server/features/order/module/orderModule";
 import { dashboard } from "../content/adminContent";
-import { formatAge, formatIst, orderCount, ordersLink } from "../helper/adminHelper";
+import { change, formatAge, formatDuration, formatIst, formatIstTime, formatPercent, orderCount, ordersLink, parseRange } from "../helper/adminHelper";
+import type { Period } from "../services/adminService";
+import MetricStrip from "./MetricStrip";
 import OrderPanel from "./OrderPanel";
+import RangePicker from "./RangePicker";
 import StatTile from "./StatTile";
+import StatusMix from "./StatusMix";
+import TrendChart from "./TrendChart";
 
-/** The admin dashboard. Reads the session and the database: render inside <Suspense>. */
-export default async function Dashboard() {
+/**
+ * The admin dashboard: what's waiting, headline figures for the chosen range, the daily trend and
+ * order mix, review performance, then the review queue and recent decisions.
+ * Reads the session and the database: render inside <Suspense>.
+ */
+export default async function Dashboard({ searchParams }: { searchParams: PageProps<"/sview/admin">["searchParams"] }) {
   await requireUser("admin");
-  const data = await orderReviewService.dashboard();
+  const range = parseRange(await searchParams);
+  const data = await orderReviewService.dashboard(range);
   const now = Date.parse(data.asOf);
-  const { hero, tiles } = dashboard;
+  const { hero, tiles, trend, performance } = dashboard;
+  const rangeText = dashboard.ranges[range];
   const toReview = data.counts.submitted;
+  const delta = ({ current, previous }: Period) => ({
+    change: change(current, previous),
+    versus: dashboard.versus.replace("{range}", rangeText),
+    none: dashboard.noPrevious.replace("{range}", rangeText),
+  });
+  const { approved, rejected, avgSeconds } = data.decisions;
 
   return (
     <div className="admin-page">
@@ -23,6 +40,10 @@ export default async function Dashboard() {
           <span className="eyebrow">{dashboard.eyebrow}</span>
           <h1 className="admin-page__title">{dashboard.title}</h1>
           <p className="text-muted admin-page__lead">{dashboard.lead}</p>
+        </div>
+        <div className="admin-page__tools">
+          <RangePicker current={range} />
+          <p className="admin-page__meta mono">{dashboard.asOf.replace("{time}", formatIstTime(data.asOf))}</p>
         </div>
       </header>
 
@@ -43,14 +64,61 @@ export default async function Dashboard() {
         </div>
         <StatTile
           label={tiles.revenue.label}
-          value={formatAmount(data.thisMonth.amount)}
-          caption={tiles.revenue.caption
-            .replace("{orders}", orderCount(data.thisMonth.orders, dashboard.orders))
-            .replace("{amount}", formatAmount(data.lastMonth.amount))}
+          value={formatAmount(data.revenue.current)}
+          delta={delta(data.revenue)}
+          trend={data.daily.map((day) => day.revenue)}
         />
-        <StatTile label={tiles.today.label} value={String(data.ordersToday)} caption={tiles.today.caption} />
-        <StatTile label={tiles.pending.label} value={String(data.counts.pending)} caption={tiles.pending.caption} />
+        <StatTile
+          label={tiles.orders.label}
+          value={String(data.orders.current)}
+          delta={delta(data.orders)}
+          trend={data.daily.map((day) => day.orders)}
+        />
+        <StatTile
+          label={tiles.average.label}
+          value={data.approved.current > 0 ? formatAmount(Math.round(data.revenue.current / data.approved.current)) : "—"}
+          caption={data.approved.current > 0 ? tiles.average.caption : tiles.average.empty}
+        />
       </div>
+
+      <div className="dash-charts">
+        <TrendChart
+          days={data.daily}
+          caption={trend.caption
+            .replace("{amount}", formatAmount(data.revenue.current))
+            .replace("{orders}", orderCount(data.approved.current, dashboard.payments))
+            .replace("{range}", rangeText)}
+        />
+        <StatusMix counts={data.counts} />
+      </div>
+
+      <MetricStrip
+        title={performance.title}
+        metrics={[
+          {
+            label: performance.approval.label,
+            value: formatPercent(approved, approved + rejected) || "—",
+            caption:
+              approved + rejected > 0
+                ? performance.approval.caption.replace("{approved}", String(approved)).replace("{rejected}", String(rejected))
+                : performance.approval.empty,
+          },
+          {
+            label: performance.reviewTime.label,
+            value: avgSeconds === null ? "—" : formatDuration(avgSeconds),
+            caption: avgSeconds === null ? performance.reviewTime.empty : performance.reviewTime.caption,
+          },
+          {
+            label: performance.paidRate.label,
+            value: formatPercent(data.paid, data.orders.current) || "—",
+            caption:
+              data.orders.current > 0
+                ? performance.paidRate.caption.replace("{paid}", String(data.paid)).replace("{orders}", String(data.orders.current))
+                : performance.paidRate.empty,
+          },
+          { label: performance.today.label, value: String(data.ordersToday), caption: performance.today.caption },
+        ]}
+      />
 
       <div className="dash-panels">
         <OrderPanel

@@ -146,7 +146,14 @@ export const review = {
 export const dashboard = {
   eyebrow: "Overview",
   title: "Dashboard",
-  lead: "Payments waiting on you, and how sales are going. Days and months are in IST.",
+  lead: "Payments waiting on you, and how sales are going. Days are in IST.",
+  asOf: "Updated {time}",
+  rangeLabel: "Period",
+  /** Range picker labels, by number of days. */
+  ranges: { 7: "7 days", 30: "30 days", 90: "90 days" },
+  /** "vs previous {range}" under a figure that changed. */
+  versus: "vs previous {range}",
+  noPrevious: "Nothing in the previous {range}",
   hero: {
     label: "Payments to review",
     waiting: "Oldest waiting {age}",
@@ -154,11 +161,34 @@ export const dashboard = {
     cta: "Review payments",
   },
   tiles: {
-    revenue: { label: "Approved this month", caption: "{orders} · last month {amount}" },
+    revenue: { label: "Approved revenue" },
+    orders: { label: "Orders placed" },
+    average: { label: "Average order", caption: "Per approved payment", empty: "No approved payments yet" },
+  },
+  trend: {
+    title: "Approved revenue per day",
+    caption: "{amount} from {orders} in the last {range}",
+    empty: "No payments approved in this period.",
+    viewTable: "View as table",
+    tableCaption: "Approved revenue and orders placed per day",
+    columns: { day: "Day", revenue: "Approved", approved: "Payments", orders: "Orders placed" },
+    tip: "{orders} · {placed} placed",
+    today: "Today",
+  },
+  mix: {
+    title: "Orders by status",
+    caption: "All time · {total}",
+    empty: "No orders yet.",
+  },
+  performance: {
+    title: "Performance",
+    approval: { label: "Approval rate", caption: "{approved} approved, {rejected} rejected", empty: "No payments decided yet" },
+    reviewTime: { label: "Average review time", caption: "From UTR to decision", empty: "No payments decided yet" },
+    paidRate: { label: "Payment rate", caption: "{paid} of {orders} sent a UTR", empty: "No orders placed yet" },
     today: { label: "Orders today", caption: "Placed since midnight" },
-    pending: { label: "Awaiting payment", caption: "QR shown, no UTR yet" },
   },
   orders: { one: "1 order", many: "{count} orders" },
+  payments: { one: "1 payment", many: "{count} payments" },
   queue: { title: "Next to review", link: "View all", empty: "No payments waiting." },
   recent: { title: "Recent decisions", link: "All orders", empty: "No payments reviewed yet." },
 };

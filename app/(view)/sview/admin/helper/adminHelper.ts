@@ -1,6 +1,7 @@
 import { routes } from "@/helper/route";
+import { payment } from "@/app/(view)/(pview)/get-ioverlay/content/getContent";
 import { statusTabs } from "../content/adminContent";
-import type { StatusFilter } from "../services/adminService";
+import { DASHBOARD_RANGES, type DashboardRange, type StatusFilter } from "../services/adminService";
 
 export interface ListQuery {
   status: StatusFilter;
@@ -34,6 +35,15 @@ export const ordersLink = ({ status, search, page }: Partial<ListQuery>) => {
   return text ? `${routes.adminOrders}?${text}` : routes.adminOrders;
 };
 
+/** Reads ?range= (days) for the dashboard. Unknown values fall back to 30 days. */
+export const parseRange = (params: Record<string, string | string[] | undefined>): DashboardRange => {
+  const days = Number(first(params.range));
+  return DASHBOARD_RANGES.find((range) => range === days) ?? 30;
+};
+
+/** The dashboard over the last `range` days, leaving the default out of the URL. */
+export const dashboardLink = (range: DashboardRange) => (range === 30 ? routes.admin : `${routes.admin}?range=${range}`);
+
 /** Admins work in India, so times show in IST whatever the server's time zone. */
 export const formatIst = (iso: string) =>
   new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(iso));
@@ -50,3 +60,45 @@ export const formatAge = (iso: string, now = Date.now()) => {
 /** "1 order" or "12 orders". */
 export const orderCount = (count: number, text: { one: string; many: string }) =>
   count === 1 ? text.one : text.many.replace("{count}", String(count));
+
+/** Change from `previous` to `current` as a fraction (0.25 is +25%), or null when there's nothing to compare with. */
+export const change = (current: number, previous: number) => (previous === 0 ? null : (current - previous) / previous);
+
+/** "+25%", "−8%", "0%". */
+export const formatChange = (fraction: number) => {
+  const percent = Math.round(fraction * 100);
+  return `${percent > 0 ? "+" : percent < 0 ? "−" : ""}${Math.abs(percent)}%`;
+};
+
+/** "64%", or "" with nothing to divide by. */
+export const formatPercent = (part: number, whole: number) => (whole === 0 ? "" : `${Math.round((part / whole) * 100)}%`);
+
+/** A duration in seconds, roughly: "45 min", "3.5 h", "2 days". */
+export const formatDuration = (seconds: number) => {
+  const minutes = Math.max(1, Math.round(seconds / 60));
+  if (minutes < 60) return `${minutes} min`;
+  const hours = minutes / 60;
+  if (hours < 48) return `${hours < 10 ? Math.round(hours * 10) / 10 : Math.round(hours)} h`;
+  return `${Math.round(hours / 24)} days`;
+};
+
+/** Short money for chart axes: "₹0", "₹1.2K", "₹3.4L". */
+export const formatCompactAmount = (amount: number) =>
+  new Intl.NumberFormat("en-IN", { style: "currency", currency: payment.currency, notation: "compact", maximumFractionDigits: 1 }).format(amount);
+
+/** "15 Oct" for an IST day key ("2026-10-15"). */
+export const formatDay = (day: string) =>
+  new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${day}T00:00:00Z`));
+
+/** Time of day in IST: "4:05 pm". */
+export const formatIstTime = (iso: string) =>
+  new Intl.DateTimeFormat("en-IN", { timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(iso));
+
+/** A round axis maximum at or above `value`, in steps of 1, 2 or 5 × 10ⁿ, split into `ticks` equal parts. */
+export const niceScale = (value: number, ticks = 4) => {
+  if (value <= 0) return { max: ticks, step: 1 };
+  const rough = value / ticks;
+  const magnitude = 10 ** Math.floor(Math.log10(rough));
+  const step = [1, 2, 5, 10].map((factor) => factor * magnitude).find((candidate) => candidate >= rough) ?? 10 * magnitude;
+  return { max: step * ticks, step };
+};

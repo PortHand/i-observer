@@ -55,19 +55,23 @@
 
 .admin-main {
   min-width: 0;
-  padding: var(--space-10) 48px 64px;
+  padding: var(--space-8) var(--space-10) 64px;
 }
 
 /* Sidebar navigation */
 
 .admin-nav {
-  display: grid;
-  gap: var(--space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-nav__list + .admin-nav__heading {
+  margin-top: var(--space-6);
 }
 
 .admin-nav__heading {
   padding: 0 var(--space-3);
-  margin-bottom: calc(var(--space-2) - var(--space-6));
+  margin-bottom: var(--space-2);
   color: var(--color-text-subtle);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -122,6 +126,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
   text-align: center;
 }
 
@@ -136,7 +141,8 @@
 .admin-page {
   display: grid;
   gap: var(--space-6);
-  max-width: 1200px;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .admin-page__header {
@@ -165,6 +171,58 @@
   font-size: var(--text-base);
 }
 
+/* Right side of the header: controls, with a quiet line of status under them. */
+.admin-page__tools {
+  display: grid;
+  justify-items: end;
+  gap: var(--space-2);
+}
+
+.admin-page__meta {
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* Segmented control: a row of square options sharing one ink frame */
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+}
+
+.segmented__option {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background var(--duration-fast) var(--easing),
+    color var(--duration-fast) var(--easing);
+}
+
+.segmented__option + .segmented__option {
+  border-left: 1px solid var(--color-border);
+}
+
+.segmented__option:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.segmented__option[aria-current="page"] {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
 /* Search */
 
 .admin-search {
@@ -179,18 +237,23 @@
   min-width: 0;
 }
 
-/* Dashboard: KPI row (the lead figure, then three tiles), then two order panels */
+/*
+ * Dashboard, top to bottom: four KPI tiles (the lead figure first), the daily trend beside the
+ * status mix, a strip of performance figures, then two order panels. Every row shares one gap.
+ */
 
 .dash-kpis {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-4);
 }
 
+/* A column so the sparkline (or the action) settles at the bottom and tiles in a row line up. */
 .kpi {
-  display: grid;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-2);
+  min-width: 0;
   padding: var(--space-6);
 }
 
@@ -209,14 +272,35 @@
   font-weight: var(--weight-bold);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
+  white-space: nowrap;
 }
 
 .kpi__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
   font-size: var(--text-sm);
 }
 
-.kpi--hero {
-  border-color: var(--color-border-strong);
+.kpi__delta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-weight: var(--weight-bold);
+}
+
+.kpi__delta--up {
+  color: var(--color-success);
+}
+
+.kpi__delta--down {
+  color: var(--color-danger);
+}
+
+.kpi__delta--flat {
+  color: var(--color-text-muted);
 }
 
 .kpi--hero .kpi__value {
@@ -225,9 +309,337 @@
 }
 
 .kpi__action {
-  justify-self: start;
-  margin-top: var(--space-2);
+  align-self: flex-start;
+  margin-top: auto;
 }
+
+.sparkline {
+  display: block;
+  width: 100%;
+  height: 36px;
+  margin-top: auto;
+  padding-top: var(--space-2);
+  overflow: visible;
+}
+
+.sparkline__line {
+  fill: none;
+  stroke: var(--color-text);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.sparkline__area {
+  fill: var(--color-text);
+  opacity: 0.08;
+}
+
+/* Chart cards: a header (label + one line of context), then the plot */
+
+.dash-charts {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+  padding: var(--space-6);
+}
+
+.chart__header {
+  display: grid;
+  gap: var(--space-1);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+.chart__header h2 {
+  margin: 0;
+}
+
+.chart__caption {
+  font-size: var(--text-sm);
+}
+
+.chart__table summary {
+  justify-self: start;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.chart__table summary:hover {
+  color: var(--color-text);
+}
+
+.chart__table[open] summary {
+  margin-bottom: var(--space-3);
+}
+
+.chart__table .admin-table-wrap {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+/* Daily trend: y-axis labels, then the plot with hairline gridlines and one column per day */
+
+.trend {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  height: 240px;
+  /* Room for the day labels under the baseline. */
+  padding-bottom: var(--space-6);
+}
+
+.trend__axis {
+  position: relative;
+}
+
+.trend__axis span {
+  position: absolute;
+  right: var(--space-3);
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  transform: translateY(50%);
+}
+
+.trend__plot {
+  position: relative;
+}
+
+.trend__gridline {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* The baseline is the one ink rule. */
+.trend__gridline:first-child {
+  background: var(--color-border-strong);
+}
+
+.trend__empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-surface);
+  font-size: var(--text-base);
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+}
+
+.trend__columns {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The whole column is the hover target, not just the painted bar. */
+.trend__col {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 0;
+}
+
+.trend__bar {
+  width: 100%;
+  max-width: 24px;
+  height: var(--value);
+  background: var(--color-text);
+  transition: background var(--duration-fast) var(--easing);
+}
+
+.trend__col--today .trend__bar {
+  background: var(--color-accent);
+}
+
+.trend__col:hover .trend__bar {
+  background: var(--color-text-muted);
+}
+
+.trend__label {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 50%;
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.trend__col--end:last-child .trend__label {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.trend__tip {
+  position: absolute;
+  bottom: calc(var(--value) + var(--space-2));
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  box-shadow: 0 4px 12px rgb(36 35 33 / 12%);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity var(--duration-fast) var(--easing);
+}
+
+.trend__tip strong {
+  font-size: var(--text-base);
+}
+
+.trend__tip span {
+  color: var(--color-text-muted);
+}
+
+.trend__col--start .trend__tip {
+  left: 0;
+  transform: none;
+}
+
+.trend__col--end .trend__tip {
+  right: 0;
+  left: auto;
+  transform: none;
+}
+
+.trend__col:hover .trend__tip {
+  opacity: 1;
+}
+
+/* Status mix: one stacked bar (2px paper gaps between segments), then a row per status */
+
+.mix__bar {
+  display: flex;
+  gap: 2px;
+  height: 16px;
+}
+
+.mix__segment {
+  flex-basis: 0;
+  min-width: 4px;
+}
+
+.mix--submitted {
+  background: var(--color-warning);
+}
+
+.mix--pending {
+  background: var(--color-text-subtle);
+}
+
+.mix--verified {
+  background: var(--color-success);
+}
+
+.mix--rejected {
+  background: var(--color-danger);
+}
+
+.mix--refunded {
+  background: var(--color-text);
+}
+
+.mix__list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mix__list li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+.mix__row {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto 44px;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-2);
+  margin: 0 calc(var(--space-2) * -1);
+  font-size: var(--text-base);
+}
+
+.mix__row:hover {
+  background: var(--color-surface-hover);
+}
+
+.mix__swatch {
+  width: 10px;
+  height: 10px;
+}
+
+.mix__count {
+  font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.mix__share {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Performance strip: four figures in one card, split by hairlines */
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0;
+}
+
+.metrics__item {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-5) var(--space-6);
+}
+
+.metrics__item + .metrics__item {
+  border-left: 1px solid var(--color-border);
+}
+
+.metrics__value {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Order panels */
 
 .dash-panels {
   display: grid;
@@ -367,10 +779,21 @@
 .admin-table td {
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--color-border);
-  vertical-align: top;
+  vertical-align: middle;
 }
 
-.admin-table tbody tr:last-child td {
+.admin-table tbody th {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.admin-table tbody tr:last-child > * {
   border-bottom: 0;
 }
 
@@ -607,13 +1030,34 @@
   color: var(--color-warning);
 }
 
+/* Below this the header's tools wrap under the title, so they line up on the left with it. */
+@media (max-width: 1320px) {
+  .admin-page__tools {
+    justify-items: start;
+  }
+}
+
 @media (max-width: 1200px) {
-  .dash-kpis {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  .dash-kpis,
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .kpi--hero {
-    grid-column: 1 / -1;
+  /* Two by two: hairlines between columns and between rows. */
+  .metrics__item + .metrics__item {
+    border-left: 0;
+  }
+
+  .metrics__item:nth-child(even) {
+    border-left: 1px solid var(--color-border);
+  }
+
+  .metrics__item:nth-child(n + 3) {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .dash-charts {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -672,7 +1116,7 @@
   }
 
   .admin-nav {
-    display: flex;
+    flex-direction: row;
     gap: 2px;
     overflow-x: auto;
   }
@@ -708,13 +1152,28 @@
   .admin-search {
     flex-basis: 100%;
   }
-
-  .dash-kpis {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }
 
 @media (max-width: 560px) {
+  .dash-kpis,
+  .metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .metrics__item:nth-child(n) {
+    border-top: 0;
+    border-left: 0;
+  }
+
+  .metrics__item + .metrics__item {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .trend {
+    grid-template-columns: 44px minmax(0, 1fr);
+    height: 200px;
+  }
+
   /* Label above value, so long emails and UPI IDs keep their full width. */
   .details__row {
     grid-template-columns: minmax(0, 1fr);

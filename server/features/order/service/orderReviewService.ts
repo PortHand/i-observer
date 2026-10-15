@@ -6,6 +6,8 @@ import type {
   AdminOrderDetail,
   AdminOrderPage,
   AdminOrderSummary,
+  DashboardDay,
+  DashboardRange,
   ReviewAction,
   StatusFilter,
 } from "@/app/(view)/sview/admin/services/adminService";
@@ -32,14 +34,18 @@ const PANEL_SIZE = 5;
 
 /** India has no daylight saving, so a fixed offset finds IST midnights. */
 const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** IST midnight starting today, this month and last month, as instants. */
-const istPeriods = (now: Date) => {
+/** IST midnight starting today, the first day of the last `days` days, and the `days` before those, as instants. */
+const istPeriods = (now: Date, days: number) => {
   const local = new Date(now.getTime() + IST_OFFSET_MS);
-  const [year, month, day] = [local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate()];
-  const at = (y: number, m: number, d: number) => new Date(Date.UTC(y, m, d) - IST_OFFSET_MS);
-  return { today: at(year, month, day), thisMonth: at(year, month, 1), lastMonth: at(year, month - 1, 1) };
+  const today = Date.UTC(local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate()) - IST_OFFSET_MS;
+  const from = today - (days - 1) * DAY_MS;
+  return { today: new Date(today), from: new Date(from), previous: new Date(from - days * DAY_MS) };
 };
+
+/** The IST date of an IST midnight, as "YYYY-MM-DD" (matching the repository's day keys). */
+const istDate = (midnight: number) => new Date(midnight + IST_OFFSET_MS).toISOString().slice(0, 10);
 
 /** What happened after a review: the order's new status, and whether the customer was emailed. */
 export interface ReviewOutcome {
@@ -87,27 +93,47 @@ export class OrderReviewService {
     return counts;
   }
 
-  /** Everything the admin dashboard shows, in one round of queries. */
-  async dashboard(now = new Date()): Promise<AdminDashboard> {
-    const periods = istPeriods(now);
-    const [counts, thisMonth, lastMonth, ordersToday, queueRows, recentRows] = await Promise.all([
-      this.counts(),
-      this.orders.verifiedBetween(periods.thisMonth),
-      this.orders.verifiedBetween(periods.lastMonth, periods.thisMonth),
-      this.orders.countCreatedSince(periods.today),
-      this.orders.list({ status: "submitted" }, PANEL_SIZE, 0),
-      this.orders.recentlyReviewed(PANEL_SIZE),
-    ]);
+  /** Everything the admin dashboard shows for the last `days` days, in one round of queries. */
+  async dashboard(days: DashboardRange, now = new Date()): Promise<AdminDashboard> {
+    const periods = istPeriods(now, days);
+    const [counts, approved, approvedBefore, placed, placedBefore, today, decisions, createdDays, verifiedDays, queueRows, recentRows] =
+      await Promise.all([
+        this.counts(),
+        this.orders.verifiedBetween(periods.from),
+        this.orders.verifiedBetween(periods.previous, periods.from),
+        this.orders.createdBetween(periods.from),
+        this.orders.createdBetween(periods.previous, periods.from),
+        this.orders.createdBetween(periods.today),
+        this.orders.decisionsSince(periods.from),
+        this.orders.createdPerDay(periods.from),
+        this.orders.verifiedPerDay(periods.from),
+        this.orders.list({ status: "submitted" }, PANEL_SIZE, 0),
+        this.orders.recentlyReviewed(PANEL_SIZE),
+      ]);
     const lines = await this.toLines(await this.orders.findItemsFor([...queueRows, ...recentRows].map((row) => row.reference)));
     const summary = (row: OrderRow) => this.toSummary(row, lines.get(row.reference) ?? []);
-    const money = ({ orders, paise }: { orders: number; paise: number }) => ({ orders, amount: paiseToRupees(paise) });
+
+    // Fill in the days the queries left out, so the trend has one entry per day.
+    const created = new Map(createdDays.map((row) => [row.day, row.orders]));
+    const verified = new Map(verifiedDays.map((row) => [row.day, row]));
+    const daily: DashboardDay[] = Array.from({ length: days }, (_, index) => {
+      const day = istDate(periods.from.getTime() + index * DAY_MS);
+      const money = verified.get(day);
+      return { day, orders: created.get(day) ?? 0, approved: money?.orders ?? 0, revenue: paiseToRupees(money?.paise ?? 0) };
+    });
+
     return {
       asOf: now.toISOString(),
+      range: days,
       counts,
       oldestWaitingSince: queueRows[0]?.submittedAt?.toISOString() ?? null,
-      thisMonth: money(thisMonth),
-      lastMonth: money(lastMonth),
-      ordersToday,
+      revenue: { current: paiseToRupees(approved.paise), previous: paiseToRupees(approvedBefore.paise) },
+      approved: { current: approved.orders, previous: approvedBefore.orders },
+      orders: { current: placed.orders, previous: placedBefore.orders },
+      paid: placed.paid,
+      ordersToday: today.orders,
+      decisions: { approved: decisions.verified, rejected: decisions.rejected, avgSeconds: decisions.avgSeconds },
+      daily,
       queue: queueRows.map(summary),
       recent: recentRows.map(summary),
     };

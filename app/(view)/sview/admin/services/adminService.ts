@@ -49,17 +49,50 @@ export interface AdminOrderPage {
   pageCount: number;
 }
 
-/** The admin dashboard's figures. Months and days are counted in IST. */
+/** Days the dashboard can look back over. */
+export const DASHBOARD_RANGES = [7, 30, 90] as const;
+export type DashboardRange = (typeof DASHBOARD_RANGES)[number];
+
+/** One IST day of the dashboard's trend. */
+export interface DashboardDay {
+  /** "YYYY-MM-DD", in IST. */
+  day: string;
+  /** Orders placed that day. */
+  orders: number;
+  /** Payments approved that day: how many, and their total in rupees. */
+  approved: number;
+  revenue: number;
+}
+
+/** A figure for the dashboard's range, and the same figure for the range just before it. */
+export interface Period {
+  current: number;
+  previous: number;
+}
+
+/**
+ * The admin dashboard's figures. Days are counted in IST; "the range" is the last `range` days,
+ * today included, and "previous" is the same number of days just before it.
+ */
 export interface AdminDashboard {
   /** When the figures were read (ISO): ages such as "waiting 3 h" count from here. */
   asOf: string;
+  range: DashboardRange;
+  /** Orders per status, all time. */
   counts: Record<StatusFilter, number>;
   /** When the longest-waiting submitted order was sent (ISO), or null when none wait. */
   oldestWaitingSince: string | null;
-  /** Approved this month so far, and all of last month: rupees and order counts. */
-  thisMonth: { amount: number; orders: number };
-  lastMonth: { amount: number; orders: number };
+  /** Approved payments in the range: rupees, and how many. */
+  revenue: Period;
+  approved: Period;
+  /** Orders placed in the range, and how many of those the customer paid (sent a UTR). */
+  orders: Period;
+  paid: number;
   ordersToday: number;
+  /** Payments decided in the range, and the mean time from UTR to decision in seconds (null when none). */
+  decisions: { approved: number; rejected: number; avgSeconds: number | null };
+  /** One entry per day of the range, oldest first. */
+  daily: DashboardDay[];
   /** Oldest submitted orders first: the next ones to review. */
   queue: AdminOrderSummary[];
   /** Latest reviews, newest first. */
