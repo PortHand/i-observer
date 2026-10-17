@@ -1145,7 +1145,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5) var(--space-5) 0;
 }
 
 .order-card__avatar {
@@ -1165,6 +1165,7 @@
 .order-card__who {
   display: grid;
   flex: 1;
+  gap: 2px;
   min-width: 0;
 }
 
@@ -1210,12 +1211,12 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-5) var(--space-4);
+  padding: var(--space-5);
 }
 
 .order-card__figure {
   display: grid;
-  gap: 2px;
+  gap: var(--space-1);
 }
 
 .order-card__amount {
@@ -1235,12 +1236,12 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
   margin: 0;
-  padding: var(--space-3) var(--space-5);
+  padding: var(--space-4) var(--space-5);
   border-top: 1px solid var(--color-border);
 }
 
 .order-card__facts dt {
-  margin-bottom: 2px;
+  margin-bottom: var(--space-1);
   color: var(--color-text-muted);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -1383,7 +1384,7 @@
 
 .order-card--skeleton .order-card__facts {
   align-items: center;
-  height: 66px;
+  height: 76px;
 }
 
 .order-list__footer {

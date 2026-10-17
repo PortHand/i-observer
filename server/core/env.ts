@@ -102,6 +102,14 @@ export const env = {
     get ssl() {
       return flag("DB_SSL");
     },
+    /**
+     * Most connections each server instance keeps open. Every serverless instance has its own pool,
+     * so in production this stays small: instances × poolMax must fit the database pooler's limit.
+     */
+    get poolMax() {
+      const value = Number(optional("DB_POOL_MAX"));
+      return Number.isInteger(value) && value > 0 ? value : env.isProduction ? 3 : 10;
+    },
   },
 
   /** Outgoing email. Without smtp.host, development prints emails and production refuses to send. */

@@ -3,6 +3,7 @@ import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "../db/schema";
 import { databaseUrl } from "./databaseConfig";
+import { env } from "./env";
 
 export type Orm = NodePgDatabase<typeof schema>;
 
@@ -17,7 +18,15 @@ export class Database {
   /** Connects on first use, so `next build` works without the DB_* settings. */
   static get orm(): Orm {
     if (!cache.ioverlayOrm) {
-      cache.ioverlayOrm = drizzle({ client: new Pool({ connectionString: databaseUrl(), max: 10 }), schema });
+      const pool = new Pool({
+        connectionString: databaseUrl(),
+        max: env.db.poolMax,
+        // Hand idle connections back quickly, so frozen serverless instances don't hold pooler slots.
+        idleTimeoutMillis: 10_000,
+        // When every connection is busy, fail after a while instead of hanging the request.
+        connectionTimeoutMillis: 10_000,
+      });
+      cache.ioverlayOrm = drizzle({ client: pool, schema });
     }
     return cache.ioverlayOrm;
   }

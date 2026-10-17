@@ -116,7 +116,7 @@
 
 /* Order summary card */
 
-.order-card {
+.checkout-summary {
   display: grid;
   gap: var(--space-5);
   position: sticky;
@@ -126,7 +126,7 @@
   background: var(--color-canvas);
 }
 
-.order-card__title {
+.checkout-summary__title {
   padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--color-border-strong);
 }
@@ -164,12 +164,12 @@
   overflow-wrap: anywhere;
 }
 
-.order-card .hint {
+.checkout-summary .hint {
   align-items: flex-start;
   overflow-wrap: anywhere;
 }
 
-.order-card .hint .icon {
+.checkout-summary .hint .icon {
   margin-top: 2px;
 }
 
@@ -470,14 +470,14 @@
     grid-template-columns: 1fr;
   }
 
-  .order-card {
+  .checkout-summary {
     position: static;
   }
 }
 
 @media (max-width: 560px) {
   .checkout__panel,
-  .order-card {
+  .checkout-summary {
     padding: var(--space-5);
   }
 

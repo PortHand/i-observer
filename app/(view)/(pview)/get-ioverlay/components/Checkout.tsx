@@ -122,8 +122,8 @@ export default function Checkout({ plans, initialPlanId }: CheckoutProps) {
               )}
             </div>
 
-            <aside className="order-card">
-              <h3 className="order-card__title">{summary.title}</h3>
+            <aside className="checkout-summary">
+              <h3 className="checkout-summary__title">{summary.title}</h3>
               <dl className="order">
                 <div className="order__row order__row--amount">
                   <dt className="field__label">{summary.amountLabel}</dt>
