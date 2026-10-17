@@ -9,3 +9,4 @@ export * from "../features/otp/schema/otpSchema";
 export * from "../features/user/schema/userSchema";
 export * from "../features/entitlement/schema/entitlementSchema";
 export * from "../features/feedback/schema/feedbackSchema";
+export * from "../features/auth/schema/signInAttemptSchema";

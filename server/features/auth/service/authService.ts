@@ -3,6 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { HttpError } from "@/server/core/httpError";
 import type { UserRepository, UserRow } from "@/server/features/user/repository/userRepository";
 import type { UserRole } from "@/server/features/user/schema/userSchema";
+import type { SignInLimiter } from "./signInLimiter";
 
 const messages = {
   // One message for both cases, so it doesn't reveal which usernames exist.
@@ -28,13 +29,27 @@ const samePassword = (given: string, stored: string) => {
 
 export class AuthService {
   private readonly users: UserRepository;
+  private readonly limiter: SignInLimiter;
 
-  constructor(users: UserRepository) {
+  constructor(users: UserRepository, limiter: SignInLimiter) {
     this.users = users;
+    this.limiter = limiter;
   }
 
-  /** The account for these credentials. A 401 when the username is unknown or the password wrong. */
-  async verify(username: string, password: string): Promise<UserRow> {
+  /**
+   * Sign-in for the website and the desktop app: the account for these credentials, within the
+   * failed-attempt limits. A 401 for a wrong username or password, a 429 while `username` or `ip`
+   * is locked. `username` must already be normalized.
+   */
+  async signIn(username: string, password: string, ip: string): Promise<UserRow> {
+    return this.limiter.guard(username, ip, () => this.verify(username, password));
+  }
+
+  /**
+   * The account for these credentials. A 401 when the username is unknown or the password wrong.
+   * Not limited: sign-in goes through signIn.
+   */
+  private async verify(username: string, password: string): Promise<UserRow> {
     const user = await this.users.findByUsername(username);
     if (!user || !samePassword(password, user.password)) throw HttpError.unauthorized(messages.invalid);
     return user;
