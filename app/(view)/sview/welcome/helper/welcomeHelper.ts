@@ -5,6 +5,9 @@ export const isInstallerId = (value: unknown): value is InstallerId =>
 
 export const getInstaller = (id: InstallerId) => installers.find((installer) => installer.id === id)!;
 
+/** Released installers only; Windows and Linux are listed as coming soon. */
+export const isAvailableInstaller = (id: InstallerId) => !getInstaller(id).comingSoon;
+
 /** The file electron-builder makes for this installer and app version, e.g. "overlay-1.0.0-setup.exe". */
 export const installerFileName = (id: InstallerId, version: string) => {
   switch (id) {
@@ -42,6 +45,10 @@ export const detectInstaller = async (): Promise<InstallerId | null> => {
   if (/linux|x11/i.test(agent)) return "linux";
   return null;
 };
+
+/** Fills "{name}" placeholders in a content string. */
+export const fill = (text: string, values: Record<string, string>) =>
+  text.replace(/\{(\w+)\}/g, (match, key: string) => values[key] ?? match);
 
 /** Seconds left as "4:05". */
 export const formatCountdown = (seconds: number) => {

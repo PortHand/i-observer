@@ -1,6 +1,7 @@
 import type { RefObject } from "react";
 import Link from "next/link";
 import { Check, CircleAlert, Download, LifeBuoy, Mail } from "lucide-react";
+import Spinner from "@/components/common/Spinner";
 import { contactLink } from "../../contact/helper/contactHelper";
 import { checkout } from "../content/getContent";
 import {
@@ -97,8 +98,9 @@ export default function Confirmation({
         className="button button--primary button--lg button--block"
         onClick={onDownload}
         disabled={downloading}
+        aria-busy={downloading || undefined}
       >
-        <Download className="icon" strokeWidth={1.75} />
+        {downloading ? <Spinner size="md" /> : <Download className="icon" strokeWidth={1.75} />}
         {done.download}
       </button>
       {downloadError && (

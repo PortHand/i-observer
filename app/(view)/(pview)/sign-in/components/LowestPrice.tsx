@@ -1,4 +1,5 @@
 import { connection } from "next/server";
+import Skeleton from "@/components/common/Skeleton";
 import { getPlansOrNone } from "@/server/features/pricing/module/pricingModule";
 import { formatAmount } from "../../get-ioverlay/helper/getHelper";
 import { buy } from "../content/signInContent";
@@ -12,3 +13,6 @@ export default async function LowestPrice() {
   const lowest = Math.min(...plans.map((plan) => plan.amount));
   return <p className="sign-in__price mono">{buy.price.replace("{price}", formatAmount(lowest))}</p>;
 }
+
+/** Holds the price line's place while plans load, so the card doesn't grow when it arrives. */
+export const LowestPriceSkeleton = () => <Skeleton variant="small" width={140} className="sign-in__price-skeleton" />;

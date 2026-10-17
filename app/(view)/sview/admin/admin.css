@@ -279,22 +279,7 @@
   }
 }
 
-/* Skeletons: paper blocks one step darker than the card, with a slow light sweep. */
-
-.skeleton {
-  display: block;
-  background: linear-gradient(90deg, var(--color-surface-active) 0%, var(--color-surface-hover) 50%, var(--color-surface-active) 100%);
-  background-size: 200% 100%;
-  animation: admin-shimmer 1.4s var(--easing) infinite;
-}
-
-.skeleton--line {
-  height: 14px;
-}
-
-.skeleton--small {
-  height: 10px;
-}
+/* Skeletons: the base block is shared (app/globals.css); these are the admin shapes. */
 
 .skeleton--avatar {
   flex: none;
@@ -360,18 +345,7 @@
   height: 44px;
 }
 
-@keyframes admin-shimmer {
-  from {
-    background-position: 100% 0;
-  }
-
-  to {
-    background-position: -100% 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .skeleton,
   .admin-search__spinner {
     animation: none;
   }

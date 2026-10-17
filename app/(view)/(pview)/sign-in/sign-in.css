@@ -151,3 +151,16 @@
     font-size: 32px;
   }
 }
+
+.sign-in__price-skeleton {
+  justify-self: center;
+  margin: 3px 0;
+}
+
+@media (max-width: 560px) {
+  .sign-in {
+    gap: var(--space-8);
+    padding-top: var(--space-10);
+    padding-bottom: 56px;
+  }
+}

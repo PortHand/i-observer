@@ -650,3 +650,77 @@
   justify-content: space-between;
   gap: var(--space-2);
 }
+
+/* Checkout skeleton (CheckoutSkeleton.tsx): the same boxes as the live step, filled with blocks. */
+
+.checkout-skeleton {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+}
+
+/* The QR code scales down to fit the narrowest phones; it stays square and sharp (SVG). */
+.qr__code svg {
+  display: block;
+  width: 100%;
+  max-width: 208px;
+  height: auto;
+}
+
+@media (max-width: 560px) {
+  .checkout-flow {
+    gap: var(--space-6);
+  }
+
+  .checkout {
+    gap: var(--space-5);
+  }
+
+  .checkout__panel .auth__header h3 {
+    font-size: 28px;
+  }
+
+  .order__row .order__amount,
+  .qr__amount {
+    font-size: 40px;
+  }
+
+  .qr {
+    padding: var(--space-4);
+  }
+
+  /* Primary action on top and full width, "Back" under it. */
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions > .button {
+    width: 100%;
+  }
+
+  .steps__cta {
+    width: 100%;
+  }
+}
+
+/* Narrowest phones: plan tiles become rows (name and period left, price right). */
+@media (max-width: 400px) {
+  .plan-tiles {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-tile {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: var(--space-3);
+  }
+
+  .plan-tile__price {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+  }
+
+  .stepper__label {
+    font-size: var(--text-sm);
+  }
+}

@@ -2,7 +2,7 @@
 
 // Server Actions for the welcome page's download, called straight from the page's service.
 
-import { isInstallerId } from "@/app/(view)/sview/welcome/helper/welcomeHelper";
+import { isAvailableInstaller, isInstallerId } from "@/app/(view)/sview/welcome/helper/welcomeHelper";
 import { runAction } from "@/server/core/baseAction";
 import { HttpError } from "@/server/core/httpError";
 import { getCurrentUser } from "@/server/features/auth/guard/authGuard";
@@ -14,6 +14,7 @@ export async function getDownloadLink(installer: string) {
     const user = await getCurrentUser();
     if (!user) throw HttpError.unauthorized("Your session has ended. Sign in again.");
     if (!isInstallerId(installer)) throw HttpError.badRequest("Choose an installer.");
+    if (!isAvailableInstaller(installer)) throw HttpError.badRequest("This version is coming soon.");
     return { link: await downloadService.link(user.id, installer) };
   });
 }

@@ -1,6 +1,7 @@
 import type { FormEvent } from "react";
 import { CircleAlert, KeyRound, ShieldCheck } from "lucide-react";
 import Modal from "@/components/common/Modal";
+import Spinner from "@/components/common/Spinner";
 import { checkout } from "../content/getContent";
 
 interface OtpModalProps {
@@ -77,8 +78,13 @@ export default function OtpModal({
           </p>
         )}
 
-        <button type="submit" className="button button--primary button--lg button--block" disabled={submitting}>
-          <ShieldCheck className="icon" strokeWidth={1.75} />
+        <button
+          type="submit"
+          className="button button--primary button--lg button--block"
+          disabled={submitting}
+          aria-busy={submitting || undefined}
+        >
+          {submitting ? <Spinner size="md" /> : <ShieldCheck className="icon" strokeWidth={1.75} />}
           {otp.verify}
         </button>
         <div className="otp__actions">

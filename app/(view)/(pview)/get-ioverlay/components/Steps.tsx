@@ -1,6 +1,9 @@
 import { ArrowDown } from "lucide-react";
 import { homeSections } from "@/helper/route";
+import StepList from "../../home/components/StepList";
 import { checkoutSectionId, getApp, getSteps } from "../content/getContent";
+
+const steps = getSteps.map(({ title, description }) => ({ label: title, description }));
 
 export default function Steps() {
   return (
@@ -20,16 +23,7 @@ export default function Steps() {
           </div>
         </header>
 
-        <ol className="steps steps--four">
-          {getSteps.map(({ title, description }, index) => (
-            <li key={title} className="step">
-              <span className="step__label mono">
-                {String(index + 1).padStart(2, "0")} · {title}
-              </span>
-              <p className="text-muted">{description}</p>
-            </li>
-          ))}
-        </ol>
+        <StepList items={steps} four />
       </div>
     </section>
   );

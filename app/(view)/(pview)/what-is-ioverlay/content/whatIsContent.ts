@@ -16,7 +16,7 @@ export const oneLine = {
 export const factSheet = {
   rows: [
     { term: "What", value: "Desktop overlay app" },
-    { term: "Runs on", value: "Windows · macOS · Linux" },
+    { term: "Runs on", value: "macOS (Apple Silicon and Intel) · Windows and Linux coming soon" },
     { term: "Hidden from", value: "Zoom · Meet · Teams · Recordings · Screenshots" },
     { term: "Inside", value: "Built-in browser · AI chat (soon)" },
     { term: "Controls", value: "Opacity · Click-through · Global shortcuts" },
@@ -60,7 +60,7 @@ export const hidingSteps = [
   },
   {
     title: "The OS skips it",
-    description: "Windows and macOS mark the overlay as excluded from screen capture.",
+    description: "macOS marks the overlay as excluded from screen capture.",
   },
   {
     title: "They see the rest",
@@ -71,8 +71,7 @@ export const hidingSteps = [
 export const limits = {
   title: "Good to know",
   items: [
-    "Linux can't hide windows from capture, so the overlay shows in shares there.",
-    "Windows 10 before version 2004 shows the overlay as a black box instead of hiding it.",
+    "iOverlay is on macOS today. Windows and Linux versions are coming soon.",
     "On macOS 15 and later, some capture tools have been reported to record it anyway. Test with the tools you use.",
     "Nothing can hide it from a camera pointed at your screen.",
   ],

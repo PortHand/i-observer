@@ -5,13 +5,17 @@ import { ArrowRight, Search, SearchX, X } from "lucide-react";
 import Accordion from "@/components/common/Accordion";
 import SectionHeader from "../../home/components/SectionHeader";
 import { sectionIds } from "../content/contactContent";
-import { allLabel, categories, categoriesLabel, faqSection, search } from "../content/faqContent";
+import { allLabel, categories, faqSection, search } from "../content/faqContent";
 import { useFaqHandler } from "../handler/useFaqHandler";
+import FaqCategories, { type CategoryFilter } from "./FaqCategories";
 
 export default function FaqSection() {
   const faq = useFaqHandler();
   const allCount = Object.values(faq.counts).reduce((sum, count) => sum + count, 0);
-  const filters = [{ id: "all" as const, label: allLabel, count: allCount }, ...categories.map((c) => ({ ...c, count: faq.counts[c.id] }))];
+  const filters: CategoryFilter[] = [
+    { id: "all", label: allLabel, count: allCount },
+    ...categories.map((c) => ({ ...c, count: faq.counts[c.id] })),
+  ];
 
   return (
     <section className="band" id={sectionIds.faq}>
@@ -38,25 +42,7 @@ export default function FaqSection() {
               </span>
             </label>
 
-            <nav className="faq__categories" aria-label={categoriesLabel}>
-              <span className="field__label">{categoriesLabel}</span>
-              <ul>
-                {filters.map(({ id, label, count }) => (
-                  <li key={id}>
-                    <button
-                      type="button"
-                      className="faq__category"
-                      aria-pressed={faq.category === id}
-                      disabled={count === 0 && faq.category !== id}
-                      onClick={() => faq.setCategory(id)}
-                    >
-                      <span>{label}</span>
-                      <span className="faq__count mono">{count}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <FaqCategories filters={filters} selected={faq.category} onSelect={faq.setCategory} />
           </aside>
 
           <div className="faq__results">
@@ -83,6 +69,9 @@ export default function FaqSection() {
                 <section key={group.id} className="faq__group" aria-labelledby={`faq-${group.id}`}>
                   <h3 id={`faq-${group.id}`} className="faq__group-title">
                     {group.label}
+                    <span className="faq__group-count mono" aria-hidden="true">
+                      {group.items.length}
+                    </span>
                   </h3>
                   <Accordion
                     headingLevel={4}

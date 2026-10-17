@@ -1,5 +1,7 @@
 import type { FormEvent, RefObject } from "react";
 import { ArrowRight, CircleAlert, CircleUser, Eye, EyeOff, Lock } from "lucide-react";
+import FieldError from "@/components/common/FieldError";
+import Spinner from "@/components/common/Spinner";
 import { form } from "../content/signInContent";
 import type { SignInField } from "../helper/signInHelper";
 
@@ -13,15 +15,6 @@ interface SignInFormProps {
   onTogglePassword: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
-
-/** Inline error under a field, linked to the input with aria-describedby. */
-const FieldError = ({ id, message }: { id: string; message?: string }) =>
-  message ? (
-    <span id={id} className="field-error">
-      <CircleAlert className="icon icon--sm" strokeWidth={1.75} />
-      {message}
-    </span>
-  ) : null;
 
 export default function SignInForm({
   errors,
@@ -104,9 +97,14 @@ export default function SignInForm({
         </p>
       )}
 
-      <button type="submit" className="button button--primary button--lg button--block" disabled={submitting}>
+      <button
+        type="submit"
+        className="button button--primary button--lg button--block"
+        disabled={submitting}
+        aria-busy={submitting || undefined}
+      >
         {form.submit}
-        <ArrowRight className="icon icon--sm" strokeWidth={1.75} />
+        {submitting ? <Spinner /> : <ArrowRight className="icon icon--sm" strokeWidth={1.75} />}
       </button>
     </form>
   );

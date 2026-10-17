@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PageHero from "@/app/(view)/(pview)/home/components/PageHero";
 import { formatAmount } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import { routes } from "@/helper/route";
 import { accountService } from "@/server/features/account/module/accountModule";
@@ -14,12 +15,7 @@ export default async function Orders() {
 
   return (
     <div className="profile-page">
-
-      <div className="page-hero animate-in">
-        <span className="eyebrow">{ordersPage.eyebrow}</span>
-        <h1 className="display page-hero__title">{ordersPage.title}</h1>
-        <p className="lead page-hero__lead">{ordersPage.lead}</p>
-      </div>
+      <PageHero {...ordersPage} />
 
       <section className="profile-section animate-in animate-in--delayed" aria-labelledby="orders-title">
         <header className="profile-section__header">

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import PageHero from "@/app/(view)/(pview)/home/components/PageHero";
 import { routes } from "@/helper/route";
 import { accountService } from "@/server/features/account/module/accountModule";
 import { requireUser } from "@/server/features/auth/guard/authGuard";
@@ -13,11 +14,7 @@ export default async function Welcome() {
 
   return (
     <div className="welcome">
-      <div className="page-hero animate-in">
-        <span className="eyebrow">{welcome.eyebrow}</span>
-        <h1 className="display page-hero__title">{welcome.title}</h1>
-        <p className="lead page-hero__lead">{welcome.lead}</p>
-      </div>
+      <PageHero {...welcome} />
       <DownloadPanel access={access} />
     </div>
   );

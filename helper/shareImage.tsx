@@ -65,7 +65,7 @@ export async function shareImage({ eyebrow, heading, lead }: ShareImage) {
             fontSize: 24,
           }}
         >
-          <span>Windows · macOS · Linux</span>
+          <span>macOS · Windows and Linux soon</span>
           <span>Hidden from Zoom · Meet · Teams</span>
         </div>
       </div>

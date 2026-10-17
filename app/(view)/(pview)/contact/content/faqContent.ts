@@ -15,7 +15,7 @@ export const faqSection = {
 
 export const search = {
   label: "Search the FAQ",
-  placeholder: "Search, e.g. UTR, Linux, shortcuts",
+  placeholder: "Search, e.g. UTR, macOS, shortcuts",
   clear: "Clear search",
   results: "{count} of {total} questions",
   empty: "No answers match “{query}”.",
@@ -75,18 +75,11 @@ export const faqs: Faq[] = [
       "Zoom, Google Meet, Microsoft Teams, screen recordings and screenshots. iOverlay asks your operating system to leave the window out of every capture, so it works with any app that captures the screen the normal way.",
   },
   {
-    id: "linux",
-    category: "privacy",
-    question: "Is it hidden on Linux?",
+    id: "windows-linux",
+    category: "app",
+    question: "Is there a Windows or Linux version?",
     answer:
-      "No. The overlay and shortcuts work on Linux, but Linux can't hide windows from screen capture, so the overlay shows up in shares there.",
-  },
-  {
-    id: "black-box",
-    category: "privacy",
-    question: "Why do viewers see a black box on Windows?",
-    answer:
-      "Windows 10 before version 2004 can't exclude a window from capture, so it shows the overlay as a black box instead. Update to Windows 10 version 2004 or later, or Windows 11.",
+      "Not yet. iOverlay is on macOS today, and the Windows and Linux versions are coming soon. A plan you buy now covers them when they're out. Note that Linux can't hide windows from screen capture, so the overlay will show in shares there.",
   },
   {
     id: "macos-15",
@@ -172,14 +165,14 @@ export const faqs: Faq[] = [
     category: "app",
     question: "Which systems does it run on?",
     answer:
-      "Windows 10 or 11 (64-bit), macOS 12 or later on Apple Silicon and Intel, and 64-bit Linux including Ubuntu, Debian and most distros. Hiding from capture works on Windows and macOS only.",
+      "macOS 12 or later, on Apple Silicon and Intel Macs. Windows 10 or 11 and 64-bit Linux versions are coming soon.",
   },
   {
     id: "shortcuts",
     category: "app",
     question: "What are the keyboard shortcuts?",
     answer:
-      "Show or hide the overlay with ⌥ ⇧ G on macOS or Ctrl+Shift+Space on Windows and Linux. Toggle click-through with ⌘/Ctrl+Shift+X, and quit with ⌘/Ctrl+Shift+Q. They work while any app has focus.",
+      "Show or hide the overlay with ⌥ ⇧ G, toggle click-through with ⌘ ⇧ X, and quit with ⌘ ⇧ Q. They work while any app has focus.",
   },
   {
     id: "click-through",

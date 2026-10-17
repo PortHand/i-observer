@@ -1,5 +1,6 @@
 import type { FormEvent, RefObject } from "react";
 import { ArrowLeft, CircleAlert, Hash, Mail, Send } from "lucide-react";
+import Spinner from "@/components/common/Spinner";
 import { checkout } from "../content/getContent";
 import { formatAmount, formatPhone, supportMailto } from "../helper/getHelper";
 import type { Order } from "../services/getService";
@@ -77,8 +78,8 @@ export default function TransactionForm({
           <ArrowLeft className="icon icon--sm" strokeWidth={1.75} />
           {transaction.back}
         </button>
-        <button type="submit" className="button button--primary" disabled={submitting}>
-          <Send className="icon icon--sm" strokeWidth={1.75} />
+        <button type="submit" className="button button--primary" disabled={submitting} aria-busy={submitting || undefined}>
+          {submitting ? <Spinner /> : <Send className="icon icon--sm" strokeWidth={1.75} />}
           {transaction.submit}
         </button>
       </div>

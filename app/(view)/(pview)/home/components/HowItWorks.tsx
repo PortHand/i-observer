@@ -1,4 +1,5 @@
 import { howSection, howSteps, stats } from "../content/homeContent";
+import StepList from "./StepList";
 
 export default function HowItWorks() {
   return (
@@ -8,16 +9,7 @@ export default function HowItWorks() {
           <h2 className="display section__title">{howSection.title}</h2>
           <p className="lead">{howSection.lead}</p>
         </header>
-        <ol className="steps steps--four">
-          {howSteps.map(({ label, description }, index) => (
-            <li key={label} className="step">
-              <span className="step__label mono">
-                {String(index + 1).padStart(2, "0")} · {label}
-              </span>
-              <p className="text-muted">{description}</p>
-            </li>
-          ))}
-        </ol>
+        <StepList items={howSteps} four />
         <ul className="stats stats--four">
           {stats.map(({ value, label }) => (
             <li key={label} className="stat">

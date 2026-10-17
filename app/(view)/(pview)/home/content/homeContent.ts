@@ -21,6 +21,15 @@ export const appInfo = {
   supportEmail: "support@i-overlay.com",
 };
 
+/** The phone and tablet menu (components/MobileNav.tsx). */
+export const mobileMenu = {
+  label: "Menu",
+  open: "Open menu",
+  close: "Close menu",
+  platforms: "macOS · Windows and Linux coming soon",
+  help: "Need help?",
+};
+
 // Pages only; the link matching the current page is marked active.
 export const navLinks = [
   { href: routes.home, label: "Home" },
@@ -37,7 +46,7 @@ export const hero = {
   lead: "iOverlay puts a private window on top of your screen for your notes, docs or any website. Share your screen in Zoom, Meet or Teams and that window stays out of the picture.",
   primaryCta: { href: routes.whatIsIOverlay, label: "What is iOverlay?" },
   demoCta: { href: homeSection("demo"), label: "Watch the demo" },
-  fineprint: "Windows · macOS · Linux · Login within 24 hours",
+  fineprint: "macOS · Windows and Linux coming soon · Login within 24 hours",
 };
 
 export const heroExplainer = {
@@ -104,7 +113,7 @@ export const questions = [
   {
     label: "Platforms",
     title: "Will it work on my computer?",
-    description: "Windows and macOS hide it from capture. Linux runs it but can't hide it.",
+    description: "Built for macOS, hidden from capture on Apple Silicon and Intel. Windows and Linux are coming soon.",
     link: { href: homeSection("platforms"), label: "Check your system" },
   },
 ];
@@ -122,7 +131,7 @@ export const howSteps = [
 ];
 
 export const stats = [
-  { value: "3", label: "Desktop systems" },
+  { value: "macOS", label: "Apple Silicon and Intel" },
   { value: "30–100%", label: "Overlay opacity" },
   { value: "3", label: "Global shortcuts" },
   { value: "24 h", label: "Login delivery" },
@@ -148,7 +157,7 @@ export const pricing = {
   title: "Simple plans.",
   lead: "Pay once by UPI, with no auto-renewal. Buy again before your time runs out and the new time is added on, so you never lose days.",
   /** Every plan is the full app; plans differ only in how long they last. */
-  features: ["Capture-protected overlay", "Global shortcuts", "Windows, macOS and Linux", "Login by email within 24 hours"],
+  features: ["Capture-protected overlay", "Global shortcuts", "macOS · Apple Silicon and Intel", "Login by email within 24 hours"],
   /** Card icons, in plan order (repeating if there are more plans). Decorative only. */
   icons: [Zap, Sparkles, Gem] as LucideIcon[],
   choose: "Choose {plan}",
@@ -164,24 +173,21 @@ export interface OsSupport {
   captureHidden: boolean;
   /** Only where capture behaves differently; the tag covers the rest. */
   note?: string;
+  /** Not released yet: shown as "Coming soon" instead of the capture tag. */
+  comingSoon?: boolean;
 }
 
 export const osSection = {
   eyebrow: "Platforms",
-  title: "Works on your system.",
-  lead: "Native apps for Windows, macOS and Linux. Check what each system supports before you buy.",
+  title: "Built for macOS.",
+  lead: "iOverlay is built for macOS first. Windows and Linux versions are on the way.",
   hidden: "Hidden from capture",
   visible: "Visible in capture",
+  comingSoon: "Coming soon",
 };
 
-// Electron's content protection, which hides the overlay from capture, only works on Windows and macOS.
+// macOS is the released app and leads the list; Windows and Linux are announced but not out yet.
 export const osSupport: OsSupport[] = [
-  {
-    name: "Windows",
-    requirement: "Windows 10 or 11 · 64-bit",
-    download: ".exe installer",
-    captureHidden: true,
-  },
   {
     name: "macOS",
     requirement: "macOS 12 or later · Apple Silicon and Intel",
@@ -189,11 +195,20 @@ export const osSupport: OsSupport[] = [
     captureHidden: true,
   },
   {
+    name: "Windows",
+    requirement: "Windows 10 or 11 · 64-bit",
+    download: ".exe installer",
+    captureHidden: true,
+    comingSoon: true,
+    note: "In the works. Buy now and your plan covers it when it's out.",
+  },
+  {
     name: "Linux",
     requirement: "64-bit · Ubuntu, Debian and most distros",
-    download: ".AppImage or .deb",
+    download: ".AppImage",
     captureHidden: false,
-    note: "The overlay and shortcuts work, but Linux can't hide windows from screen capture.",
+    comingSoon: true,
+    note: "In the works. Linux can't hide windows from screen capture, so the overlay will show in shares there.",
   },
 ];
 

@@ -1,15 +1,12 @@
 import { homeSections } from "@/helper/route";
+import PageHero from "../../home/components/PageHero";
 import { factSheet, intro, oneLine } from "../content/whatIsContent";
 
 export default function Intro() {
   return (
     <>
       <section className="band" id={homeSections.top}>
-        <div className="container page-hero animate-in">
-          <span className="eyebrow">{intro.eyebrow}</span>
-          <h1 className="display page-hero__title">{intro.title}</h1>
-          <p className="lead page-hero__lead">{intro.lead}</p>
-        </div>
+        <PageHero {...intro} className="container" />
       </section>
       <section className="band">
         <div className="container section section--compact summary">

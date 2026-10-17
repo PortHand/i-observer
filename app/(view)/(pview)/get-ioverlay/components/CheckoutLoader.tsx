@@ -32,7 +32,7 @@ export default async function CheckoutLoader({ searchParams }: CheckoutLoaderPro
   );
 }
 
-/** Placeholder with the checkout's anchor, so "#checkout" links still land here while plans load. */
+/** Notice with the checkout's anchor, so "#checkout" links still land here when checkout is paused. */
 export function CheckoutNotice({ children }: { children: React.ReactNode }) {
   return (
     <section className="band band--light" id={checkoutSectionId}>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { download, type InstallerId } from "../content/welcomeContent";
-import { detectInstaller } from "../helper/welcomeHelper";
+import { detectInstaller, isAvailableInstaller } from "../helper/welcomeHelper";
 import * as welcomeService from "../services/welcomeService";
 
 /** Stop offering a link a little before the server says it expires, so a click never lands on a dead one. */
@@ -59,7 +59,8 @@ export const useDownloadHandler = (allowed: boolean) => {
     detectInstaller().then((installer) => {
       if (cancelled) return;
       setDetected(installer);
-      if (allowed && installer && !autoStarted.current) {
+      // Windows and Linux are coming soon: nothing to start for them.
+      if (allowed && installer && isAvailableInstaller(installer) && !autoStarted.current) {
         autoStarted.current = true;
         void requestLink(installer);
       }

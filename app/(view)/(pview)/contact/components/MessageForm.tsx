@@ -1,6 +1,8 @@
 import type { FormEvent, RefObject } from "react";
 import { CircleAlert, Hash, Mail, MessageSquare, Phone, Send, User } from "lucide-react";
 import Dropdown from "@/components/common/Dropdown";
+import FieldError from "@/components/common/FieldError";
+import Spinner from "@/components/common/Spinner";
 import { MESSAGE_MAX, form, topics, type TopicId } from "../content/contactContent";
 import type { ContactField, ContactPrefill } from "../helper/contactHelper";
 
@@ -29,15 +31,6 @@ const RequiredMark = () => (
     *
   </span>
 );
-
-/** Inline error under a field, linked to the input with aria-describedby. */
-const FieldError = ({ id, message }: { id: string; message?: string }) =>
-  message ? (
-    <span id={id} className="field-error">
-      <CircleAlert className="icon icon--sm" strokeWidth={1.75} />
-      {message}
-    </span>
-  ) : null;
 
 export default function MessageForm({
   defaults,
@@ -223,8 +216,8 @@ export default function MessageForm({
 
       <div className="form-footer">
         <p className="hint">{form.privacy}</p>
-        <button type="submit" className="button button--primary button--lg" disabled={submitting}>
-          <Send className="icon icon--sm" strokeWidth={1.75} />
+        <button type="submit" className="button button--primary button--lg" disabled={submitting} aria-busy={submitting || undefined}>
+          {submitting ? <Spinner /> : <Send className="icon icon--sm" strokeWidth={1.75} />}
           {form.submit}
         </button>
       </div>

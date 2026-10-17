@@ -10,5 +10,5 @@ export default async function PricingLoader() {
   // Prices come from the database, so read them per request (cached a minute), never at build time.
   await connection();
   const plans = await getPlansOrNone();
-  return plans.length > 0 ? <Pricing plans={plans} /> : <PricingNotice unavailable />;
+  return plans.length > 0 ? <Pricing plans={plans} /> : <PricingNotice />;
 }

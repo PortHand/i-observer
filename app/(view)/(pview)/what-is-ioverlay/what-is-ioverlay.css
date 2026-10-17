@@ -69,3 +69,25 @@
   color: var(--color-text-muted);
   font-size: var(--text-base);
 }
+
+@media (max-width: 560px) {
+  .summary {
+    gap: var(--space-6);
+  }
+
+  .callout {
+    padding: var(--space-4) var(--space-5);
+    font-size: var(--text-md);
+  }
+
+  /* Term above value: the 140px label column leaves too little room on a phone. */
+  .facts__row {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+    padding: var(--space-3) 0;
+  }
+
+  .limits {
+    padding: var(--space-4) var(--space-5);
+  }
+}

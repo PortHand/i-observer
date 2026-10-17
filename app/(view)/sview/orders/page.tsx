@@ -4,6 +4,7 @@ import { routes } from "@/helper/route";
 import SiteFooter from "../../(pview)/home/components/SiteFooter";
 import SiteHeader from "../../(pview)/home/components/SiteHeader";
 import Orders from "./components/Orders";
+import OrdersSkeleton from "./components/OrdersSkeleton";
 
 export const metadata: Metadata = {
   title: "Orders",
@@ -18,7 +19,7 @@ export default function OrdersView() {
       <main>
         <section className="band">
           <div className="container">
-            <Suspense fallback={<div className="profile-page welcome--loading" aria-busy="true" />}>
+            <Suspense fallback={<OrdersSkeleton />}>
               <Orders />
             </Suspense>
           </div>

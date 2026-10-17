@@ -5,15 +5,17 @@ import { routes } from "@/helper/route";
 import { getCurrentUser } from "@/server/features/auth/guard/authGuard";
 import { appInfo, auth, navLinks } from "../content/homeContent";
 import AccountMenu from "./AccountMenu";
+import MobileNav from "./MobileNav";
 
 const SignInLink = ({ current }: { current?: string }) => (
   <Link
     href={routes.signIn}
     className="button button--secondary button--sm"
     aria-current={current === routes.signIn ? "page" : undefined}
+    aria-label={auth.navSignedOut}
   >
     <CircleUser className="icon icon--sm" strokeWidth={1.75} />
-    <span>{auth.navSignedOut}</span>
+    <span className="nav__sign-in-label">{auth.navSignedOut}</span>
   </Link>
 );
 
@@ -68,6 +70,7 @@ export default function SiteHeader({ signedIn = false, current }: { signedIn?: b
           <Suspense fallback={signedIn ? <AccountPlaceholder /> : <SignInLink current={current} />}>
             <AccountSlot current={current} />
           </Suspense>
+          <MobileNav current={current} />
         </div>
       </header>
     </>

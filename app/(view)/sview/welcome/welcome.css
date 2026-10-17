@@ -15,10 +15,6 @@
   max-width: 680px;
 }
 
-.welcome--loading {
-  min-height: 520px;
-}
-
 .welcome__role {
   margin-left: auto;
   padding: var(--space-1) var(--space-2);
@@ -151,33 +147,13 @@
   font-size: var(--text-xs);
 }
 
-.spin {
-  animation: spin 0.9s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .spin {
-    animation: none;
-  }
-
   .download__meter > span {
     transition: none;
   }
 }
 
 /* How to use */
-
-.step__icon {
-  margin-right: var(--space-2);
-  color: var(--color-accent-text);
-  vertical-align: -2px;
-}
 
 .first-run {
   display: grid;
@@ -194,5 +170,34 @@
 @media (max-width: 560px) {
   .download__actions > .button {
     flex: 1 1 100%;
+  }
+}
+
+.download__status--soon {
+  color: var(--color-warning);
+}
+
+.installer:disabled:has(.installer__soon) {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.installer__soon {
+  flex: none;
+  padding: 2px var(--space-2);
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  font-size: 10px;
+}
+
+@media (max-width: 560px) {
+  .welcome {
+    gap: var(--space-8);
+    padding-top: var(--space-6);
+    padding-bottom: 56px;
+  }
+
+  .download__title {
+    font-size: 28px;
   }
 }

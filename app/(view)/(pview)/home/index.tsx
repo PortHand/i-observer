@@ -1,5 +1,3 @@
-"use client";
-
 import type { ReactNode } from "react";
 import Closing from "./components/Closing";
 import Demo from "./components/Demo";

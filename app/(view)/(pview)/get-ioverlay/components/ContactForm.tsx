@@ -1,5 +1,6 @@
 import type { FormEvent, RefObject } from "react";
 import { CircleAlert, Mail, Phone, QrCode } from "lucide-react";
+import Spinner from "@/components/common/Spinner";
 import { checkout } from "../content/getContent";
 import { formatAmount, getPlan } from "../helper/getHelper";
 import type { ContactDraft } from "../handler/useCheckoutHandler";
@@ -120,8 +121,13 @@ export default function ContactForm({
           <span>{error}</span>
         </p>
       )}
-      <button type="submit" className="button button--primary button--lg button--block" disabled={submitting}>
-        <QrCode className="icon" strokeWidth={1.75} />
+      <button
+        type="submit"
+        className="button button--primary button--lg button--block"
+        disabled={submitting}
+        aria-busy={submitting || undefined}
+      >
+        {submitting ? <Spinner size="md" /> : <QrCode className="icon" strokeWidth={1.75} />}
         {contact.submit}
       </button>
       <p className="form-note">{contact.description}</p>

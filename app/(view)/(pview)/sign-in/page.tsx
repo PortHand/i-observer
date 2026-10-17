@@ -4,9 +4,10 @@ import "./sign-in.css";
 import { routes } from "@/helper/route";
 import { pageMetadata } from "@/helper/seo";
 import SiteFooter from "../home/components/SiteFooter";
+import PageHero from "../home/components/PageHero";
 import SiteHeader from "../home/components/SiteHeader";
 import LoginHelp from "./components/LoginHelp";
-import LowestPrice from "./components/LowestPrice";
+import LowestPrice, { LowestPriceSkeleton } from "./components/LowestPrice";
 import SignInSection from "./components/SignInSection";
 import { intro } from "./content/signInContent";
 
@@ -26,16 +27,12 @@ export default function SignInView() {
         <section className="band">
           <div className="container sign-in">
             <div className="sign-in__intro">
-              <div className="page-hero animate-in">
-                <span className="eyebrow">{intro.eyebrow}</span>
-                <h1 className="display page-hero__title">{intro.title}</h1>
-                <p className="lead page-hero__lead">{intro.lead}</p>
-              </div>
+              <PageHero {...intro} />
               <LoginHelp />
             </div>
             <SignInSection
               price={
-                <Suspense fallback={null}>
+                <Suspense fallback={<LowestPriceSkeleton />}>
                   <LowestPrice />
                 </Suspense>
               }

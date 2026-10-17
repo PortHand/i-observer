@@ -16,13 +16,15 @@ export interface Installer {
   os: string;
   label: string;
   detail: string;
+  /** Not released yet: listed, but no download. */
+  comingSoon?: boolean;
 }
 
 export const installers: Installer[] = [
-  { id: "windows", os: "Windows", label: "Windows", detail: "Windows 10 or 11 · 64-bit · .exe" },
   { id: "mac-arm64", os: "macOS", label: "macOS · Apple Silicon", detail: "M1 and later · .dmg" },
   { id: "mac-x64", os: "macOS", label: "macOS · Intel", detail: "Intel Macs · .dmg" },
-  { id: "linux", os: "Linux", label: "Linux", detail: "64-bit · .AppImage" },
+  { id: "windows", os: "Windows", label: "Windows", detail: "Windows 10 or 11 · 64-bit", comingSoon: true },
+  { id: "linux", os: "Linux", label: "Linux", detail: "64-bit · .AppImage", comingSoon: true },
 ];
 
 export const download = {
@@ -36,9 +38,12 @@ export const download = {
   expiresIn: "Link expires in {time}",
   expired: "This link has expired.",
   newLink: "Get a new link",
-  pickTitle: "Other systems",
-  pickHint: "Pick another installer. Each one gets its own short-lived link.",
-  unknownDevice: "We couldn't tell which computer you're on. iOverlay runs on Windows, macOS and Linux: pick your installer below.",
+  pickTitle: "All installers",
+  pickHint: "Pick an installer. Each one gets its own short-lived link.",
+  unknownDevice: "We couldn't tell which computer you're on. iOverlay runs on macOS: pick your Mac below.",
+  comingSoonTitle: "{os} is coming soon",
+  comingSoonText: "iOverlay is on macOS today. The {os} app is in the works, and your plan covers it when it's out. On a Mac? Pick your installer.",
+  comingSoon: "Coming soon",
   macArchHint: "Not sure which Mac you have? Apple menu → About This Mac: \"Chip Apple M…\" is Apple Silicon, \"Processor Intel…\" is Intel.",
   lockedTitle: "Download unlocks with your plan",
   locked: {
@@ -56,7 +61,7 @@ export const howTo = {
   title: "From download to presenting.",
   lead: "Four steps, about two minutes. Your login is the one we emailed you; you can find it in your inbox.",
   steps: [
-    { icon: Download, label: "Install", description: "Open the installer. On macOS drag iOverlay to Applications; on Windows follow the setup." },
+    { icon: Download, label: "Install", description: "Open the .dmg and drag iOverlay to Applications." },
     { icon: KeyRound, label: "Sign in", description: "Start iOverlay and sign in with the email and password from your login email." },
     { icon: Rocket, label: "Open the overlay", description: "Press Start overlay, then load your notes, a doc or any website inside it." },
     { icon: MonitorUp, label: "Share your screen", description: "Share in Zoom, Meet or Teams as usual. You see the overlay; they don't." },
@@ -65,8 +70,7 @@ export const howTo = {
     title: "First launch tips",
     items: [
       "macOS may say the app is from an unidentified developer: right-click iOverlay in Applications and choose Open.",
-      "Windows SmartScreen may show \"Windows protected your PC\": choose More info → Run anyway.",
-      "On Linux, make the AppImage executable (chmod +x) before opening it. Linux can't hide windows from capture.",
+      "The first time you share your screen, macOS asks for Screen Recording permission: allow it in System Settings → Privacy & Security.",
     ],
   },
 };

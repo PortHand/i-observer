@@ -8,6 +8,7 @@ import HelpBand from "./components/HelpBand";
 import HowToUse from "./components/HowToUse";
 import VideoGuide from "./components/VideoGuide";
 import Welcome from "./components/Welcome";
+import WelcomeSkeleton from "./components/WelcomeSkeleton";
 
 export const metadata: Metadata = {
   title: "Welcome",
@@ -25,7 +26,7 @@ export default function WelcomeView() {
       <main>
         <section className="band">
           <div className="container">
-            <Suspense fallback={<div className="welcome welcome--loading" aria-busy="true" />}>
+            <Suspense fallback={<WelcomeSkeleton />}>
               <Welcome />
             </Suspense>
           </div>

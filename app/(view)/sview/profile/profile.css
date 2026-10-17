@@ -505,3 +505,15 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+@media (max-width: 560px) {
+  .profile-page {
+    gap: var(--space-8);
+    padding-top: var(--space-6);
+    padding-bottom: 56px;
+  }
+
+  .profile-grid {
+    gap: var(--space-4);
+  }
+}

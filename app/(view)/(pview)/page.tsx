@@ -3,8 +3,8 @@ import { Suspense } from "react";
 import { routes } from "@/helper/route";
 import { pageMetadata, seo } from "@/helper/seo";
 import HomeView from "./home";
-import { PricingNotice } from "./home/components/Pricing";
 import PricingLoader from "./home/components/PricingLoader";
+import PricingSkeleton from "./home/components/PricingSkeleton";
 import SiteHeader from "./home/components/SiteHeader";
 import SoftwareJsonLd from "./home/components/SoftwareJsonLd";
 
@@ -16,14 +16,14 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function Page() {
-  // HomeView runs in the browser; the header (session) and pricing cards (database) need the
-  // server, so they're rendered here and handed in.
+  // The header (session) and pricing cards (database) stream in; they're rendered here and handed
+  // to HomeView, which lays out the page.
   return (
     <>
       <HomeView
         header={<SiteHeader current={routes.home} />}
         pricing={
-          <Suspense fallback={<PricingNotice />}>
+          <Suspense fallback={<PricingSkeleton />}>
             <PricingLoader />
           </Suspense>
         }

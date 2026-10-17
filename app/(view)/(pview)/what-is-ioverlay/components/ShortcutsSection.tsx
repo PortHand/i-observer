@@ -6,8 +6,8 @@ import { detectPlatform, type Platform } from "../../home/helper/homeHelper";
 
 const subscribeNoop = () => () => {};
 
-/** Shortcuts for the visitor's system; the server renders the Windows/Linux keys. */
+/** Shortcuts for the visitor's system; the server renders the macOS keys, the system iOverlay ships on. */
 export default function ShortcutsSection() {
-  const platform = useSyncExternalStore<Platform>(subscribeNoop, detectPlatform, () => "other");
+  const platform = useSyncExternalStore<Platform>(subscribeNoop, detectPlatform, () => "darwin");
   return <Shortcuts platform={platform} />;
 }

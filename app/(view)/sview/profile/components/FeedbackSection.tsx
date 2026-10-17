@@ -1,29 +1,16 @@
 "use client";
 
-import { CircleAlert, CircleCheck, Hash, MessageSquare, Send, Star } from "lucide-react";
+import { CircleAlert, CircleCheck, Hash, MessageSquare, Send } from "lucide-react";
 import Dropdown from "@/components/common/Dropdown";
+import FieldError from "@/components/common/FieldError";
+import Spinner from "@/components/common/Spinner";
 import { FEEDBACK_MAX, feedback, feedbackTopics } from "../content/profileContent";
-import { formatDate, topicLabel } from "../helper/profileHelper";
 import { useFeedbackHandler } from "../handler/useFeedbackHandler";
 import type { CustomerFeedback } from "../services/profileService";
+import FeedbackHistory from "./FeedbackHistory";
+import RatingField from "./RatingField";
 
 const topicOptions = feedbackTopics.map(({ id, label }) => ({ value: id, label }));
-
-const FieldError = ({ id, message }: { id: string; message?: string }) =>
-  message ? (
-    <span id={id} className="field-error">
-      <CircleAlert className="icon icon--sm" strokeWidth={1.75} />
-      {message}
-    </span>
-  ) : null;
-
-const Stars = ({ rating }: { rating: number }) => (
-  <span className="stars" aria-label={`${rating} out of 5`}>
-    {[1, 2, 3, 4, 5].map((value) => (
-      <Star key={value} className={value <= rating ? "icon icon--sm stars__on" : "icon icon--sm"} strokeWidth={1.75} />
-    ))}
-  </span>
-);
 
 /** Rating, topic, optional order and a note, plus the customer's earlier feedback. */
 export default function FeedbackSection({ references, initial }: { references: string[]; initial: CustomerFeedback[] }) {
@@ -68,29 +55,14 @@ export default function FeedbackSection({ references, initial }: { references: s
               <p className="text-muted">{feedback.description}</p>
             </header>
 
-            <fieldset className="field rating" aria-describedby={describe("rating")}>
-              <legend className="field__label">{feedback.ratingLabel}</legend>
-              <div className="rating__options">
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <label key={value} className="rating__option" title={feedback.ratings[value - 1]}>
-                    <input
-                      type="radio"
-                      name="rating"
-                      value={value}
-                      checked={rating === value}
-                      onChange={() => {
-                        setRating(value);
-                        clearError("rating");
-                      }}
-                    />
-                    <Star className={value <= rating ? "icon rating__star rating__star--on" : "icon rating__star"} strokeWidth={1.75} />
-                    <span className="sr-only">{feedback.ratings[value - 1]}</span>
-                  </label>
-                ))}
-                <span className="rating__word mono">{rating ? feedback.ratings[rating - 1] : ""}</span>
-              </div>
-              <FieldError id="rating-error" message={errors.rating} />
-            </fieldset>
+            <RatingField
+              rating={rating}
+              error={errors.rating}
+              onChange={(value) => {
+                setRating(value);
+                clearError("rating");
+              }}
+            />
 
             <div className="field-grid">
               <div className="field">
@@ -170,8 +142,8 @@ export default function FeedbackSection({ references, initial }: { references: s
 
             <div className="form-footer">
               <span />
-              <button type="submit" className="button button--primary button--lg" disabled={submitting}>
-                <Send className="icon icon--sm" strokeWidth={1.75} />
+              <button type="submit" className="button button--primary button--lg" disabled={submitting} aria-busy={submitting || undefined}>
+                {submitting ? <Spinner /> : <Send className="icon icon--sm" strokeWidth={1.75} />}
                 {submitting ? feedback.sending : feedback.submit}
               </button>
             </div>
@@ -179,24 +151,7 @@ export default function FeedbackSection({ references, initial }: { references: s
         )}
       </div>
 
-      {history.length > 0 && (
-        <div className="feedback-history">
-          <span className="section-label">{feedback.history}</span>
-          <ul className="feedback-history__list">
-            {history.map((entry) => (
-              <li key={entry.id} className="feedback-history__item">
-                <div className="feedback-history__meta">
-                  <Stars rating={entry.rating} />
-                  <span className="mono">{topicLabel(entry.topic)}</span>
-                  {entry.reference && <span className="mono">{entry.reference}</span>}
-                  <span className="mono text-muted">{formatDate(entry.createdAt)}</span>
-                </div>
-                <p>{entry.message}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <FeedbackHistory history={history} />
     </section>
   );
 }

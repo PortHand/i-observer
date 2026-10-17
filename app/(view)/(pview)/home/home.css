@@ -39,7 +39,8 @@ a {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 40px;
+  /* Sides only: many elements are also a .container and set their own top and bottom padding. */
+  padding-inline: 40px;
 }
 
 /* Bands: full-width sections alternating paper tones, divided by hairlines */
@@ -75,10 +76,17 @@ a {
 .nav {
   position: sticky;
   top: 0;
-  z-index: 1;
+  /* Above sticky page toolbars (the FAQ filter bar on phones), so header menus open over them. */
+  z-index: 10;
   border-bottom: 1px solid var(--color-border);
   background: rgb(233 233 229 / 92%);
   backdrop-filter: blur(12px);
+}
+
+/* backdrop-filter would pin the menu sheet (position: fixed) inside the header; drop it while open. */
+.nav:has(.mobile-nav--open) {
+  background: var(--color-canvas);
+  backdrop-filter: none;
 }
 
 .nav__inner {
@@ -131,7 +139,7 @@ a {
 }
 
 .hero__title {
-  font-size: var(--text-display);
+  font-size: clamp(44px, 8vw, var(--text-display));
 }
 
 .lead {
@@ -165,7 +173,7 @@ a {
 }
 
 .auth__header h2 {
-  font-size: 44px;
+  font-size: clamp(32px, 5vw, 44px);
 }
 
 .auth__header .mono {
@@ -337,7 +345,7 @@ a {
 
 .topic h3 {
   margin-top: var(--space-2);
-  font-size: 36px;
+  font-size: clamp(28px, 4vw, 36px);
 }
 
 .topic__link {
@@ -368,7 +376,8 @@ a {
 }
 
 .page-hero__title {
-  font-size: var(--text-display);
+  font-size: clamp(44px, 8vw, var(--text-display));
+  overflow-wrap: break-word;
 }
 
 .page-hero__lead {
@@ -397,7 +406,7 @@ a {
 }
 
 .section__title {
-  font-size: 64px;
+  font-size: clamp(36px, 6vw, 64px);
 }
 
 /* Pricing.tsx sets --plan-count to the number of plans on sale. */
@@ -453,6 +462,12 @@ a {
   font-size: var(--text-sm);
 }
 
+.step__icon {
+  margin-right: var(--space-2);
+  color: var(--color-accent-text);
+  vertical-align: -2px;
+}
+
 .step p {
   max-width: 340px;
   font-size: var(--text-base);
@@ -484,7 +499,7 @@ a {
 
 .stat__value {
   margin-bottom: var(--space-2);
-  font-size: 56px;
+  font-size: clamp(40px, 6vw, 56px);
 }
 
 .stat__label {
@@ -505,9 +520,15 @@ a {
   font-size: var(--text-xs);
 }
 
-.capture-tag--off {
+.capture-tag--off,
+.capture-tag--soon {
   background: var(--color-warning-soft);
   color: var(--color-warning);
+}
+
+/* Systems not released yet: same card, quieter headline. */
+.stat--soon .stat__value {
+  color: var(--color-text-subtle);
 }
 
 .stat__note {
@@ -543,9 +564,11 @@ a {
 
 .page-footer__inner {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding-top: var(--space-5);
-  padding-bottom: var(--space-5);
+  min-height: 72px;
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
   font-size: var(--text-xs);
 }
 
@@ -554,29 +577,54 @@ a {
   font-weight: var(--weight-regular);
 }
 
+/* Tablet: one column for the big two-part rows; four-across rows become two by two. */
+
 @media (max-width: 980px) {
-  .hero,
-  .section__header,
-  .topics,
-  .steps,
-  .steps--four,
-  .stats,
-  .stats--four,
-  .plans {
-    grid-template-columns: 1fr;
+  .container {
+    padding-inline: var(--space-6);
   }
 
+  .nav__inner {
+    gap: var(--space-4);
+  }
+
+  /* The section links move into the menu (MobileNav.tsx). */
   .nav__links {
     display: none;
   }
 
-  .hero__title,
-  .page-hero__title {
-    font-size: 56px;
+  .hero,
+  .section__header,
+  .topics,
+  .steps,
+  .stats {
+    grid-template-columns: 1fr;
   }
 
-  .section__title {
-    font-size: 48px;
+  .hero {
+    gap: var(--space-10);
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .page-hero {
+    padding-top: 56px;
+    padding-bottom: var(--space-8);
+  }
+
+  .section {
+    gap: var(--space-8);
+    padding-top: 64px;
+    padding-bottom: 64px;
+  }
+
+  .section--compact {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .section__header {
+    gap: var(--space-4);
   }
 
   /* Stacked cards: divide with a top hairline instead of a left one. */
@@ -587,11 +635,353 @@ a {
     border-top: 1px solid var(--color-border);
     border-left: 0;
   }
+
+  .steps--four,
+  .stats--four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Two by two: a left hairline on the right column, a top hairline from the second row. */
+  .steps--four > .step,
+  .stats--four > .stat {
+    padding-left: 0;
+    border-top: 0;
+    border-left: 0;
+  }
+
+  .steps--four > .step:nth-child(even),
+  .stats--four > .stat:nth-child(even) {
+    padding-left: var(--space-6);
+    border-left: 1px solid var(--color-border);
+  }
+
+  .steps--four > .step:nth-child(n + 3),
+  .stats--four > .stat:nth-child(n + 3) {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .auth {
+    padding: var(--space-8);
+  }
 }
 
+@media (max-width: 760px) {
+  .plans {
+    grid-template-columns: 1fr;
+  }
+
+  .plan,
+  .plan:first-child {
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .plan + .plan {
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* The highlighted plan is an ink panel: keep its side padding when stacked. */
+  .plan--highlighted {
+    padding-right: var(--space-5);
+    padding-left: var(--space-5);
+  }
+}
+
+/* Phones: 16px gutters, everything in one column, full-width actions. */
+
 @media (max-width: 560px) {
+  html {
+    scroll-padding-top: 72px;
+  }
+
+  .container {
+    padding-inline: var(--space-4);
+  }
+
+  .utility-bar__inner span:last-child {
+    display: none;
+  }
+
+  .nav__inner {
+    gap: var(--space-3);
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
+  }
+
+  .brand {
+    gap: var(--space-2);
+  }
+
+  .brand__logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand__tagline {
+    display: none;
+  }
+
+  .hero {
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-10);
+  }
+
+  .page-hero {
+    gap: var(--space-4);
+    padding-top: var(--space-10);
+    padding-bottom: var(--space-6);
+  }
+
+  .lead {
+    font-size: var(--text-md);
+  }
+
+  .section {
+    gap: var(--space-6);
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+
+  .section--compact {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+  }
+
+  .hero__actions > .button {
+    flex: 1 1 100%;
+  }
+
+  .auth,
+  .explainer {
+    padding: var(--space-5);
+  }
+
+  .topic,
+  .step,
+  .stat {
+    padding-right: 0;
+  }
+
+  .steps--four,
+  .stats--four {
+    grid-template-columns: 1fr;
+  }
+
+  .steps--four > .step:nth-child(even),
+  .stats--four > .stat:nth-child(even) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .steps--four > .step + .step,
+  .stats--four > .stat + .stat {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .closing {
+    gap: var(--space-6);
+    padding: var(--space-8) 0;
+  }
+
+  .closing > .button,
+  .closing > .download__actions,
+  .closing > .download__actions > .button {
+    width: 100%;
+  }
+
+  .page-footer__inner {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    min-height: 64px;
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-5);
+  }
+
   /* Keep the mock overlay's notes inside its box on narrow screens. */
   .screen__overlay li:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .screen__overlay li:nth-child(n + 2) {
+    display: none;
+  }
+}
+
+/* Video: shimmers until the player paints over it (VideoEmbed.tsx). */
+
+.video--loading {
+  background: linear-gradient(90deg, #1b1a19 0%, #2e2d2a 50%, #1b1a19 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s var(--easing) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video--loading {
+    animation: none;
+  }
+}
+
+/* Pricing skeleton: the plan cards' shape while prices load (PricingSkeleton.tsx). */
+
+.plan--skeleton {
+  min-height: 420px;
+}
+
+.plan--skeleton::before {
+  background: var(--color-border);
+}
+
+/* Mobile menu (MobileNav.tsx): replaces the section links below 980px. */
+
+.mobile-nav {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .mobile-nav {
+    display: block;
+  }
+}
+
+.mobile-nav__toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border-strong);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--easing), color var(--duration-fast) var(--easing);
+}
+
+.mobile-nav__toggle:hover,
+.mobile-nav--open .mobile-nav__toggle {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+/* A sheet from under the header (MobileNav.tsx sets `top`) to the bottom of the window. */
+.mobile-nav__panel {
+  position: fixed;
+  z-index: 30;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-canvas);
+  animation: dropdown-in var(--duration-fast) var(--easing);
+}
+
+.mobile-nav__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-height: 100%;
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-8);
+}
+
+.mobile-nav__links {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border-strong);
+}
+
+.mobile-nav__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 60px;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+  transition: color var(--duration-fast) var(--easing);
+}
+
+.mobile-nav__index {
+  flex: none;
+  width: 24px;
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+}
+
+.mobile-nav__label {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  text-transform: uppercase;
+}
+
+.mobile-nav__link .icon {
+  color: var(--color-text-subtle);
+  transition: transform var(--duration-fast) var(--easing), color var(--duration-fast) var(--easing);
+}
+
+.mobile-nav__link:hover .icon {
+  transform: translateX(2px);
+}
+
+.mobile-nav__link[aria-current="page"],
+.mobile-nav__link[aria-current="page"] .mobile-nav__index,
+.mobile-nav__link[aria-current="page"] .icon,
+.mobile-nav__link:hover .icon {
+  color: var(--color-accent-text);
+}
+
+/* Pinned to the bottom of the sheet when the links don't fill it. */
+.mobile-nav__footer {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.mobile-nav__footer .mono {
+  font-size: var(--text-xs);
+}
+
+.mobile-nav__footer .hint {
+  align-items: flex-start;
+  overflow-wrap: anywhere;
+}
+
+.mobile-nav__footer .hint .icon {
+  margin-top: 2px;
+}
+
+/* Tablets: the sheet's content keeps a readable width. */
+@media (min-width: 561px) {
+  .mobile-nav__inner {
+    padding-top: var(--space-8);
+  }
+
+  .mobile-nav__label {
+    font-size: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav__panel {
+    animation: none;
+  }
+}
+
+/* Sign-in link in the header: icon only on the narrowest phones. */
+@media (max-width: 380px) {
+  .nav__sign-in-label {
     display: none;
   }
 }
