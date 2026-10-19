@@ -175,3 +175,307 @@
     font-size: 28px;
   }
 }
+
+.download .hint a {
+  color: var(--color-accent-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Opening on a Mac: one card per step, each with a drawn picture of the macOS screen */
+
+.mac-open {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mac-open__step {
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+}
+
+.mac-open__title {
+  font-size: var(--text-lg);
+}
+
+.mac-open__damaged {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 860px;
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-left: 2px solid var(--color-warning);
+}
+
+.mac-open__damaged .section-label {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  color: var(--color-warning);
+}
+
+.mac-open__command {
+  display: block;
+  overflow-x: auto;
+  padding: var(--space-3);
+  background: var(--color-text);
+  color: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  user-select: all;
+}
+
+/*
+ * The pictures copy macOS rather than this site, so they keep macOS's own light look: system font,
+ * rounded windows and blue buttons. The button to click gets the site's red ring.
+ */
+.mac-shot {
+  --mac-window: #f6f6f6;
+  --mac-line: rgb(0 0 0 / 12%);
+  --mac-text: #1d1d1f;
+  --mac-muted: #6e6e73;
+  --mac-blue: #0a84ff;
+  --mac-button: #e3e3e6;
+
+  display: grid;
+  place-items: center;
+  height: 220px;
+  padding: var(--space-3);
+  overflow: hidden;
+  background: linear-gradient(160deg, #cfd7e3, #e6ddd3);
+  border: 1px solid var(--color-border);
+  color: var(--mac-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.mac-shot__window {
+  width: 100%;
+  max-width: 260px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--mac-window);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 22%), 0 0 0 0.5px rgb(0 0 0 / 25%);
+}
+
+.mac-shot__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--mac-line);
+}
+
+.mac-shot__lights {
+  display: flex;
+  gap: 5px;
+}
+
+.mac-shot__lights i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff5f57;
+}
+
+.mac-shot__lights i:nth-child(2) {
+  background: #febc2e;
+}
+
+.mac-shot__lights i:nth-child(3) {
+  background: #28c840;
+}
+
+.mac-shot__title {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.mac-shot__app-icon {
+  display: block;
+  border-radius: 22%;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 25%);
+}
+
+.mac-shot__dmg {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 12px 26px;
+  background: #fff;
+}
+
+.mac-shot__file {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.mac-shot__folder {
+  width: 48px;
+  height: 48px;
+  color: #3a9bf0;
+  fill: #8cc8fa;
+}
+
+.mac-shot__arrow {
+  width: 22px;
+  height: 22px;
+  color: var(--mac-muted);
+}
+
+.mac-shot__alert {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 220px;
+  padding: 14px 14px 12px;
+  border-radius: 12px;
+  background: var(--mac-window);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 22%), 0 0 0 0.5px rgb(0 0 0 / 25%);
+  text-align: center;
+}
+
+.mac-shot__alert strong {
+  font-size: 12px;
+}
+
+.mac-shot__alert p {
+  margin: 0;
+  color: var(--mac-text);
+  font-size: 10px;
+}
+
+.mac-shot__buttons {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.mac-shot__btn {
+  display: block;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--mac-button);
+  font-size: 11px;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mac-shot__alert .mac-shot__btn:first-child {
+  background: var(--mac-blue);
+  color: #fff;
+}
+
+/* The thing to click: the site's red ring, so it reads as our annotation on top of macOS. */
+.mac-shot__btn--target,
+.mac-shot__file--target {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.mac-shot__settings {
+  max-width: 300px;
+}
+
+.mac-shot__split {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  min-height: 132px;
+}
+
+.mac-shot__sidebar {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  margin: 0;
+  padding: 6px;
+  border-right: 1px solid var(--mac-line);
+  background: #ececec;
+  color: var(--mac-muted);
+  font-size: 9.5px;
+  list-style: none;
+}
+
+.mac-shot__sidebar li {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 3px 5px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.mac-shot__sidebar .mac-shot__selected {
+  background: var(--mac-blue);
+  color: #fff;
+}
+
+.mac-shot__side-icon {
+  flex: none;
+  width: 11px;
+  height: 11px;
+}
+
+.mac-shot__pane {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.mac-shot__pane-title {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mac-shot__group-label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  color: var(--mac-muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.mac-shot__row {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 0 0.5px var(--mac-line);
+  font-size: 10px;
+}
+
+
+@media (max-width: 1100px) {
+  .mac-open {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .mac-open {
+    grid-template-columns: 1fr;
+  }
+}

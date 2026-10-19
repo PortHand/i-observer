@@ -68,9 +68,52 @@ export const howTo = {
   firstRun: {
     title: "First launch tips",
     items: [
-      "macOS may say the app is from an unidentified developer: right-click iOverlay in Applications and choose Open.",
+      "The first time you open iOverlay, macOS shows a security warning: follow \"Opening iOverlay on a Mac\" above, once.",
       "The first time you share your screen, macOS asks for Screen Recording permission: allow it in System Settings → Privacy & Security.",
     ],
+  },
+};
+
+/** The illustration drawn for each step (components/MacOpenShot.tsx). */
+export type MacOpenShot = "install" | "blocked" | "settings" | "confirm";
+
+/**
+ * Getting past Gatekeeper the first time. The app isn't notarized by Apple, so macOS blocks the
+ * first launch; macOS 15 and later dropped right-click → Open, leaving Open Anyway in Settings.
+ */
+export const macOpen = {
+  id: "open-on-mac",
+  eyebrow: "macOS · first launch",
+  title: "Opening iOverlay on a Mac.",
+  lead: "The first time you open iOverlay, macOS asks you to confirm it. It takes under a minute and you only do it once.",
+  hint: "The first time you open it, macOS shows a security warning.",
+  hintLink: "See the steps above",
+  steps: [
+    {
+      shot: "install",
+      title: "Install it",
+      text: "Open the downloaded .dmg and drag iOverlay onto the Applications folder.",
+    },
+    {
+      shot: "blocked",
+      title: "Open it, then click Done",
+      text: "Double-click iOverlay in Applications. macOS says it couldn't verify the app: click Done. Don't click Move to Bin.",
+    },
+    {
+      shot: "settings",
+      title: "Click Open Anyway",
+      text: "Open System Settings → Privacy & Security, scroll down to Security and click Open Anyway next to \"iOverlay\" was blocked.",
+    },
+    {
+      shot: "confirm",
+      title: "Confirm",
+      text: "Click Open Anyway again and enter your Mac password. iOverlay opens, and from now on it opens like any other app.",
+    },
+  ] satisfies { shot: MacOpenShot; title: string; text: string }[],
+  damaged: {
+    title: "macOS says \"iOverlay is damaged\"?",
+    text: "Open Terminal (Applications → Utilities), paste this line, press Return, then open iOverlay again:",
+    command: "xattr -dr com.apple.quarantine /Applications/iOverlay.app",
   },
 };
 

@@ -1,8 +1,8 @@
 "use client";
 
-import { CircleAlert, Download, RotateCw } from "lucide-react";
+import { CircleAlert, Download, RotateCw, ShieldAlert } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
-import { download, type InstallerId } from "../content/welcomeContent";
+import { download, macOpen, type InstallerId } from "../content/welcomeContent";
 import { fill, getInstaller, isAvailableInstaller } from "../helper/welcomeHelper";
 import { useDownloadHandler } from "../handler/useDownloadHandler";
 import type { DownloadAccess } from "../services/welcomeService";
@@ -78,6 +78,15 @@ export default function DownloadPanel({ access }: { access: DownloadAccess }) {
                   : fill(download.downloadNow, { installer: primaryInstaller.label })}
             </button>
           </div>
+        )}
+
+        {primaryInstaller?.os === "macOS" && (
+          <p className="hint">
+            <ShieldAlert className="icon icon--sm" strokeWidth={1.75} />
+            <span>
+              {macOpen.hint} <a href={`#${macOpen.id}`}>{macOpen.hintLink}</a>
+            </span>
+          </p>
         )}
       </div>
 
