@@ -6,7 +6,7 @@ import { apiRoutes } from "@/helper/route";
 export const welcome = {
   eyebrow: "Signed in",
   title: "Welcome to iOverlay",
-  lead: "Your download starts on its own. Install the app, sign in with the same login, and you're ready for your next screen share.",
+  lead: "Download the installer for your computer, install the app, sign in with the same login, and you're ready for your next screen share.",
 };
 
 /** One installer per system. The file names match electron-builder's (iobserver-app/electron-builder.yml). */
@@ -34,11 +34,9 @@ export const download = {
   detected: "Detected: {installer}",
   preparing: "Preparing your secure download link…",
   started: "Your download has started.",
-  startedHint: "Didn't start? Use the button below. The link is private and works for a few minutes.",
+  startedHint: "Didn't start? Click download again: each click makes a new private link that works for one minute.",
   downloadNow: "Download {installer}",
-  expiresIn: "Link expires in {time}",
-  expired: "This link has expired.",
-  newLink: "Get a new link",
+  downloadAgain: "Download again",
   pickTitle: "All installers",
   pickHint: "Pick an installer. Each one gets its own short-lived link.",
   unknownDevice: "We couldn't tell which computer you're on. iOverlay runs on macOS: pick your Mac below.",

@@ -1,46 +1,33 @@
 "use client";
 
-import { CircleAlert, Download, RefreshCw } from "lucide-react";
+import { CircleAlert, Download, RotateCw } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import { download, type InstallerId } from "../content/welcomeContent";
-import { fill, formatCountdown, getInstaller, isAvailableInstaller } from "../helper/welcomeHelper";
+import { fill, getInstaller, isAvailableInstaller } from "../helper/welcomeHelper";
 import { useDownloadHandler } from "../handler/useDownloadHandler";
 import type { DownloadAccess } from "../services/welcomeService";
 import DownloadLocked from "./DownloadLocked";
 import DownloadStatus, { type DownloadState } from "./DownloadStatus";
 import InstallerList from "./InstallerList";
 
-/** Time left on the private link, as text and a draining bar. */
-function LinkTimer({ secondsLeft, total }: { secondsLeft: number; total: number }) {
-  return (
-    <div className="download__timer">
-      <span className="mono">{fill(download.expiresIn, { time: formatCountdown(secondsLeft) })}</span>
-      <span className="download__meter" aria-hidden="true">
-        <span style={{ width: `${Math.max(0, Math.min(100, (secondsLeft / total) * 100))}%` }} />
-      </span>
-    </div>
-  );
-}
-
 /**
- * Starts the download for the visitor's system as soon as the page opens, through a private link
- * that works for a few minutes. Shows the countdown, a manual button and the other installers.
- * Windows and Linux are coming soon: those visitors get a note instead of a download.
+ * The download for the visitor's system, and the other installers. Each click fetches a fresh
+ * private link that works for a minute and starts the download with it. Windows and Linux are
+ * coming soon: those visitors get a note instead of a download.
  */
 export default function DownloadPanel({ access }: { access: DownloadAccess }) {
-  const { detected, link, live, secondsLeft, loading, error, requestLink } = useDownloadHandler(access.allowed);
+  const { detected, started, loading, error, startInstaller } = useDownloadHandler();
 
   if (!access.allowed) return <DownloadLocked access={access} />;
 
   const detectedSoon = detected ? !isAvailableInstaller(detected) : false;
-  const primary: InstallerId | null = link?.installer ?? (detected && !detectedSoon ? detected : null);
+  const primary: InstallerId | null = started ?? (detected && !detectedSoon ? detected : null);
   const primaryInstaller = primary ? getInstaller(primary) : null;
   const detectedInstaller = detected ? getInstaller(detected) : null;
 
   let state: DownloadState = "idle";
-  if (detected === undefined || (loading !== null && loading === primary)) state = "preparing";
-  else if (link && live) state = "started";
-  else if (link) state = "expired";
+  if (loading !== null && loading === primary) state = "preparing";
+  else if (started) state = "started";
   else if (detectedSoon) state = "coming-soon";
   else if (!detected) state = "unknown";
 
@@ -70,36 +57,31 @@ export default function DownloadPanel({ access }: { access: DownloadAccess }) {
 
         {primaryInstaller && (
           <div className="download__actions">
-            {link && live && link.installer === primary ? (
-              <a href={link.url} className="button button--primary button--lg" rel="noopener">
+            <button
+              type="button"
+              className="button button--primary button--lg"
+              disabled={loading !== null}
+              aria-busy={loading === primaryInstaller.id || undefined}
+              onClick={() => void startInstaller(primaryInstaller.id)}
+            >
+              {loading === primaryInstaller.id ? (
+                <Spinner />
+              ) : started === primaryInstaller.id ? (
+                <RotateCw className="icon icon--sm" strokeWidth={1.75} />
+              ) : (
                 <Download className="icon icon--sm" strokeWidth={1.75} />
-                {fill(download.downloadNow, { installer: primaryInstaller.label })}
-              </a>
-            ) : (
-              <button
-                type="button"
-                className="button button--primary button--lg"
-                disabled={loading !== null}
-                aria-busy={loading === primaryInstaller.id || undefined}
-                onClick={() => requestLink(primaryInstaller.id)}
-              >
-                {loading === primaryInstaller.id ? (
-                  <Spinner />
-                ) : link ? (
-                  <RefreshCw className="icon icon--sm" strokeWidth={1.75} />
-                ) : (
-                  <Download className="icon icon--sm" strokeWidth={1.75} />
-                )}
-                {link ? download.newLink : error ? download.retry : fill(download.downloadNow, { installer: primaryInstaller.label })}
-              </button>
-            )}
+              )}
+              {error
+                ? download.retry
+                : started === primaryInstaller.id
+                  ? download.downloadAgain
+                  : fill(download.downloadNow, { installer: primaryInstaller.label })}
+            </button>
           </div>
         )}
-
-        {link && live && <LinkTimer secondsLeft={secondsLeft} total={link.expiresIn} />}
       </div>
 
-      <InstallerList primary={primary} loading={loading} onPick={requestLink} />
+      <InstallerList primary={primary} loading={loading} onPick={(installer) => void startInstaller(installer)} />
     </div>
   );
 }

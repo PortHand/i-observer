@@ -85,6 +85,30 @@ export const env = {
     },
   },
 
+  /** AWS S3, for the app installers when S3_BUCKET and both keys are set. See .env.example. */
+  s3: {
+    /** The bucket's region, e.g. ap-south-1 (Mumbai). */
+    get region() {
+      return optional("S3_REGION")?.trim() ?? "ap-south-1";
+    },
+    /** Private bucket holding the installers, under releases/<version>/. */
+    get bucket() {
+      return optional("S3_BUCKET")?.trim();
+    },
+    /** Folder in the bucket the installers' releases/ folder is under; S3_PREFIX="" for the root. */
+    get prefix() {
+      return (process.env.S3_PREFIX ?? "i-overlay/app").trim().replace(/^\/+|\/+$/g, "");
+    },
+    /** An IAM user's access key that may read the bucket (s3:GetObject). */
+    get accessKeyId() {
+      return optional("S3_ACCESS_KEY_ID")?.trim();
+    },
+    /** The same key's secret: server only, never NEXT_PUBLIC_. */
+    get secretAccessKey() {
+      return optional("S3_SECRET_ACCESS_KEY")?.trim();
+    },
+  },
+
   /** Postgres connection. databaseConfig.ts checks the required ones and builds the URL. */
   db: {
     get host() {

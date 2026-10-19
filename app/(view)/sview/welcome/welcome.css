@@ -72,26 +72,6 @@
   gap: var(--space-3);
 }
 
-.download__timer {
-  display: grid;
-  gap: var(--space-2);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
-.download__meter {
-  display: block;
-  height: 3px;
-  background: var(--color-border);
-}
-
-.download__meter > span {
-  display: block;
-  height: 100%;
-  background: var(--color-accent);
-  transition: width 1s linear;
-}
-
 .installers {
   display: grid;
   gap: var(--space-4);
@@ -145,12 +125,6 @@
 .installer__detail {
   color: var(--color-text-muted);
   font-size: var(--text-xs);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .download__meter > span {
-    transition: none;
-  }
 }
 
 /* How to use */

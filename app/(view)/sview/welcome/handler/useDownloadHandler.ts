@@ -1,17 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { download, type InstallerId } from "../content/welcomeContent";
-import { detectInstaller, isAvailableInstaller } from "../helper/welcomeHelper";
+import { detectInstaller } from "../helper/welcomeHelper";
 import * as welcomeService from "../services/welcomeService";
-
-/** Stop offering a link a little before the server says it expires, so a click never lands on a dead one. */
-const EXPIRY_MARGIN_MS = 5000;
-
-export interface ActiveLink extends welcomeService.DownloadLink {
-  /** When the link stops being offered, by this browser's clock. */
-  deadline: number;
-}
 
 /** Hands the browser a link that answers with "Content-Disposition: attachment": it saves the file and stays on the page. */
 const startDownload = (url: string) => {
@@ -24,28 +16,26 @@ const startDownload = (url: string) => {
 };
 
 /**
- * The welcome page's download: works out the visitor's system, fetches a short-lived link for it
- * and starts the download straight away (when `allowed`). Other installers and fresh links on demand.
+ * The welcome page's download: works out the visitor's system, and on each click asks the server
+ * for a fresh private link (it works for a minute) and starts the download with it straight away.
+ * Links are never kept or shown, so there's nothing to copy and pass around.
  */
-export const useDownloadHandler = (allowed: boolean) => {
+export const useDownloadHandler = () => {
   /** undefined while detecting; null when the system couldn't be told (e.g. a phone). */
   const [detected, setDetected] = useState<InstallerId | null | undefined>(undefined);
-  const [link, setLink] = useState<ActiveLink | null>(null);
+  /** The installer whose download was last started. */
+  const [started, setStarted] = useState<InstallerId | null>(null);
   const [loading, setLoading] = useState<InstallerId | null>(null);
   const [error, setError] = useState("");
-  const [now, setNow] = useState(() => Date.now());
-  const autoStarted = useRef(false);
 
-  const requestLink = useCallback(async (installer: InstallerId) => {
+  const startInstaller = useCallback(async (installer: InstallerId) => {
     setLoading(installer);
     setError("");
     try {
       const result = await welcomeService.getDownloadLink(installer);
       if (!result.ok) return setError(result.error);
-      const received = Date.now();
-      setLink({ ...result.link, deadline: received + result.link.expiresIn * 1000 - EXPIRY_MARGIN_MS });
-      setNow(received);
       startDownload(result.link.url);
+      setStarted(installer);
     } catch {
       setError(download.error);
     } finally {
@@ -53,38 +43,16 @@ export const useDownloadHandler = (allowed: boolean) => {
     }
   }, []);
 
-  // Detect the system once, and start its download on arrival.
+  // Detect the system once, to offer its installer first.
   useEffect(() => {
     let cancelled = false;
     detectInstaller().then((installer) => {
-      if (cancelled) return;
-      setDetected(installer);
-      // Windows and Linux are coming soon: nothing to start for them.
-      if (allowed && installer && isAvailableInstaller(installer) && !autoStarted.current) {
-        autoStarted.current = true;
-        void requestLink(installer);
-      }
+      if (!cancelled) setDetected(installer);
     });
     return () => {
       cancelled = true;
     };
-  }, [allowed, requestLink]);
+  }, []);
 
-  // Tick the countdown while a link is live.
-  const live = link !== null && now < link.deadline;
-  useEffect(() => {
-    if (!live) return;
-    const timer = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(timer);
-  }, [live]);
-
-  return {
-    detected,
-    link,
-    live,
-    secondsLeft: link ? (link.deadline - now) / 1000 : 0,
-    loading,
-    error,
-    requestLink,
-  };
+  return { detected, started, loading, error, startInstaller };
 };

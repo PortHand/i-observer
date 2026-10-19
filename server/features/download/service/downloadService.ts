@@ -5,10 +5,13 @@ import { installerFileName } from "@/app/(view)/sview/welcome/helper/welcomeHelp
 import type { DownloadLink } from "@/app/(view)/sview/welcome/services/welcomeService";
 import { HttpError } from "@/server/core/httpError";
 import type { AccountService } from "@/server/features/account/service/accountService";
-import type { StorageService } from "@/server/features/storage/service/storageService";
+import type { SignedLinks } from "@/server/features/storage/service/storageService";
 
-/** How long a download link works, in seconds: enough to start the download, too short to pass around. */
-export const DOWNLOAD_LINK_SECONDS = 5 * 60;
+/**
+ * How long a download link works, in seconds. The page makes one per click and starts it at once,
+ * so a minute is plenty; a download already running finishes after the link expires.
+ */
+export const DOWNLOAD_LINK_SECONDS = 60;
 
 const messages = {
   locked: "Your download unlocks once you have an active plan.",
@@ -19,14 +22,14 @@ const messages = {
 const installerPath = (fileName: string) => `releases/${appInfo.version}/${fileName}`;
 
 /**
- * Short-lived links to the app installers, which sit in a private bucket. Only accounts with access
+ * Short-lived links to the app installers, which sit in a private bucket (S3, or Supabase without it). Only accounts with access
  * get one; each link expires after DOWNLOAD_LINK_SECONDS and makes the browser save the file.
  */
 export class DownloadService {
-  private readonly storage: StorageService;
+  private readonly storage: SignedLinks;
   private readonly accounts: AccountService;
 
-  constructor(storage: StorageService, accounts: AccountService) {
+  constructor(storage: SignedLinks, accounts: AccountService) {
     this.storage = storage;
     this.accounts = accounts;
   }

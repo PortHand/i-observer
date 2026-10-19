@@ -1,9 +1,9 @@
-import { CircleAlert, Clock, MonitorDown } from "lucide-react";
+import { Clock, MonitorDown } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import { download, type Installer } from "../content/welcomeContent";
 import { fill } from "../helper/welcomeHelper";
 
-export type DownloadState = "preparing" | "started" | "expired" | "coming-soon" | "unknown" | "idle";
+export type DownloadState = "preparing" | "started" | "coming-soon" | "unknown" | "idle";
 
 /** The line under the download card's title: what's happening with this computer's download. */
 export default function DownloadStatus({ state, detected }: { state: DownloadState; detected: Installer | null }) {
@@ -24,13 +24,6 @@ export default function DownloadStatus({ state, detected }: { state: DownloadSta
           </p>
           <p className="text-muted">{download.startedHint}</p>
         </div>
-      );
-    case "expired":
-      return (
-        <p className="download__status" role="status">
-          <CircleAlert className="icon icon--sm" strokeWidth={1.75} />
-          {download.expired}
-        </p>
       );
     case "coming-soon":
       return (

@@ -22,11 +22,16 @@ const encodePath = (path: string) =>
     .map((segment) => encodeURIComponent(segment).replace(/%40/g, "@"))
     .join("/");
 
+/** Storage that hands out short-lived links to its files: Supabase (below) or AWS S3 (s3Storage.ts). */
+export interface SignedLinks {
+  signedUrl(path: string, expiresIn: number, downloadAs?: string): Promise<string | null>;
+}
+
 /**
  * Files in one private Supabase Storage bucket, through its HTTP API. Uploads are server-side with
  * the service_role key; reading back goes through short-lived signed links.
  */
-export class StorageService {
+export class StorageService implements SignedLinks {
   private readonly settings: StorageSettings;
 
   constructor(settings: StorageSettings) {

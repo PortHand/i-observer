@@ -50,8 +50,3 @@ export const detectInstaller = async (): Promise<InstallerId | null> => {
 export const fill = (text: string, values: Record<string, string>) =>
   text.replace(/\{(\w+)\}/g, (match, key: string) => values[key] ?? match);
 
-/** Seconds left as "4:05". */
-export const formatCountdown = (seconds: number) => {
-  const safe = Math.max(0, Math.ceil(seconds));
-  return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
-};

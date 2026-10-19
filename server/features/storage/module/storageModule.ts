@@ -3,6 +3,7 @@
 
 import "server-only";
 import { env } from "@/server/core/env";
+import { S3Storage } from "../service/s3Storage";
 import { StorageService } from "../service/storageService";
 
 const { url, secretKey, receiptsBucket, downloadsBucket, assetsBucket } = env.supabase;
@@ -22,14 +23,22 @@ export const receiptStorage = new StorageService({
   testMode,
 });
 
-/** The private bucket holding the app installers (SUPABASE_DOWNLOADS_BUCKET). Read only, through signed links. */
-export const downloadStorage = new StorageService({
-  url,
-  secretKey,
-  bucket: downloadsBucket,
-  optional: !env.isProduction,
-  testMode: false,
-});
+const s3Downloads = new S3Storage(env.s3);
+
+/**
+ * The private bucket holding the app installers. Read only, through signed links. AWS S3 when
+ * S3_BUCKET and its keys are set (installers are larger than Supabase's free upload limit);
+ * otherwise the Supabase bucket SUPABASE_DOWNLOADS_BUCKET.
+ */
+export const downloadStorage = s3Downloads.configured
+  ? s3Downloads
+  : new StorageService({
+      url,
+      secretKey,
+      bucket: downloadsBucket,
+      optional: !env.isProduction,
+      testMode: false,
+    });
 
 /** The private bucket holding site media under assets/ (SUPABASE_ASSETS_BUCKET). Read only, through signed links. */
 export const assetStorage = new StorageService({
