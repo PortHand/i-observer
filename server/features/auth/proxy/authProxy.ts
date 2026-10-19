@@ -4,7 +4,7 @@
 // (see ../guard/authGuard.ts).
 
 import { NextResponse, type NextRequest } from "next/server";
-import { adminRoutes, homeRouteFor, isUnder, routes, secureRoot } from "@/helper/route";
+import { adminRoutes, homeRouteFor, isUnder, routes, secureRoot, sessionEndedParam } from "@/helper/route";
 import { SESSION_COOKIE, verifySession } from "../session/sessionToken";
 
 export function authProxy(request: NextRequest): NextResponse {
@@ -12,7 +12,16 @@ export function authProxy(request: NextRequest): NextResponse {
   const session = verifySession(request.cookies.get(SESSION_COOKIE)?.value);
   const to = (path: string) => NextResponse.redirect(new URL(path, request.url));
 
-  if (pathname === routes.signIn) return session ? to(homeRouteFor(session.role)) : NextResponse.next();
+  if (pathname === routes.signIn) {
+    // Sent here by authGuard: the cookie is signed but the database no longer accepts it, e.g. the
+    // account signed in on another browser. Drop it, or this would redirect straight back home.
+    if (request.nextUrl.searchParams.has(sessionEndedParam)) {
+      const response = NextResponse.next();
+      if (request.cookies.has(SESSION_COOKIE)) response.cookies.delete(SESSION_COOKIE);
+      return response;
+    }
+    return session ? to(homeRouteFor(session.role)) : NextResponse.next();
+  }
   if (!isUnder(pathname, [secureRoot])) return NextResponse.next();
   if (!session) {
     const response = to(routes.signIn);

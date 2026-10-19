@@ -1,20 +1,20 @@
 // Authorization for signed-in pages. proxy.ts already redirects on the cookie alone; these checks
 // run next to the data, so a page stays protected even if the proxy matcher misses it, and an
-// account deleted after signing in loses access straight away.
+// account deleted after signing in, or signed in again on another browser, loses access straight away.
 
 import "server-only";
 import { redirect } from "next/navigation";
-import { homeRouteFor, routes } from "@/helper/route";
+import { homeRouteFor, routes, sessionEndedLink } from "@/helper/route";
 import { HttpError } from "@/server/core/httpError";
 import type { UserRole } from "@/server/features/user/schema/userSchema";
 import { authService } from "../module/authModule";
 import type { SessionUser } from "../service/authService";
 import { readSession } from "../session/session";
 
-/** The signed-in account, or null. */
+/** The signed-in account, or null. Null too once the account has signed in on another browser. */
 export const getCurrentUser = async (): Promise<SessionUser | null> => {
   const session = await readSession();
-  return session && authService.findUser(session.userId);
+  return session && authService.findWebSessionUser(session.userId, session.sid);
 };
 
 /**
@@ -23,7 +23,9 @@ export const getCurrentUser = async (): Promise<SessionUser | null> => {
  */
 export const requireUser = async (role?: UserRole): Promise<SessionUser> => {
   const user = await getCurrentUser();
-  if (!user) redirect(routes.signIn);
+  // A cookie that's still signed but no longer valid (signed in elsewhere, account deleted) would
+  // bounce between the proxy and here: sessionEndedLink has the proxy drop it and the page say why.
+  if (!user) redirect((await readSession()) ? sessionEndedLink : routes.signIn);
   if (role && user.role !== role) redirect(homeRouteFor(user.role));
   return user;
 };

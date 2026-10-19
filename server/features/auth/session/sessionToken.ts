@@ -1,5 +1,5 @@
 // Signs and checks the sign-in cookie: "<payload>.<signature>", both base64url, where the payload is
-// { userId, role, expiresAt } as JSON and the signature an HMAC-SHA256 of it with SESSION_SECRET.
+// { userId, sid, role, expiresAt } as JSON and the signature an HMAC-SHA256 of it with SESSION_SECRET.
 // The cookie is readable but can't be forged or extended without the secret.
 //
 // No "server-only" here: ../proxy/authProxy.ts imports this too, and Proxy isn't bundled as a
@@ -16,6 +16,11 @@ export const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 export interface SessionPayload {
   userId: string;
+  /**
+   * Which sign-in this is. Only the account's latest one (users.web_session_id) is accepted, which
+   * the pages check against the database: see ../guard/authGuard.ts.
+   */
+  sid: string;
   role: UserRole;
   /** Milliseconds since the epoch. */
   expiresAt: number;
@@ -50,7 +55,8 @@ export const verifySession = (token: string | undefined): SessionPayload | null 
 
   try {
     const payload = JSON.parse(Buffer.from(data, "base64url").toString()) as SessionPayload;
-    if (typeof payload.userId !== "string" || typeof payload.expiresAt !== "number") return null;
+    // Cookies from before sid existed fail here too, so their owners sign in once more.
+    if (typeof payload.userId !== "string" || typeof payload.sid !== "string" || typeof payload.expiresAt !== "number") return null;
     return payload.expiresAt > Date.now() ? payload : null;
   } catch {
     return null;

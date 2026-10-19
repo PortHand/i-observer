@@ -8,6 +8,7 @@ import PageHero from "../home/components/PageHero";
 import SiteHeader from "../home/components/SiteHeader";
 import LoginHelp from "./components/LoginHelp";
 import LowestPrice, { LowestPriceSkeleton } from "./components/LowestPrice";
+import SessionEndedNotice from "./components/SessionEndedNotice";
 import SignInSection from "./components/SignInSection";
 import { intro } from "./content/signInContent";
 
@@ -19,7 +20,7 @@ export const metadata: Metadata = pageMetadata({
   index: false,
 });
 
-export default function SignInView() {
+export default function SignInView({ searchParams }: PageProps<"/sign-in">) {
   return (
     <>
       <SiteHeader current={routes.signIn} />
@@ -31,6 +32,12 @@ export default function SignInView() {
               <LoginHelp />
             </div>
             <SignInSection
+              // Only this reads the URL, so the rest of the page is still prerendered.
+              notice={
+                <Suspense fallback={null}>
+                  <SessionEndedNotice searchParams={searchParams} />
+                </Suspense>
+              }
               price={
                 <Suspense fallback={<LowestPriceSkeleton />}>
                   <LowestPrice />

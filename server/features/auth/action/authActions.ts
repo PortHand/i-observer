@@ -12,11 +12,11 @@ import { clientIp } from "@/server/core/clientIp";
 import type { FieldErrors } from "@/server/core/httpError";
 import { authService } from "../module/authModule";
 import { toSessionUser } from "../service/authService";
-import { createSession, deleteSession } from "../session/session";
+import { createSession, deleteSession, readSession } from "../session/session";
 
 /**
  * Checks the credentials (within the failed-attempt limits, see SignInLimiter) and sets the sign-in
- * cookie. Returns the account and the page to open next, which depends on its role.
+ * cookie. An account has one website sign-in at a time: this one ends any on another browser. Returns the account and the page to open next, which depends on its role.
  */
 export async function signIn(username: string, password: string) {
   return runAction(async () => {
@@ -28,13 +28,15 @@ export async function signIn(username: string, password: string) {
     assertValid(fields);
 
     const user = await authService.signIn(name, secret, clientIp(await headers()));
-    await createSession(user);
+    await createSession(user, await authService.startSession(user.id, "web"));
     return { user: toSessionUser(user), redirectTo: homeRouteFor(user.role) };
   });
 }
 
-/** Clears the sign-in cookie and goes back to the sign-in page. */
+/** Ends this sign-in, clears the cookie and goes back to the sign-in page. */
 export async function signOut() {
+  const session = await readSession();
+  if (session) await authService.endSession(session.userId, "web", session.sid);
   await deleteSession();
   redirect(routes.signIn);
 }

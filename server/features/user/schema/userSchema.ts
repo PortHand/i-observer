@@ -30,6 +30,13 @@ export const users = pgTable("users", {
   accessUntil: timestamp("access_until", { withTimezone: true }),
   /** An active lifetime entitlement exists. */
   lifetimeAccess: boolean("lifetime_access").notNull().default(false),
+  /**
+   * The one website sign-in this account may have: the id in its cookie. Signing in again replaces
+   * it, which ends the sign-in on the other browser. Null: signed out.
+   */
+  webSessionId: text("web_session_id"),
+  /** Same for the desktop app: the id in its one valid app token. */
+  appSessionId: text("app_session_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

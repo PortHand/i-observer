@@ -49,6 +49,9 @@ export const form = {
   },
 };
 
+/** Above the form on arrival from a sign-in that was ended by a newer one (see sessionEndedLink). */
+export const sessionEnded = "You were signed out because your account was signed in on another browser. Sign in again to continue here.";
+
 /** "Don't have iOverlay?" block under the form. */
 export const buy = {
   divider: "Don't have iOverlay?",

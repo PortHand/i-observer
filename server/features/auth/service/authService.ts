@@ -1,7 +1,7 @@
 import "server-only";
-import { timingSafeEqual } from "node:crypto";
+import { randomBytes, timingSafeEqual } from "node:crypto";
 import { HttpError } from "@/server/core/httpError";
-import type { UserRepository, UserRow } from "@/server/features/user/repository/userRepository";
+import type { SessionKind, UserRepository, UserRow } from "@/server/features/user/repository/userRepository";
 import type { UserRole } from "@/server/features/user/schema/userSchema";
 import type { SignInLimiter } from "./signInLimiter";
 
@@ -20,12 +20,15 @@ export interface SessionUser {
 
 export const toSessionUser = ({ id, username, email, role }: UserRow): SessionUser => ({ id, username, email, role });
 
-/** Compares in constant time, so response times don't hint at how much of a password was right. */
-const samePassword = (given: string, stored: string) => {
+/** Compares in constant time, so response times don't hint at how much of a password or session id was right. */
+const sameSecret = (given: string, stored: string) => {
   const a = Buffer.from(given);
   const b = Buffer.from(stored);
   return a.length === b.length && timingSafeEqual(a, b);
 };
+
+/** True when `given` is the account's current session id. Constant time, like the password check. */
+export const isCurrentSession = (current: string | null, given: string) => current !== null && sameSecret(given, current);
 
 export class AuthService {
   private readonly users: UserRepository;
@@ -51,12 +54,33 @@ export class AuthService {
    */
   private async verify(username: string, password: string): Promise<UserRow> {
     const user = await this.users.findByUsername(username);
-    if (!user || !samePassword(password, user.password)) throw HttpError.unauthorized(messages.invalid);
+    if (!user || !sameSecret(password, user.password)) throw HttpError.unauthorized(messages.invalid);
     return user;
   }
 
   async findUser(id: string): Promise<SessionUser | null> {
     const user = await this.users.findById(id);
     return user && toSessionUser(user);
+  }
+
+  /**
+   * Starts the account's one sign-in of this kind and returns its id, for the cookie or app token.
+   * The previous sign-in of the same kind, on any other device, stops working straight away.
+   */
+  async startSession(userId: string, kind: SessionKind): Promise<string> {
+    const sessionId = randomBytes(18).toString("base64url");
+    await this.users.setSession(userId, kind, sessionId);
+    return sessionId;
+  }
+
+  /** Ends this sign-in. Does nothing if the account has already signed in again elsewhere. */
+  async endSession(userId: string, kind: SessionKind, sessionId: string): Promise<void> {
+    await this.users.clearSession(userId, kind, sessionId);
+  }
+
+  /** The account behind a website session, or null once it's deleted or signed in on another browser. */
+  async findWebSessionUser(userId: string, sessionId: string): Promise<SessionUser | null> {
+    const user = await this.users.findById(userId);
+    return user && isCurrentSession(user.webSessionId, sessionId) ? toSessionUser(user) : null;
   }
 }

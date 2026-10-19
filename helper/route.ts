@@ -44,6 +44,12 @@ export const adminOrderLink = (reference: string) => `${routes.adminOrders}/${en
 /** Pages only admins may open. Other signed-in users are sent to their home route. */
 export const adminRoutes: readonly string[] = [routes.admin];
 
+/** Query parameter on the sign-in page: the previous sign-in was ended, e.g. by one on another browser. */
+export const sessionEndedParam = "ended";
+
+/** The sign-in page after a sign-in was ended elsewhere: "/sign-in?ended=1". */
+export const sessionEndedLink = `${routes.signIn}?${sessionEndedParam}=1`;
+
 /** Where a role lands after signing in. */
 export const homeRouteFor = (role: "customer" | "admin") => (role === "admin" ? routes.admin : routes.welcome);
 
