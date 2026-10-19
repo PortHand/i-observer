@@ -27,6 +27,3 @@ export const formatKeys = (accelerator: string, platform: Platform): string[] =>
     return key;
   });
 };
-
-export const youtubeEmbedUrl = (videoId: string) =>
-  `https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?rel=0`;

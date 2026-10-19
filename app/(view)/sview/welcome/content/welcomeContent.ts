@@ -1,6 +1,7 @@
 // Static content for the welcome (download) page.
 
 import { Download, KeyRound, MonitorUp, Rocket } from "lucide-react";
+import { apiRoutes } from "@/helper/route";
 
 export const welcome = {
   eyebrow: "Signed in",
@@ -79,8 +80,8 @@ export const video = {
   eyebrow: "Video guide",
   title: "Watch the walkthrough.",
   lead: "A short video covering install, sign-in, the shortcuts and a real screen share.",
-  /** YouTube video id (the part after `watch?v=` in its URL). */
-  videoId: "aqz-KE-bpKQ",
+  /** The intro video, served from Supabase through this route. */
+  videoSrc: apiRoutes.introVideo,
   videoTitle: "iOverlay setup walkthrough",
 };
 

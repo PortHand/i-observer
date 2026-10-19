@@ -24,6 +24,12 @@ export const routes = {
   adminOrders: "/sview/admin/orders",
 } as const;
 
+/** Route Handlers in app/api that pages and the desktop app link to directly. */
+export const apiRoutes = {
+  /** Redirects to a short-lived link to the intro video (app/api/intro-video/route.ts). */
+  introVideo: "/api/intro-video",
+} as const;
+
 /**
  * Every page under this path needs sign-in: the app/(view)/sview folder. proxy.ts sends signed-out
  * visitors to the sign-in page, so a new folder there is protected without listing it anywhere.

@@ -809,7 +809,11 @@ a {
   }
 }
 
-/* Video: shimmers until the player paints over it (VideoEmbed.tsx). */
+/* Video: shimmers until the first frame is ready (VideoEmbed.tsx). */
+
+.video--loading video {
+  opacity: 0;
+}
 
 .video--loading {
   background: linear-gradient(90deg, #1b1a19 0%, #2e2d2a 50%, #1b1a19 100%);

@@ -10,7 +10,7 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
-import { homeSection, routes } from "@/helper/route";
+import { apiRoutes, homeSection, routes } from "@/helper/route";
 
 export const appInfo = {
   name: "iOverlay",
@@ -147,8 +147,8 @@ export const demo = {
   eyebrow: "Demo",
   title: "See it in action.",
   lead: "A short walkthrough of the overlay, from sign-in to screen share.",
-  /** YouTube video id (the part after `watch?v=` in its URL). */
-  videoId: "aqz-KE-bpKQ",
+  /** The intro video, served from Supabase through this route. */
+  videoSrc: apiRoutes.introVideo,
   videoTitle: "iOverlay demo",
 };
 

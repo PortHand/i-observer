@@ -58,7 +58,7 @@ export const env = {
     },
   },
 
-  /** Supabase Storage, for payment receipts and app installers. Without url and secret key, development skips uploads and production refuses them. */
+  /** Supabase Storage, for payment receipts, app installers and site media. Without url and secret key, development skips uploads and production refuses them. */
   supabase: {
     /** Project URL, e.g. https://<project-ref>.supabase.co. */
     get url() {
@@ -78,6 +78,10 @@ export const env = {
     /** Private bucket holding the app installers, under releases/<version>/. Defaults to the receipts bucket. */
     get downloadsBucket() {
       return optional("SUPABASE_DOWNLOADS_BUCKET") ?? env.supabase.receiptsBucket;
+    },
+    /** Private bucket holding site media such as the intro video, under assets/. Defaults to the receipts bucket. */
+    get assetsBucket() {
+      return optional("SUPABASE_ASSETS_BUCKET") ?? env.supabase.receiptsBucket;
     },
   },
 

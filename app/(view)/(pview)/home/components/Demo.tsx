@@ -8,7 +8,7 @@ export default function Demo() {
     <section className="band" id={homeSections.demo}>
       <div className="container section">
         <SectionHeader eyebrow={demo.eyebrow} title={demo.title} lead={demo.lead} />
-        <VideoEmbed videoId={demo.videoId} title={demo.videoTitle} />
+        <VideoEmbed src={demo.videoSrc} title={demo.videoTitle} />
       </div>
     </section>
   );
