@@ -22,6 +22,8 @@ export const routes = {
   /** Admin dashboard; the order list is below it. */
   admin: "/sview/admin",
   adminOrders: "/sview/admin/orders",
+  /** The desktop app's forced-update policy. */
+  adminAppUpdate: "/sview/admin/app-update",
 } as const;
 
 /** Route Handlers in app/api that pages and the desktop app link to directly. */

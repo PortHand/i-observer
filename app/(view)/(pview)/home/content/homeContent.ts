@@ -14,7 +14,7 @@ import { apiRoutes, homeSection, routes } from "@/helper/route";
 
 export const appInfo = {
   name: "iOverlay",
-  version: "1.0.0",
+  version: "1.0.1",
   tagline: "Invisible to screen share",
   utility: "Private screen overlay",
   /** The one support mailbox, shown on the contact page and in checkout. */

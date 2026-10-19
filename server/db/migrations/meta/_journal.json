@@ -78,6 +78,13 @@
       "when": 1792230895483,
       "tag": "0010_sign_in_attempts",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792402080394,
+      "tag": "0011_app_update_policy",
+      "breakpoints": true
     }
   ]
 }

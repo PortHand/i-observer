@@ -5,6 +5,8 @@
 import type { OrderLine, Payee } from "@/app/(view)/(pview)/get-ioverlay/services/getService";
 import type { OrderStatus } from "@/server/features/order/schema/orderSchema";
 import * as reviewActions from "@/server/features/order/action/orderReviewActions";
+import * as appUpdateActions from "@/server/features/appUpdate/action/appUpdateActions";
+import type { AppUpdateInput } from "../helper/appUpdateHelper";
 
 export type { OrderStatus };
 
@@ -122,3 +124,20 @@ export const listOrders = (status: StatusFilter, search: string, page: number): 
 
 /** The dashboard's figures over the last `range` days, read without a page load. */
 export const loadDashboard = (range: DashboardRange): Promise<DashboardResult> => reviewActions.loadDashboard(range);
+
+/** The desktop app's forced-update policy, as the admin portal shows it. */
+export interface AppUpdatePolicyView {
+  forceUpdate: boolean;
+  /** Oldest version allowed while forceUpdate is on. */
+  minimumVersion: string;
+  /** Shown on the app's update screen; null for its default text. */
+  message: string | null;
+  /** When it was last saved (ISO), and by which admin; null when never saved. */
+  updatedAt: string | null;
+  updatedBy: string | null;
+}
+
+export type AppUpdateSaveResult = Awaited<ReturnType<typeof appUpdateActions.saveAppUpdatePolicy>>;
+
+/** Saves the forced-update policy; apps pick it up on their next check. */
+export const saveAppUpdatePolicy = (input: AppUpdateInput): Promise<AppUpdateSaveResult> => appUpdateActions.saveAppUpdatePolicy(input);

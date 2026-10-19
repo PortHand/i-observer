@@ -7,6 +7,8 @@ export const portal = {
   overviewHeading: "Overview",
   dashboard: "Dashboard",
   ordersHeading: "Orders",
+  appHeading: "Desktop app",
+  appUpdate: "Force update",
   siteHeading: "Site",
   viewSite: "View website",
   signedInAs: "Signed in as",
@@ -201,4 +203,42 @@ export const dashboard = {
   payments: { one: "1 payment", many: "{count} payments" },
   queue: { title: "Next to review", link: "View all", empty: "No payments waiting." },
   recent: { title: "Recent decisions", link: "All orders", empty: "No payments reviewed yet." },
+};
+
+/** Longest message shown on the app's update screen. */
+export const APP_UPDATE_MESSAGE_MAX = 300;
+
+export const appUpdate = {
+  eyebrow: "Desktop app",
+  title: "Force update",
+  lead: "Block older versions of the app until users install the latest one. Publish the new installers and raise the website's version first, then set the minimum here.",
+  latest: "The website hands out v{version}.",
+  status: {
+    on: "On: apps older than v{version} are blocked.",
+    off: "Off: every version of the app can be used.",
+  },
+  updated: "Last saved {date} by {admin}",
+  neverSaved: "Never saved. Force update is off.",
+  forceLabel: "Require an update",
+  forceHint: "The app checks each time it opens. Users on an older version see an update screen they can't close, and the overlay won't start until they update.",
+  versionLabel: "Minimum version",
+  versionHint: "Apps older than this must update. Usually the latest version.",
+  versionPlaceholder: "1.2.0",
+  messageLabel: "Message to users (optional)",
+  messagePlaceholder: "e.g. This update fixes screen sharing in Zoom 6.",
+  messageHint: "Shown on the update screen. Leave empty for the default text.",
+  save: "Save",
+  saving: "Saving…",
+  saved: "Saved. Apps pick this up the next time they open.",
+  confirm: {
+    title: "Force everyone to update?",
+    description: "From its next launch, every app older than v{version} is blocked until the user installs the update. Apps already open keep working until they are closed.",
+    action: "Force update",
+    cancel: "Cancel",
+  },
+  errors: {
+    version: "Enter a version like 1.2.0.",
+    aheadOfLatest: "The website hands out v{latest}. Publish the new version first, or users would have nothing to update to.",
+    messageLong: `Keep the message under ${APP_UPDATE_MESSAGE_MAX} characters.`,
+  },
 };
