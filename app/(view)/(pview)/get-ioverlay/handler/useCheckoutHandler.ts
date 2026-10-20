@@ -240,16 +240,16 @@ export const useCheckoutHandler = (plans: getService.Plan[], initialPlanId: getS
     const { transaction } = checkout;
 
     if (!isValidUtr(utr)) return setError(transaction.invalidUtr);
-    if (screenshot && !isValidScreenshot(screenshot)) return setError(transaction.invalidScreenshot);
+    if (!screenshot) return setError(transaction.missingScreenshot);
+    if (!isValidScreenshot(screenshot)) return setError(transaction.invalidScreenshot);
 
     setSubmitting(true);
     setError("");
     try {
       const result = await getService.submitTransaction({ reference: order.reference, utr, screenshot });
       if (!result.ok) return setError(result.error);
-      const dataUrl = screenshot ? await readAsDataUrl(screenshot).catch(() => null) : null;
-      setScreenshotUrl(dataUrl);
-      setSummary({ ...order, utr, submittedAt: result.submittedAt, screenshotName: screenshot?.name ?? null });
+      setScreenshotUrl(await readAsDataUrl(screenshot).catch(() => null));
+      setSummary({ ...order, utr, submittedAt: result.submittedAt, screenshotName: screenshot.name });
       goTo("done");
     } finally {
       setSubmitting(false);

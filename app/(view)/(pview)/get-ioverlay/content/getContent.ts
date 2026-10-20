@@ -33,7 +33,7 @@ export const getSteps: GetStep[] = [
   },
   {
     title: "Share the transaction",
-    description: "Send us the UTR / transaction ID and, if you like, a screenshot of the payment.",
+    description: "Send us the UTR / transaction ID and a screenshot of the payment.",
   },
   {
     title: "Get your login",
@@ -156,11 +156,12 @@ export const checkout = {
     description: "Find the UTR or transaction ID in your UPI app under the payment's details.",
     utrLabel: "UTR / transaction ID",
     utrPlaceholder: "12-digit number, e.g. 412345678901",
-    screenshotLabel: "Payment screenshot (optional)",
+    screenshotLabel: "Payment screenshot",
     screenshotHint: "PNG or JPG, up to 5 MB.",
     submit: "Submit transaction",
     back: "Back to QR code",
     invalidUtr: "Enter the 12-digit UTR / transaction ID from your UPI app.",
+    missingScreenshot: "Upload a screenshot of the payment from your UPI app.",
     invalidScreenshot: "Upload a PNG or JPG image up to 5 MB.",
     emailInstead: "Trouble submitting? Email the details instead",
   },

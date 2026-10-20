@@ -24,7 +24,7 @@ const messages = {
   tooMany: (plan: string, max: number) => `${plan} can be bought at most ${max} at a time.`,
   notFound: "We couldn't find this order. Start again from step 1.",
   alreadySubmitted: "This order's payment was already submitted. Contact support to change it.",
-  uploadFailed: "We couldn't upload your screenshot. Try again, or send the UTR without it.",
+  uploadFailed: "We couldn't upload your screenshot. Try again, or email the details instead.",
   alreadyClaimed: "You have already availed this offer.",
   /** Review note on a free plan's order, approved without a payment. */
   freeNote: "Free plan: claimed at checkout, no payment.",

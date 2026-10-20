@@ -75,14 +75,15 @@ export async function updateOrder(reference: string, input: OrderRequest, emailT
 
 /**
  * Records the customer's UTR, so the payment can be checked against the bank statement, with the
- * payment screenshot when one is attached (PNG or JPG up to 5 MB; null for none).
+ * payment screenshot, which is required (PNG or JPG up to 5 MB).
  */
-export async function submitTransaction(reference: string, utr: string, screenshot: File | null) {
+export async function submitTransaction(reference: string, utr: string, screenshot: File) {
   return runAction(async () => {
     const normalized = normalizeUtr(String(utr ?? ""));
     assertValid(isValidUtr(normalized) ? {} : { utr: checkout.transaction.invalidUtr });
-    const { invalidScreenshot } = checkout.transaction;
+    const { invalidScreenshot, missingScreenshot } = checkout.transaction;
     const receipt = await readReceipt(screenshot, () => HttpError.badRequest(invalidScreenshot, { screenshot: invalidScreenshot }));
+    if (!receipt) throw HttpError.badRequest(missingScreenshot, { screenshot: missingScreenshot });
     return orderService.submit(String(reference), normalized, receipt);
   });
 }

@@ -33,7 +33,7 @@ export default function TransactionForm({
       `Phone: ${formatPhone(order.phone)}`,
       "UTR / transaction ID: ",
       "",
-      "(Attach the payment screenshot if you have it.)",
+      "(Attach the payment screenshot.)",
     ].join("\n"),
   );
 
@@ -64,7 +64,7 @@ export default function TransactionForm({
       </label>
       <label className="field">
         <span className="field__label">{transaction.screenshotLabel}</span>
-        <input className="file-input" name="screenshot" type="file" accept="image/png,image/jpeg" />
+        <input className="file-input" name="screenshot" type="file" accept="image/png,image/jpeg" required />
         <span className="hint">{transaction.screenshotHint}</span>
       </label>
       {error && (

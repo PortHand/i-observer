@@ -85,8 +85,8 @@ export type VerifyCodeResult = { ok: true; token: string } | Failure;
 export interface TransactionRequest {
   reference: string;
   utr: string;
-  /** Optional payment screenshot, PNG or JPG up to 5 MB. Stored privately for the admin to check. */
-  screenshot: File | null;
+  /** Payment screenshot, PNG or JPG up to 5 MB; required. Stored privately for the admin to check. */
+  screenshot: File;
 }
 
 export type SubmitTransactionResult =

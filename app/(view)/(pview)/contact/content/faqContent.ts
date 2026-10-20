@@ -122,14 +122,14 @@ export const faqs: Faq[] = [
     category: "payment",
     question: "Do I have to upload a payment screenshot?",
     answer:
-      "No, it's optional. The UTR is enough to find your payment, but a screenshot (PNG or JPG, up to 5 MB) can speed things up.",
+      "Yes. Along with the UTR, upload a screenshot of the payment from your UPI app (PNG or JPG, up to 5 MB) so we can verify it.",
   },
   {
     id: "receipt",
     category: "payment",
     question: "Do I get a receipt?",
     answer:
-      "Yes. After you share the transaction, download the PDF receipt. It has your plan, amount, reference, UTR, the submission time and your screenshot if you added one.",
+      "Yes. After you share the transaction, download the PDF receipt. It has your plan, amount, reference, UTR, the submission time and your payment screenshot.",
   },
   {
     id: "reference",
