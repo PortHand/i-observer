@@ -79,7 +79,7 @@ export const faqs: Faq[] = [
     category: "app",
     question: "Is there a Windows or Linux version?",
     answer:
-      "Not yet. iOverlay is on macOS today, and the Windows and Linux versions are coming soon. A plan you buy now covers them when they're out. Note that Linux can't hide windows from screen capture, so the overlay will show in shares there.",
+      "Windows, yes: iOverlay runs on Windows 10 and 11 (64-bit), hidden from screen capture just as on macOS. Linux is coming soon, and a plan you buy now covers it when it's out. Note that Linux can't hide windows from screen capture, so the overlay will show in shares there.",
   },
   {
     id: "macos-15",
@@ -165,7 +165,7 @@ export const faqs: Faq[] = [
     category: "app",
     question: "Which systems does it run on?",
     answer:
-      "macOS 12 or later, on Apple Silicon and Intel Macs. Windows 10 or 11 and 64-bit Linux versions are coming soon.",
+      "macOS 12 or later on Apple Silicon and Intel Macs, and Windows 10 or 11 (64-bit). A 64-bit Linux version is coming soon.",
   },
   {
     id: "shortcuts",

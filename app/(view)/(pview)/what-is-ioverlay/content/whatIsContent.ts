@@ -16,7 +16,7 @@ export const oneLine = {
 export const factSheet = {
   rows: [
     { term: "What", value: "Desktop overlay app" },
-    { term: "Runs on", value: "macOS (Apple Silicon and Intel) · Windows and Linux coming soon" },
+    { term: "Runs on", value: "macOS (Apple Silicon and Intel) · Windows 10 and 11 · Linux coming soon" },
     { term: "Hidden from", value: "Zoom · Meet · Teams · Recordings · Screenshots" },
     { term: "Inside", value: "Built-in browser · AI chat (soon)" },
     { term: "Controls", value: "Opacity · Click-through · Global shortcuts" },
@@ -71,7 +71,7 @@ export const hidingSteps = [
 export const limits = {
   title: "Good to know",
   items: [
-    "iOverlay is on macOS today. Windows and Linux versions are coming soon.",
+    "iOverlay runs on macOS and Windows. The Linux version is coming soon.",
     "On macOS 15 and later, some capture tools have been reported to record it anyway. Test with the tools you use.",
     "Nothing can hide it from a camera pointed at your screen.",
   ],

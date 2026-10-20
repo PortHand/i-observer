@@ -27,7 +27,7 @@ export const mobileMenu = {
   label: "Menu",
   open: "Open menu",
   close: "Close menu",
-  platforms: "macOS · Windows and Linux coming soon",
+  platforms: "macOS and Windows · Linux coming soon",
   help: "Need help?",
 };
 
@@ -47,7 +47,7 @@ export const hero = {
   lead: "iOverlay puts a private window on top of your screen for your notes, docs or any website. Share your screen in Zoom, Meet or Teams and that window stays out of the picture.",
   primaryCta: { href: routes.whatIsIOverlay, label: "What is iOverlay?" },
   demoCta: { href: homeSection("demo"), label: "Watch the demo" },
-  fineprint: "macOS · Windows and Linux coming soon · Login within 24 hours",
+  fineprint: "macOS and Windows · Linux coming soon · Login within 24 hours",
 };
 
 export const heroExplainer = {
@@ -114,7 +114,7 @@ export const questions = [
   {
     label: "Platforms",
     title: "Will it work on my computer?",
-    description: "Built for macOS, hidden from capture on Apple Silicon and Intel. Windows and Linux are coming soon.",
+    description: "Runs on macOS and Windows, hidden from screen capture on both. Linux is coming soon.",
     link: { href: homeSection("platforms"), label: "Check your system" },
   },
 ];
@@ -132,7 +132,7 @@ export const howSteps = [
 ];
 
 export const stats = [
-  { value: "macOS", label: "Apple Silicon and Intel" },
+  { value: "Mac · PC", label: "macOS and Windows" },
   { value: "30–100%", label: "Overlay opacity" },
   { value: "3", label: "Global shortcuts" },
   { value: "24 h", label: "Login delivery" },
@@ -184,14 +184,14 @@ export interface OsSupport {
 
 export const osSection = {
   eyebrow: "Platforms",
-  title: "Built for macOS.",
-  lead: "iOverlay is built for macOS first. Windows and Linux versions are on the way.",
+  title: "Runs where you work.",
+  lead: "iOverlay runs on macOS and Windows, hidden from screen capture on both. A Linux version is on the way.",
   hidden: "Hidden from capture",
   visible: "Visible in capture",
   comingSoon: "Coming soon",
 };
 
-// macOS is the released app and leads the list; Windows and Linux are announced but not out yet.
+// The released apps (macOS, Windows) lead the list; Linux is announced but not out yet.
 export const osSupport: OsSupport[] = [
   {
     name: "macOS",
@@ -204,8 +204,6 @@ export const osSupport: OsSupport[] = [
     requirement: "Windows 10 or 11 · 64-bit",
     download: ".exe installer",
     captureHidden: true,
-    comingSoon: true,
-    note: "In the works. Buy now and your plan covers it when it's out.",
   },
   {
     name: "Linux",

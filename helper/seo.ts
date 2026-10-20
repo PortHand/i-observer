@@ -13,7 +13,7 @@ export const seo = {
   /** Other pages: "Contact | iOverlay". */
   titleTemplate: `%s | ${appInfo.name}`,
   description:
-    "iOverlay is a desktop overlay for your notes, docs or any website that stays hidden from Zoom, Google Meet, Teams, screen recordings and screenshots. For macOS, with Windows and Linux coming soon.",
+    "iOverlay is a desktop overlay for your notes, docs or any website that stays hidden from Zoom, Google Meet, Teams, screen recordings and screenshots. For macOS and Windows, with Linux coming soon.",
   keywords: [
     "iOverlay",
     "screen share overlay",
@@ -132,7 +132,7 @@ export const softwareJsonLd = (plans: { name: string; amount: number }[]): JsonL
   url: siteUrl(),
   description: seo.description,
   applicationCategory: "BusinessApplication",
-  operatingSystem: "macOS 12 or later",
+  operatingSystem: "macOS 12 or later, Windows 10 or 11",
   softwareVersion: appInfo.version,
   image: absoluteUrl("/opengraph-image"),
   publisher: { "@id": organizationId() },
