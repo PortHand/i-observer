@@ -158,7 +158,7 @@ export const pricing = {
   title: "Simple plans.",
   lead: "Pay once by UPI, with no auto-renewal. Buy again before your time runs out and the new time is added on, so you never lose days.",
   /** Every plan is the full app; plans differ only in how long they last. */
-  features: ["Capture-protected overlay", "Global shortcuts", "macOS · Apple Silicon and Intel", "Login by email within 24 hours"],
+  features: ["Capture-protected overlay", "Global shortcuts", "macOS and Windows", "Login by email within 24 hours"],
   /** Card icons, in plan order (repeating if there are more plans). Decorative only. */
   icons: [Zap, Sparkles, Gem, Crown] as LucideIcon[],
   choose: "Choose {plan}",
