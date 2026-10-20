@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function ProfileView() {
   return (
     <>
-      <SiteHeader signedIn current={routes.profile} />
+      <SiteHeader current={routes.profile} />
       <main>
         <section className="band">
           <div className="container">

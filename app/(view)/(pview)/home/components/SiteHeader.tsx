@@ -19,7 +19,7 @@ const SignInLink = ({ current }: { current?: string }) => (
   </Link>
 );
 
-/** Stands in for the account menu while the session is read, so the header doesn't jump. */
+/** A skeleton in the button's place while the session is read, so it never shows "Sign in" first. */
 const AccountPlaceholder = () => (
   <span className="account-menu__trigger account-menu__trigger--placeholder" aria-hidden="true" />
 );
@@ -32,9 +32,9 @@ async function AccountSlot({ current }: { current?: string }) {
 
 /**
  * The site's top bar. The right-hand button follows the visitor's session: "Sign in", or the
- * account menu. Signed-in pages pass `signedIn` so the placeholder shown meanwhile matches.
+ * account menu.
  */
-export default function SiteHeader({ signedIn = false, current }: { signedIn?: boolean; current?: string }) {
+export default function SiteHeader({ current }: { current?: string }) {
   return (
     <>
       <div className="utility-bar mono">
@@ -67,7 +67,7 @@ export default function SiteHeader({ signedIn = false, current }: { signedIn?: b
               </Link>
             ))}
           </nav>
-          <Suspense fallback={signedIn ? <AccountPlaceholder /> : <SignInLink current={current} />}>
+          <Suspense fallback={<AccountPlaceholder />}>
             <AccountSlot current={current} />
           </Suspense>
           <MobileNav current={current} />

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function OrdersView() {
   return (
     <>
-      <SiteHeader signedIn current={routes.orders} />
+      <SiteHeader current={routes.orders} />
       <main>
         <section className="band">
           <div className="container">

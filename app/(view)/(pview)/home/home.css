@@ -1061,8 +1061,17 @@ a {
 }
 
 .account-menu__trigger--placeholder {
-  background: var(--color-border);
+  background: linear-gradient(90deg, var(--color-surface-active) 0%, var(--color-surface-hover) 50%, var(--color-surface-active) 100%);
+  background-size: 200% 100%;
+  box-shadow: none;
   cursor: default;
+  animation: shimmer 1.4s var(--easing) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-menu__trigger--placeholder {
+    animation: none;
+  }
 }
 
 .account-menu__panel {

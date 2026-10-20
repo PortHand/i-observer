@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function WelcomeView() {
   return (
     <>
-      <SiteHeader signedIn current={routes.welcome} />
+      <SiteHeader current={routes.welcome} />
       <main>
         <section className="band">
           <div className="container">
