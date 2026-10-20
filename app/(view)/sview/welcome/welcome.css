@@ -24,14 +24,7 @@
   text-transform: uppercase;
 }
 
-/* Download: the ink card for this computer, the other installers beside it */
-
-.download-wrap {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-  gap: var(--space-6);
-  align-items: start;
-}
+/* Download bar under the steps (components/SetupGuide.tsx) and the locked card in its place */
 
 .download {
   display: grid;
@@ -40,11 +33,6 @@
 
 .download--locked {
   max-width: 640px;
-}
-
-.download__header {
-  display: grid;
-  gap: var(--space-2);
 }
 
 .download__title {
@@ -66,65 +54,14 @@
   color: var(--color-success);
 }
 
+.download__status--soon {
+  color: var(--color-warning);
+}
+
 .download__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-}
-
-.installers {
-  display: grid;
-  gap: var(--space-4);
-}
-
-.installers__list {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--color-border-strong);
-}
-
-.installer {
-  display: flex;
-  width: 100%;
-  gap: var(--space-3);
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3) var(--space-2);
-  border: 0;
-  border-bottom: 1px solid var(--color-border);
-  background: none;
-  color: var(--color-text);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.installer:hover:not(:disabled) {
-  background: var(--color-surface-hover);
-}
-
-.installer:disabled {
-  cursor: progress;
-}
-
-.installer[aria-current="true"] {
-  box-shadow: inset 2px 0 0 var(--color-accent);
-}
-
-.installer__text {
-  display: grid;
-  gap: 2px;
-}
-
-.installer__name {
-  font-weight: var(--weight-bold);
-}
-
-.installer__detail {
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
 }
 
 /* How to use */
@@ -135,33 +72,10 @@
   max-width: 860px;
 }
 
-@media (max-width: 980px) {
-  .download-wrap {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 560px) {
   .download__actions > .button {
     flex: 1 1 100%;
   }
-}
-
-.download__status--soon {
-  color: var(--color-warning);
-}
-
-.installer:disabled:has(.installer__soon) {
-  color: var(--color-text-muted);
-  cursor: not-allowed;
-}
-
-.installer__soon {
-  flex: none;
-  padding: 2px var(--space-2);
-  background: var(--color-warning-soft);
-  color: var(--color-warning);
-  font-size: 10px;
 }
 
 @media (max-width: 560px) {
@@ -176,13 +90,171 @@
   }
 }
 
-.download .hint a {
-  color: var(--color-accent-text);
-  text-decoration: underline;
-  text-underline-offset: 2px;
+/* Setup guide: a tab per system, one card per step (each with a drawn picture of the screen), then the download */
+
+.setup {
+  display: grid;
+  /* minmax(0, …): the Terminal command doesn't wrap, and mustn't widen the page on phones. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
 }
 
-/* Opening on a Mac: one card per step, each with a drawn picture of the macOS screen */
+.setup__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+.setup__tab {
+  display: grid;
+  gap: 2px;
+  margin-bottom: -1px;
+  padding: var(--space-3) var(--space-5);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* "#open-on-…" links land on these: just above the tabs, clear of the sticky header. */
+.setup__anchor {
+  position: absolute;
+  scroll-margin-top: 96px;
+}
+
+.setup__tab:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.setup__tab:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.setup__tab[aria-selected="true"] {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.setup__tab-name {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+}
+
+.setup__tab-detail {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.setup__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+}
+
+.setup__panel[hidden] {
+  display: none;
+}
+
+.setup__soon {
+  display: grid;
+  gap: var(--space-2);
+  max-width: 640px;
+}
+
+.setup__download {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.setup__download-text,
+.setup__download-actions {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+}
+
+.setup__arch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.setup__arch legend {
+  margin-bottom: var(--space-2);
+  padding: 0;
+}
+
+.setup__arch-option {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  cursor: pointer;
+}
+
+.setup__arch-option:has(input:checked) {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.setup__arch-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.setup__arch-option:has(input:disabled) {
+  cursor: progress;
+}
+
+/* The radio itself stays for keyboards and screen readers; the bordered box shows the choice. */
+.setup__arch-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.setup__arch-name {
+  font-weight: var(--weight-bold);
+}
+
+.setup__arch-detail {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 760px) {
+  .setup__download {
+    grid-template-columns: 1fr;
+  }
+
+  .setup__download-actions > .button {
+    width: 100%;
+  }
+}
+
+.setup__fix-list {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding-left: var(--space-5);
+}
+
+@media (max-width: 560px) {
+  .setup__tab {
+    flex: 1 1 0;
+    padding: var(--space-3);
+  }
+}
 
 .mac-open {
   display: grid;
@@ -478,4 +550,205 @@
   .mac-open {
     grid-template-columns: 1fr;
   }
+}
+
+/*
+ * Windows pictures, like the macOS ones: Windows 11's own light look (Segoe UI, square-ish corners,
+ * SmartScreen's blue), with the site's red ring on the thing to click.
+ */
+.win-shot {
+  --win-window: #f3f3f3;
+  --win-line: rgb(0 0 0 / 10%);
+  --win-text: #1b1b1b;
+  --win-muted: #5f5f5f;
+  --win-blue: #005fb8;
+  --win-smartscreen: #0f4c9b;
+  --win-button: #fbfbfb;
+
+  display: grid;
+  place-items: center;
+  height: 220px;
+  padding: var(--space-3);
+  overflow: hidden;
+  background: linear-gradient(160deg, #c9d8ec, #e4e9f2);
+  border: 1px solid var(--color-border);
+  color: var(--win-text);
+  font-family: "Segoe UI", system-ui, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.win-shot__window {
+  width: 100%;
+  max-width: 270px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--win-window);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 20%), 0 0 0 0.5px rgb(0 0 0 / 22%);
+}
+
+.win-shot__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 26px;
+  padding: 0 0 0 10px;
+  border-bottom: 1px solid var(--win-line);
+}
+
+.win-shot__title {
+  font-size: 10.5px;
+}
+
+.win-shot__controls {
+  display: flex;
+  height: 100%;
+}
+
+.win-shot__controls svg {
+  width: 26px;
+  height: 100%;
+  padding: 0 8px;
+  color: var(--win-text);
+}
+
+.win-shot__explorer {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  background: #fff;
+}
+
+.win-shot__group {
+  color: var(--win-muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.win-shot__file {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.win-shot__file--muted {
+  color: var(--win-muted);
+}
+
+.win-shot__file-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--win-blue);
+}
+
+.win-shot__folder {
+  color: #d9a400;
+  fill: #ffd35c;
+}
+
+.win-shot__smartscreen {
+  position: relative;
+  display: grid;
+  gap: 7px;
+  width: 100%;
+  max-width: 260px;
+  padding: 14px 14px 12px;
+  background: var(--win-smartscreen);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 25%);
+  color: #fff;
+}
+
+.win-shot__smartscreen strong {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.win-shot__smartscreen p {
+  margin: 0;
+  font-size: 9.5px;
+}
+
+.win-shot__close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 12px;
+  height: 12px;
+}
+
+.win-shot__facts {
+  opacity: 0.9;
+}
+
+.win-shot__link {
+  justify-self: start;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.win-shot__actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.win-shot__btn {
+  padding: 3px 12px;
+  border: 1px solid var(--win-line);
+  border-radius: 4px;
+  background: var(--win-button);
+  color: var(--win-text);
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+
+.win-shot__smartscreen .win-shot__btn {
+  border-color: transparent;
+  border-radius: 0;
+  background: #cfd8e6;
+}
+
+.win-shot__btn--primary {
+  border-color: transparent;
+  background: var(--win-blue);
+  color: #fff;
+}
+
+.win-shot__setup {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+}
+
+.win-shot__setup strong {
+  font-size: 12px;
+}
+
+.win-shot__setup p {
+  margin: 0;
+  color: var(--win-muted);
+  font-size: 10px;
+}
+
+.win-shot__field {
+  overflow: hidden;
+  padding: 4px 6px;
+  border: 1px solid var(--win-line);
+  border-bottom-color: var(--win-blue);
+  border-radius: 4px;
+  background: #fff;
+  font-size: 9.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The thing to click: the site's red ring, as on the macOS pictures. */
+.win-shot__target {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }

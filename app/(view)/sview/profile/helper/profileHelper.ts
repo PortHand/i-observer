@@ -40,5 +40,8 @@ export const formatDate = (iso: string) =>
 export const formatDateTime = (iso: string) =>
   new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(iso));
 
+/** Whole hours from `now` until `iso`, rounded up, at least 0: for hour passes. */
+export const hoursUntil = (iso: string, now = Date.now()) => Math.max(0, Math.ceil((Date.parse(iso) - now) / 3_600_000));
+
 /** Whole days from `now` until `iso`, at least 0. */
 export const daysUntil = (iso: string, now = Date.now()) => Math.max(0, Math.ceil((Date.parse(iso) - now) / 86_400_000));

@@ -2,6 +2,7 @@
 // prices come from the database (plans and plan_prices tables).
 
 import {
+  Crown,
   Eye,
   Gem,
   MousePointerClick,
@@ -159,8 +160,12 @@ export const pricing = {
   /** Every plan is the full app; plans differ only in how long they last. */
   features: ["Capture-protected overlay", "Global shortcuts", "macOS · Apple Silicon and Intel", "Login by email within 24 hours"],
   /** Card icons, in plan order (repeating if there are more plans). Decorative only. */
-  icons: [Zap, Sparkles, Gem] as LucideIcon[],
+  icons: [Zap, Sparkles, Gem, Crown] as LucideIcon[],
   choose: "Choose {plan}",
+  /** Beside the struck-through original price. */
+  off: "{percent}% off",
+  /** Read out before the struck-through price, which screen readers don't mark. */
+  was: "Was",
   loading: "Loading plans…",
   unavailable: "Plans can't be shown right now. Email {supportEmail} and we'll help you buy.",
 };

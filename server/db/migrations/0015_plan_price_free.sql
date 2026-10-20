@@ -1,0 +1,2 @@
+ALTER TABLE "plan_prices" DROP CONSTRAINT "plan_prices_amount_positive";--> statement-breakpoint
+ALTER TABLE "plan_prices" ADD CONSTRAINT "plan_prices_amount_not_negative" CHECK ("plan_prices"."amount_paise" >= 0);

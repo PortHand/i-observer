@@ -10,6 +10,8 @@ export interface PaymentMailData {
   /** e.g. "₹3,999". */
   amount: string;
   utr: string | null;
+  /** A free plan, claimed without a payment: the email says so instead of "we found your payment". */
+  free?: boolean;
 }
 
 export interface PaymentVerifiedMailData extends PaymentMailData {

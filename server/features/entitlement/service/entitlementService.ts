@@ -20,6 +20,16 @@ export const addMonths = (date: Date, months: number): Date => {
   return new Date(local.getTime() - IST_OFFSET_MS);
 };
 
+const HOUR_MS = 60 * 60 * 1000;
+
+/** When a row's time ends if it starts at `startsAt`: its months or its hours. Callers skip lifetime rows. */
+const endOf = (startsAt: Date, { durationMonths, durationHours }: { durationMonths: number | null; durationHours: number | null }) =>
+  durationMonths !== null ? addMonths(startsAt, durationMonths) : new Date(startsAt.getTime() + (durationHours ?? 0) * HOUR_MS);
+
+/** Lifetime: neither months nor hours. */
+const isLifetime = (row: { durationMonths: number | null; durationHours: number | null }) =>
+  row.durationMonths === null && row.durationHours === null;
+
 /** Whether a customer can use the app at `now`, from the columns EntitlementService keeps on users. */
 export const hasAccess = (user: { accessUntil: Date | null; lifetimeAccess: boolean }, now = new Date()) =>
   user.lifetimeAccess || (user.accessUntil !== null && user.accessUntil > now);
@@ -42,17 +52,20 @@ export class EntitlementService {
     await this.entitlements.insert(
       tx,
       items.map((item) => {
-        // Quantity buys that many units back to back: 2 × 1 month is 2 months.
-        const durationMonths = item.durationMonths === null ? null : item.durationMonths * item.quantity;
+        // Quantity buys that many units back to back: 2 × 1 month is 2 months, 3 × 2 hours is 6 hours.
+        const duration = {
+          durationMonths: item.durationMonths === null ? null : item.durationMonths * item.quantity,
+          durationHours: item.durationHours === null ? null : item.durationHours * item.quantity,
+        };
         return {
           userId,
           orderItemId: item.id,
           planId: item.planId,
-          durationMonths,
+          ...duration,
           grantedAt,
           // Placeholders: refresh() below works out the real dates.
           startsAt: grantedAt,
-          endsAt: durationMonths === null ? null : addMonths(grantedAt, durationMonths),
+          endsAt: isLifetime(duration) ? null : endOf(grantedAt, duration),
         };
       }),
     );
@@ -79,7 +92,7 @@ export class EntitlementService {
 
   /**
    * The queue: each time row starts when it was granted or when the previous one ends, whichever
-   * is later, and runs for its months. Lifetime rows sit outside the queue. Expects the user locked.
+   * is later, and runs for its months or hours. Lifetime rows sit outside the queue. Expects the user locked.
    */
   private async refresh(tx: Tx, userId: string): Promise<void> {
     let accessUntil: Date | null = null;
@@ -87,11 +100,11 @@ export class EntitlementService {
     for (const row of await this.entitlements.listActive(tx, userId)) {
       let startsAt = row.grantedAt;
       let endsAt: Date | null = null;
-      if (row.durationMonths === null) {
+      if (isLifetime(row)) {
         lifetimeAccess = true;
       } else {
         if (accessUntil && accessUntil > startsAt) startsAt = accessUntil;
-        endsAt = addMonths(startsAt, row.durationMonths);
+        endsAt = endOf(startsAt, row);
         accessUntil = endsAt;
       }
       if (row.startsAt.getTime() !== startsAt.getTime() || row.endsAt?.getTime() !== endsAt?.getTime()) {

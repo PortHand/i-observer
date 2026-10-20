@@ -33,6 +33,9 @@ export const access = {
   },
   daysLeft: "{days} days left",
   dayLeft: "1 day left",
+  /** Under a day left, e.g. on an hour pass. */
+  hoursLeft: "{hours} hours left",
+  hourLeft: "Under 1 hour left",
   renew: "Renew plan",
   buy: "Get iOverlay",
   download: "Download app",

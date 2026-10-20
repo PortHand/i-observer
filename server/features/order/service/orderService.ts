@@ -25,6 +25,9 @@ const messages = {
   notFound: "We couldn't find this order. Start again from step 1.",
   alreadySubmitted: "This order's payment was already submitted. Contact support to change it.",
   uploadFailed: "We couldn't upload your screenshot. Try again, or send the UTR without it.",
+  alreadyClaimed: "You have already availed this offer.",
+  /** Review note on a free plan's order, approved without a payment. */
+  freeNote: "Free plan: claimed at checkout, no payment.",
 };
 
 /** What an order's saved state looks like before it's written: the order row and its lines. */
@@ -66,27 +69,30 @@ export class OrderService {
   /**
    * Saves the order with each plan's current price and the active UPI account, before the QR code
    * is shown. A returning customer (same email and phone) goes straight through; anyone else needs
-   * `emailToken` from an OTP (see OtpService). The account is then created, or found.
+   * `emailToken` from an OTP (see OtpService). The account is then created, or found. A free order
+   * (₹0) needs no payment: it's approved straight away and its access granted (Order.claimed).
    */
   async create(request: OrderRequest, emailToken: string | null): Promise<Order> {
+    await this.assertFreeUnclaimed(request);
     await this.assertCustomer(request, emailToken);
     const { order, items } = await this.snapshot(request);
     const row = await withUniqueCode(
       () => `IOV-${randomCode(6)}`,
       (reference) => this.orders.create({ reference, ...order }, items),
     );
-    return this.toOrder(row);
+    return this.toOrder(await this.claimIfFree(row));
   }
 
   /** Changes the plans or contact details of an unpaid order, refreshing its prices and payee. Same checks as create(). */
   async update(reference: string, request: OrderRequest, emailToken: string | null): Promise<Order> {
     const current = await this.orders.find(reference);
     if (!current) throw orderNotFound();
+    await this.assertFreeUnclaimed(request, reference);
     await this.assertCustomer(request, emailToken);
     const { order, items } = await this.snapshot(request);
     const row = await this.orders.updatePending(reference, order, items);
     if (!row) throw await this.unchangeable(reference);
-    return this.toOrder(row);
+    return this.toOrder(await this.claimIfFree(row));
   }
 
   /**
@@ -139,6 +145,41 @@ export class OrderService {
   }
 
   /**
+   * A free plan (₹0 now) can be claimed once per email and once per phone. Checked before the OTP,
+   * so nobody waits for a code only to be turned away. claimIfFree checks again under a lock.
+   */
+  private async assertFreeUnclaimed({ items, email, phone }: OrderRequest, exceptReference?: string) {
+    for (const { planId } of items) {
+      const priced = await this.pricing.findPlanOnSale(planId);
+      if (priced?.price.amountPaise === 0 && (await this.orders.hasClaimedFree(planId, email, phone, exceptReference)))
+        throw HttpError.conflict(messages.alreadyClaimed);
+    }
+  }
+
+  /**
+   * A ₹0 order has nothing to pay: approves it and grants its access in one go, after checking
+   * under a lock that no other order claimed its free plans first. Other orders come back as they were.
+   */
+  private async claimIfFree(row: OrderRow): Promise<OrderRow> {
+    if (row.amountPaise !== 0) return row;
+    return Database.transaction(async (tx) => {
+      const items = await this.orders.findItems(row.reference, tx);
+      // Sorted, so concurrent claims take their locks in the same order.
+      const free = items.filter((item) => item.unitPaise === 0).sort((a, b) => a.planId.localeCompare(b.planId));
+      for (const item of free) {
+        await this.orders.lockFreeClaim(tx, item.planId, row.email, row.phone);
+        if (await this.orders.hasClaimedFree(item.planId, row.email, row.phone, row.reference, tx))
+          throw HttpError.conflict(messages.alreadyClaimed);
+      }
+      const verified = await this.orders.review(tx, row.reference, "pending", "verified", messages.freeNote);
+      if (!verified) throw await this.unchangeable(row.reference);
+      // snapshot() always sets the account.
+      await this.entitlements.grant(tx, verified.userId!, items);
+      return verified;
+    });
+  }
+
+  /**
    * Email and phone must both match one account, or both be new (409 otherwise, before any OTP).
    * A returning customer goes through; a new one needs an OTP token (throws "verification_required").
    */
@@ -165,6 +206,7 @@ export class OrderService {
         unitPaise: price.amountPaise,
         linePaise: price.amountPaise * quantity,
         durationMonths: plan.durationMonths,
+        durationHours: plan.durationHours,
       });
     }
     const payee = await this.pricing.getPayee();
@@ -210,6 +252,7 @@ export class OrderService {
       phone: row.phone,
       amount: paiseToRupees(row.amountPaise),
       payee: { upiId: row.upiId, name: row.payeeName },
+      claimed: row.status === "verified" && row.amountPaise === 0,
     };
   }
 

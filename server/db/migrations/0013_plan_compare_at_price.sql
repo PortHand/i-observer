@@ -1,0 +1,2 @@
+ALTER TABLE "plan_prices" ADD COLUMN "compare_at_paise" integer;--> statement-breakpoint
+ALTER TABLE "plan_prices" ADD CONSTRAINT "plan_prices_compare_at_above_amount" CHECK ("plan_prices"."compare_at_paise" IS NULL OR "plan_prices"."compare_at_paise" > "plan_prices"."amount_paise");

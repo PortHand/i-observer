@@ -1,4 +1,4 @@
-// To the customer once an admin finds their payment: their iOverlay login.
+// To the customer once an admin finds their payment, or once they claim a free plan: their iOverlay login.
 
 import { routes } from "@/helper/route";
 import { appInfo } from "@/app/(view)/(pview)/home/content/homeContent";
@@ -22,15 +22,17 @@ export const paymentVerifiedTemplate = defineMailTemplate<PaymentVerifiedMailDat
   id: "payment.verified",
   feature: PAYMENT_FEATURE,
   secret: true,
-  render: ({ reference, planLabel, amount, username, password }) => {
+  render: ({ reference, planLabel, amount, username, password, free }) => {
     const signInLink = siteLink(routes.signIn);
     const rows: DetailRow[] = [
       { icon: "row-user", label: "Username", value: username },
       { icon: "row-order", label: "Order", value: reference },
       { icon: "row-topic", label: "Plan", value: planLabel },
-      { icon: "row-time", label: "Paid", value: amount },
+      { icon: "row-time", label: "Paid", value: free ? "Free" : amount },
     ];
-    const lead = `We found your payment for ${reference}. Your ${appInfo.name} access is active: sign in with the details below.`;
+    const lead = free
+      ? `Your free ${appInfo.name} plan (${reference}) is active: sign in with the details below.`
+      : `We found your payment for ${reference}. Your ${appInfo.name} access is active: sign in with the details below.`;
     const nextSteps = [
       { title: "Sign in", text: `Open ${appInfo.name} and sign in with your username and password.` },
       { title: "Keep this email", text: "It's the only copy of your password. Don't forward it to anyone." },
@@ -56,10 +58,10 @@ export const paymentVerifiedTemplate = defineMailTemplate<PaymentVerifiedMailDat
         `${appInfo.name} Support`,
       ].join("\n"),
       html: layout({
-        preheader: `Payment confirmed for ${reference}. Here's your login.`,
+        preheader: free ? `Your free plan is active. Here's your login.` : `Payment confirmed for ${reference}. Here's your login.`,
         footerNote: `You're receiving this email because you bought ${appInfo.name}.`,
         body: [
-          hero({ icon: "tile-check", eyebrow: "Payment · Confirmed", title: "You're all set.", lead }),
+          hero({ icon: "tile-check", eyebrow: free ? "Free plan · Active" : "Payment · Confirmed", title: "You're all set.", lead }),
           codeCard({ label: "Your password", value: password, note: `Sign in with username ${username}.` }),
           sectionTitle("Your order"),
           detailsList(rows),

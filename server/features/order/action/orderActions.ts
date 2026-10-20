@@ -14,7 +14,8 @@ import type { OrderItemRequest, OrderRequest } from "@/app/(view)/(pview)/get-io
 import { assertValid, runAction } from "@/server/core/baseAction";
 import { HttpError, type FieldErrors } from "@/server/core/httpError";
 import { readReceipt } from "../helper/receiptFile";
-import { orderService } from "../module/orderModule";
+import type { Order } from "@/app/(view)/(pview)/get-ioverlay/services/getService";
+import { orderReviewService, orderService } from "../module/orderModule";
 
 /** More lines than any order needs, so a bad request can't make the server look up hundreds of plans. */
 const MAX_ORDER_LINES = 10;
@@ -48,17 +49,27 @@ const readOrder = (input: OrderRequest): OrderRequest => {
 const readToken = (token: unknown) => (typeof token === "string" && token ? token : null);
 
 /**
+ * A free order is approved as it's saved: email its login, as an approved payment does. A failed
+ * email doesn't undo the claim (it's logged; an admin can resend it from the order page).
+ */
+const withLogin = async (order: Order) => {
+  if (order.claimed) await orderReviewService.emailLogin(order.reference);
+  return order;
+};
+
+/**
  * Saves the order with each plan's current price and the active UPI account, before the QR code is
  * shown. `emailToken` comes from verifyEmailOtp for the same email.
  */
 export async function createOrder(input: OrderRequest, emailToken: string | null) {
-  return runAction(async () => ({ order: await orderService.create(readOrder(input), readToken(emailToken)) }));
+  return runAction(async () => ({ order: await withLogin(await orderService.create(readOrder(input), readToken(emailToken))) }));
 }
+
 
 /** Changes the plans or contact details of an unpaid order. Changing the email needs a fresh `emailToken`. */
 export async function updateOrder(reference: string, input: OrderRequest, emailToken: string | null) {
   return runAction(async () => ({
-    order: await orderService.update(String(reference), readOrder(input), readToken(emailToken)),
+    order: await withLogin(await orderService.update(String(reference), readOrder(input), readToken(emailToken))),
   }));
 }
 

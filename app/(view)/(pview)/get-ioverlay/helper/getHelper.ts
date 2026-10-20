@@ -40,6 +40,10 @@ export const formatAmount = (amount: number) =>
     minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
   }).format(amount);
 
+/** Whole percent off the original price, e.g. 30 for ₹2,799 instead of ₹3,999; null without a discount. */
+export const discountPercent = ({ amount, compareAtAmount }: Pick<Plan, "amount" | "compareAtAmount">) =>
+  compareAtAmount && compareAtAmount > amount ? Math.round(((compareAtAmount - amount) / compareAtAmount) * 100) : null;
+
 export const formatDateTime = (iso: string) =>
   new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
 

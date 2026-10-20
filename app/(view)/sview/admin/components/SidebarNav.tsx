@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { CircleCheck, CircleX, Clock, ExternalLink, Inbox, LayoutDashboard, List, MonitorDown, Undo2, type LucideIcon } from "lucide-react";
-import { routes } from "@/helper/route";
+import { CircleCheck, CircleX, Clock, ExternalLink, Inbox, LayoutDashboard, List, MonitorDown, Tag, Undo2, type LucideIcon } from "lucide-react";
+import { isUnder, routes } from "@/helper/route";
 import { portal, statusTabs } from "../content/adminContent";
 import { orderListEvents, ordersLink, parseListQuery } from "../helper/adminHelper";
 import type { AdminOrderPage, StatusFilter } from "../services/adminService";
@@ -73,6 +73,16 @@ export default function SidebarNav({ counts }: { counts: AdminOrderPage["counts"
             </li>
           );
         })}
+      </ul>
+
+      <p className="admin-nav__heading">{portal.storeHeading}</p>
+      <ul className="admin-nav__list">
+        <li>
+          <Link href={routes.adminPlans} className="admin-nav__link" aria-current={isUnder(pathname, [routes.adminPlans]) ? "page" : undefined}>
+            <Tag className="icon icon--sm" strokeWidth={1.75} />
+            <span className="admin-nav__label">{portal.plans}</span>
+          </Link>
+        </li>
       </ul>
 
       <p className="admin-nav__heading">{portal.appHeading}</p>

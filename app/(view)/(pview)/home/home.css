@@ -426,6 +426,27 @@ a {
   border-right-color: transparent;
 }
 
+/* Four plans: a little smaller across a full row, and two by two where four across won't fit. */
+@media (min-width: 1101px) {
+  .plans:has(> .plan:nth-child(4)) .plan__price {
+    font-size: 48px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .plans:has(> .plan:nth-child(4)) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .plans:has(> .plan:nth-child(4)) > .plan:nth-child(odd) {
+    border-left: 1px solid var(--color-border);
+  }
+
+  .plans:has(> .plan:nth-child(4)) > .plan:nth-child(n + 3) {
+    border-top: 1px solid var(--color-border);
+  }
+}
+
 /* Process steps, each led by a short red rule */
 
 .steps {

@@ -26,8 +26,9 @@ export const entitlements = pgTable(
     planId: text("plan_id")
       .notNull()
       .references(() => plans.id),
-    /** Months this row adds (the line's duration × quantity). Null means lifetime. */
+    /** Months or hours this row adds (the line's duration × quantity). Both null means lifetime. */
     durationMonths: integer("duration_months"),
+    durationHours: integer("duration_hours"),
     /** When the payment was verified. Rows queue up in this order. */
     grantedAt: timestamp("granted_at", { withTimezone: true }).notNull().defaultNow(),
     startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
@@ -40,6 +41,7 @@ export const entitlements = pgTable(
   },
   (table) => [
     check("entitlements_duration_positive", sql`${table.durationMonths} IS NULL OR ${table.durationMonths} > 0`),
+    check("entitlements_duration_hours_positive", sql`${table.durationHours} IS NULL OR ${table.durationHours} > 0`),
     // One customer's access, in queue order.
     index("entitlements_user_id_granted_at_idx").on(table.userId, table.grantedAt),
     index("entitlements_order_item_id_idx").on(table.orderItemId),

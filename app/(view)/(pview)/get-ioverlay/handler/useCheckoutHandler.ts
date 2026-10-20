@@ -122,7 +122,7 @@ export const useCheckoutHandler = (plans: getService.Plan[], initialPlanId: getS
 
   /**
    * Creates the order, or updates it when editing (same reference; the server re-prices it), then
-   * shows the QR code. Returns false, without showing an error, when the server wants an OTP first.
+   * shows the QR code, or for a free plan the "claimed" screen (the server approved it already). Returns false, without showing an error, when the server wants an OTP first.
    */
   const saveOrder = async (
     request: getService.OrderRequest,
@@ -143,7 +143,7 @@ export const useCheckoutHandler = (plans: getService.Plan[], initialPlanId: getS
       return true;
     }
     setOrder(result.order);
-    goTo("pay");
+    goTo(result.order.claimed ? "done" : "pay");
     return true;
   };
 

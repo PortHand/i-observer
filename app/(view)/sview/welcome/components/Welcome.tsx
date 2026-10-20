@@ -4,9 +4,12 @@ import { routes } from "@/helper/route";
 import { accountService } from "@/server/features/account/module/accountModule";
 import { requireUser } from "@/server/features/auth/guard/authGuard";
 import { welcome } from "../content/welcomeContent";
-import DownloadPanel from "./DownloadPanel";
+import SetupGuide from "./SetupGuide";
 
-/** Greeting and the download. Reads the session and the database, so render inside <Suspense>. */
+/**
+ * Greeting, then the setup guide: install steps per system with the download below them. Reads the
+ * session and the database, so render inside <Suspense>.
+ */
 export default async function Welcome() {
   const user = await requireUser();
   const access = await accountService.downloadAccess(user.id);
@@ -15,7 +18,7 @@ export default async function Welcome() {
   return (
     <div className="welcome">
       <PageHero {...welcome} />
-      <DownloadPanel access={access} />
+      <SetupGuide access={access} />
     </div>
   );
 }

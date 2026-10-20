@@ -203,12 +203,17 @@ export class OrderReviewService {
     return { ...result, emailed };
   }
 
+  /** Emails a free plan's login once it's claimed at checkout. False (and logged) when sending fails. */
+  emailLogin(reference: string): Promise<boolean> {
+    return this.emailOutcome(reference);
+  }
+
   /** Emails the customer their order's outcome. False (and logged) when sending fails. */
   private async emailOutcome(reference: string): Promise<boolean> {
     try {
       const detail = await this.detail(reference);
       if (!detail) throw notFound(reference);
-      const data = { reference, planLabel: detail.planLabel, amount: formatAmount(detail.amount), utr: detail.utr };
+      const data = { reference, planLabel: detail.planLabel, amount: formatAmount(detail.amount), utr: detail.utr, free: detail.amount === 0 };
       if (detail.status === "verified") {
         const row = await this.orders.find(reference);
         const user = row?.userId ? await this.users.find(row.userId) : null;

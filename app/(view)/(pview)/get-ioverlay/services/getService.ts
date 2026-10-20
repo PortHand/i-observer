@@ -6,12 +6,14 @@ import * as otpActions from "@/server/features/otp/action/otpActions";
 
 export type PlanId = string;
 
-/** A plan from the plans table, with its price now (plan_prices). Prices are edited in the database, not in code. */
+/** A plan from the plans table, with its price now (plan_prices). Prices are edited on the admin portal, not in code. */
 export interface Plan {
   id: PlanId;
   name: string;
   /** Amount in rupees, paid once by UPI. */
   amount: number;
+  /** The original price in rupees, shown struck through with the % off. Always above amount; null for no discount. */
+  compareAtAmount: number | null;
   period: string;
   description: string;
   badge: string | null;
@@ -58,6 +60,8 @@ export interface Order extends OrderRequest {
   /** Total in rupees, fixed when the order was saved, so a later price change doesn't affect it. */
   amount: number;
   payee: Payee;
+  /** A free order: approved at once, access granted and the login emailed. No payment steps. */
+  claimed: boolean;
 }
 
 /** Failures may name the fields at fault, e.g. { code: "That code isn't right. 2 tries left." }. */

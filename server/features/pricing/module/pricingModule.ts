@@ -9,12 +9,12 @@ import { PricingService } from "../service/pricingService";
 
 export const pricingService = new PricingService(new PricingRepository());
 
-/** Revalidate this tag after changing plans, e.g. from a future admin panel: revalidateTag(plansCacheTag). */
+/** Expired by the admin portal's Plans page on save (updateTag), so pages show the change straight away. */
 export const plansCacheTag = "plans";
 
 /**
- * Active plans for pages, cached for a minute so edits made straight in the database show up
- * quickly. Callers call `await connection()` first, so `next build` doesn't need the database, and
+ * Active plans for pages, cached for a minute so edits made straight in the database (e.g. a sale
+ * row) show up quickly. Callers call `await connection()` first, so `next build` doesn't need the database, and
  * render inside <Suspense>.
  */
 export async function getPlans(): Promise<Plan[]> {

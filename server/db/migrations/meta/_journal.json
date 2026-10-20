@@ -92,6 +92,27 @@
       "when": 1792412084948,
       "tag": "0012_single_session",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1792517263863,
+      "tag": "0013_plan_compare_at_price",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1792518149160,
+      "tag": "0014_plan_duration_hours",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1792518869622,
+      "tag": "0015_plan_price_free",
+      "breakpoints": true
     }
   ]
 }

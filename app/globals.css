@@ -1038,6 +1038,33 @@ kbd {
   text-transform: uppercase;
 }
 
+/* The original price struck through above the price, with the % off. */
+.plan__compare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: calc(-1 * var(--space-2));
+}
+
+.plan__was {
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  text-decoration-thickness: 1.5px;
+}
+
+.plan__off {
+  padding: 2px var(--space-2);
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
 .plan__description {
   color: var(--color-text-muted);
   font-size: var(--text-base);

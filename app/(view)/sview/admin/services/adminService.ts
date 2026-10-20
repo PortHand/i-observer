@@ -6,7 +6,9 @@ import type { OrderLine, Payee } from "@/app/(view)/(pview)/get-ioverlay/service
 import type { OrderStatus } from "@/server/features/order/schema/orderSchema";
 import * as reviewActions from "@/server/features/order/action/orderReviewActions";
 import * as appUpdateActions from "@/server/features/appUpdate/action/appUpdateActions";
+import * as pricingActions from "@/server/features/pricing/action/pricingActions";
 import type { AppUpdateInput } from "../helper/appUpdateHelper";
+import type { PlanInput } from "../helper/planHelper";
 
 export type { OrderStatus };
 
@@ -141,3 +143,44 @@ export type AppUpdateSaveResult = Awaited<ReturnType<typeof appUpdateActions.sav
 
 /** Saves the forced-update policy; apps pick it up on their next check. */
 export const saveAppUpdatePolicy = (input: AppUpdateInput): Promise<AppUpdateSaveResult> => appUpdateActions.saveAppUpdatePolicy(input);
+
+/**
+ * Whether customers see a plan now: on sale; active but outside its sale window; active but with no
+ * price in force; or switched off.
+ */
+export type AdminPlanStatus = "onSale" | "scheduled" | "noPrice" | "off";
+
+/** A plan as the admin portal's Plans page shows and edits it. Amounts in rupees. */
+export interface AdminPlanView {
+  id: string;
+  name: string;
+  period: string;
+  description: string;
+  badge: string | null;
+  /** At most one is set; both null: lifetime. */
+  durationMonths: number | null;
+  durationHours: number | null;
+  sortOrder: number;
+  maxQuantity: number;
+  isDefault: boolean;
+  active: boolean;
+  /** Sale window (ISO); null for no limit on that side. */
+  availableFrom: string | null;
+  availableUntil: string | null;
+  /** The normal price and its struck-through original; null when the plan has none. */
+  price: number | null;
+  compareAtPrice: number | null;
+  /** A sale price added in the database that beats the normal price until `until` (ISO). */
+  sale: { price: number; compareAtPrice: number | null; until: string } | null;
+  status: AdminPlanStatus;
+}
+
+export type PlanSaveResult = Awaited<ReturnType<typeof pricingActions.savePlan>>;
+
+export type PlanToggleResult = Awaited<ReturnType<typeof pricingActions.setPlanActive>>;
+
+/** Turns a plan on or off for sale; returns every plan as saved. */
+export const setPlanActive = (id: string, active: boolean): Promise<PlanToggleResult> => pricingActions.setPlanActive(id, active);
+
+/** Adds a plan (`isNew`) or saves changes to one; returns every plan as saved. */
+export const savePlan = (input: PlanInput, isNew: boolean): Promise<PlanSaveResult> => pricingActions.savePlan(input, isNew);

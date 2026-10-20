@@ -5,7 +5,7 @@ export const isInstallerId = (value: unknown): value is InstallerId =>
 
 export const getInstaller = (id: InstallerId) => installers.find((installer) => installer.id === id)!;
 
-/** Released installers only; Windows and Linux are listed as coming soon. */
+/** Released installers only; Linux is listed as coming soon. */
 export const isAvailableInstaller = (id: InstallerId) => !getInstaller(id).comingSoon;
 
 /** The file electron-builder makes for this installer and app version, e.g. "overlay-1.0.0-setup.exe". */

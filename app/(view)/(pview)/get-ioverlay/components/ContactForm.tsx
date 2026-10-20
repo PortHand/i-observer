@@ -1,8 +1,9 @@
-import type { FormEvent, RefObject } from "react";
-import { CircleAlert, Mail, Phone, QrCode } from "lucide-react";
+import type { CSSProperties, FormEvent, RefObject } from "react";
+import { CircleAlert, Gift, Mail, Phone, QrCode } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
+import { pricing } from "../../home/content/homeContent";
 import { checkout } from "../content/getContent";
-import { formatAmount, getPlan } from "../helper/getHelper";
+import { discountPercent, formatAmount, getPlan } from "../helper/getHelper";
 import type { ContactDraft } from "../handler/useCheckoutHandler";
 import type { Order, Plan, PlanId } from "../services/getService";
 
@@ -33,6 +34,9 @@ export default function ContactForm({
   onSubmit,
 }: ContactFormProps) {
   const { contact } = checkout;
+  // A free plan is claimed on submit: no QR code to generate.
+  const free = getPlan(plans, planId).amount === 0;
+  const SubmitIcon = free ? Gift : QrCode;
   const required = (
     <span className="field__required" aria-hidden="true">
       {contact.required}
@@ -50,23 +54,35 @@ export default function ContactForm({
 
       <fieldset className="plan-picker">
         <legend className="field__label">{contact.planLabel}</legend>
-        <div className="plan-tiles">
-          {plans.map((plan) => (
-            <label key={plan.id} className="plan-tile">
-              <input
-                className="visually-hidden"
-                type="radio"
-                name="plan"
-                value={plan.id}
-                checked={plan.id === planId}
-                onChange={() => onPlanChange(plan.id)}
-              />
-              {plan.badge && <span className="plan-tile__badge">{plan.badge}</span>}
-              <span className="plan-tile__name">{plan.name}</span>
-              <span className="plan-tile__price display">{formatAmount(plan.amount)}</span>
-              <span className="plan-tile__period">{plan.period}</span>
-            </label>
-          ))}
+        <div className="plan-tiles" style={{ "--plan-count": plans.length } as CSSProperties}>
+          {plans.map((plan) => {
+            const percent = discountPercent(plan);
+            return (
+              <label key={plan.id} className="plan-tile">
+                <input
+                  className="visually-hidden"
+                  type="radio"
+                  name="plan"
+                  value={plan.id}
+                  checked={plan.id === planId}
+                  onChange={() => onPlanChange(plan.id)}
+                />
+                {plan.badge && <span className="plan-tile__badge">{plan.badge}</span>}
+                <span className="plan-tile__name">{plan.name}</span>
+                {percent !== null && (
+                  <span className="plan-tile__compare">
+                    <s>
+                      <span className="visually-hidden">{pricing.was} </span>
+                      {formatAmount(plan.compareAtAmount!)}
+                    </s>
+                    <span className="plan-tile__off">{pricing.off.replace("{percent}", String(percent))}</span>
+                  </span>
+                )}
+                <span className="plan-tile__price display">{formatAmount(plan.amount)}</span>
+                <span className="plan-tile__period">{plan.period}</span>
+              </label>
+            );
+          })}
         </div>
         <p className="plan-picker__description" aria-live="polite">
           {getPlan(plans, planId).description}
@@ -127,10 +143,10 @@ export default function ContactForm({
         disabled={submitting}
         aria-busy={submitting || undefined}
       >
-        {submitting ? <Spinner size="md" /> : <QrCode className="icon" strokeWidth={1.75} />}
-        {contact.submit}
+        {submitting ? <Spinner size="md" /> : <SubmitIcon className="icon" strokeWidth={1.75} />}
+        {free ? contact.submitFree : contact.submit}
       </button>
-      <p className="form-note">{contact.description}</p>
+      <p className="form-note">{free ? contact.freeDescription : contact.description}</p>
     </form>
   );
 }

@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { boolean, check, index, integer, pgTable, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
-// Plans, their prices and the UPI payee are edited in the database (for now with `npm run db:studio`),
-// so prices and the UPI ID change without a redeploy. Pages pick up edits within a minute.
+// Plans and their prices are edited on the admin portal's Plans page; the UPI payee in the database
+// (`npm run db:studio`). Prices and the UPI ID change without a redeploy.
 
 export const plans = pgTable(
   "plans",
@@ -10,10 +10,14 @@ export const plans = pgTable(
     /** Short slug such as "yearly". Stored on orders, so don't rename one that has orders. */
     id: text("id").primaryKey(),
     name: text("name").notNull(),
-    /** Shown under the price, e.g. "12 months" or "One-time". Display only: see durationMonths. */
+    /** Shown under the price, e.g. "12 months", "2 hours" or "One-time". Display only: see durationMonths. */
     period: text("period").notNull(),
-    /** Access one unit of the plan gives, in calendar months. Null means lifetime (never expires). */
+    /**
+     * Access one unit of the plan gives: calendar months, or hours for short passes. At most one is
+     * set; both null means lifetime (never expires).
+     */
     durationMonths: integer("duration_months"),
+    durationHours: integer("duration_hours"),
     description: text("description").notNull(),
     /** Optional ribbon such as "Best value". */
     badge: text("badge"),
@@ -32,6 +36,8 @@ export const plans = pgTable(
   },
   (table) => [
     check("plans_duration_positive", sql`${table.durationMonths} IS NULL OR ${table.durationMonths} > 0`),
+    check("plans_duration_hours_positive", sql`${table.durationHours} IS NULL OR ${table.durationHours} > 0`),
+    check("plans_one_duration_unit", sql`${table.durationMonths} IS NULL OR ${table.durationHours} IS NULL`),
     check("plans_max_quantity_positive", sql`${table.maxQuantity} > 0`),
     uniqueIndex("plans_one_default_idx").on(table.isDefault).where(sql`${table.isDefault}`),
   ],
@@ -52,15 +58,19 @@ export const planPrices = pgTable(
     planId: text("plan_id")
       .notNull()
       .references(() => plans.id),
-    /** Whole paise (₹3,999 is 399900), so amounts never pick up floating-point rounding. */
+    /** Whole paise (₹3,999 is 399900), so amounts never pick up floating-point rounding. 0: free. */
     amountPaise: integer("amount_paise").notNull(),
+    /** The original price, shown struck through beside amountPaise with the % off. Null: no discount shown. */
+    compareAtPaise: integer("compare_at_paise"),
     validFrom: timestamp("valid_from", { withTimezone: true }).notNull().defaultNow(),
     /** Null: no end date. */
     validTo: timestamp("valid_to", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    check("plan_prices_amount_positive", sql`${table.amountPaise} > 0`),
+    // 0 is a free plan: claimed at checkout without a payment, once per email or phone.
+    check("plan_prices_amount_not_negative", sql`${table.amountPaise} >= 0`),
+    check("plan_prices_compare_at_above_amount", sql`${table.compareAtPaise} IS NULL OR ${table.compareAtPaise} > ${table.amountPaise}`),
     check("plan_prices_valid_range", sql`${table.validTo} IS NULL OR ${table.validTo} > ${table.validFrom}`),
     // A plan's current price.
     index("plan_prices_plan_id_valid_from_idx").on(table.planId, table.validFrom),

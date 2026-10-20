@@ -110,6 +110,9 @@ export const checkout = {
     phonePlaceholder: "98765 43210",
     phonePrefix: "+91",
     submit: "Generate QR code",
+    /** The button for a free (₹0) plan: no QR code, the plan is claimed straight away. */
+    submitFree: "Claim free plan",
+    freeDescription: "Free plans can be claimed once per email and phone number. Your login is emailed straight away.",
     /** Marks email and phone as required. */
     required: "*",
     /** Modal that opens on "Generate QR code" while the email isn't verified yet. */
@@ -160,6 +163,13 @@ export const checkout = {
     invalidUtr: "Enter the 12-digit UTR / transaction ID from your UPI app.",
     invalidScreenshot: "Upload a PNG or JPG image up to 5 MB.",
     emailInstead: "Trouble submitting? Email the details instead",
+  },
+  /** Shown instead of the payment steps once a free plan is claimed. */
+  claimed: {
+    title: "Your free plan is active",
+    message: "We've emailed your login to {email}. Sign in with it to start using iOverlay.",
+    signIn: "Sign in",
+    noEmail: "No email after a few minutes? Check spam, or contact support with {reference}.",
   },
   done: {
     title: "Order successful",

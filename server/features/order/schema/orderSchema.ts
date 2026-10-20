@@ -76,8 +76,9 @@ export const orderItems = pgTable(
     unitPaise: integer("unit_paise").notNull(),
     /** unitPaise × quantity. */
     linePaise: integer("line_paise").notNull(),
-    /** One unit's access in months, copied from the plan. Null means lifetime. */
+    /** One unit's access in months or hours, copied from the plan. Both null means lifetime. */
     durationMonths: integer("duration_months"),
+    durationHours: integer("duration_hours"),
   },
   (table) => [
     check("order_items_quantity_positive", sql`${table.quantity} > 0`),

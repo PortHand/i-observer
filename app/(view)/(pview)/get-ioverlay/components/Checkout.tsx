@@ -8,6 +8,7 @@ import CheckoutHeader from "./CheckoutHeader";
 import CheckoutStepper from "./CheckoutStepper";
 import Confirmation from "./Confirmation";
 import ContactForm from "./ContactForm";
+import FreeClaimed from "./FreeClaimed";
 import OrderSummary from "./OrderSummary";
 import OtpModal from "./OtpModal";
 import PayPanel from "./PayPanel";
@@ -83,6 +84,7 @@ export default function Checkout({ plans, initialPlanId }: CheckoutProps) {
                   onBack={() => co.goTo("pay")}
                 />
               )}
+              {co.step === "done" && co.order?.claimed && <FreeClaimed order={co.order} headingRef={co.headingRef} />}
               {co.step === "done" && co.summary && (
                 <Confirmation
                   summary={co.summary}

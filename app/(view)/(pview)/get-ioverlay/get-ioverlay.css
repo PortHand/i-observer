@@ -545,9 +545,10 @@
   padding: 0;
 }
 
+/* ContactForm.tsx sets --plan-count to the number of plans on sale (2 to 4). */
 .plan-tiles {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--plan-count, 3), minmax(0, 1fr));
   gap: var(--space-2);
 }
 
@@ -611,6 +612,24 @@
   font-size: var(--text-xs);
 }
 
+.plan-tile__compare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.plan-tile__off {
+  color: var(--color-success);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
 .plan-picker__description {
   min-height: 1.6em;
   color: var(--color-text-muted);
@@ -624,6 +643,11 @@
 }
 
 @media (max-width: 560px) {
+  /* Four tiles are too narrow for their prices on a phone: two by two. */
+  .plan-tiles:has(> .plan-tile:nth-child(4)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .plan-tile {
     padding: var(--space-4) var(--space-2) var(--space-2);
   }

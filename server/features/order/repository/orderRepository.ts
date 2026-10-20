@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lt, or, sql, sum, type SQL, type SQLWrapper } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, inArray, isNotNull, lt, ne, or, sql, sum, type SQL, type SQLWrapper } from "drizzle-orm";
 import { BaseRepository } from "@/server/core/baseRepository";
 import type { Tx } from "@/server/core/database";
 import { orderItems, orders, type OrderStatus } from "../schema/orderSchema";
@@ -20,6 +20,9 @@ export interface OrderFilter {
   /** Part of a reference, email or UTR, matched case-insensitively. */
   search?: string;
 }
+
+/** Orders that used up a free plan: claimed (verified), or claimed and later taken back. */
+const CLAIMED_STATUSES: OrderStatus[] = ["submitted", "verified", "refunded"];
 
 /** `%`, `_` and `\` are wildcards in LIKE: escape them so a search matches them literally. */
 const likeTerm = (text: string) => `%${text.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
@@ -169,6 +172,37 @@ export class OrderRepository extends BaseRepository {
       .where(and(eq(orders.reference, reference), eq(orders.status, "pending")))
       .returning();
     return row ?? null;
+  }
+
+  /**
+   * Whether this email or this phone already claimed `planId` for free (a ₹0 line), on an order
+   * other than `exceptReference`. Lines bought while the plan still cost money don't count.
+   */
+  async hasClaimedFree(planId: string, email: string, phone: string, exceptReference?: string, tx?: Tx): Promise<boolean> {
+    const [row] = await this.using(tx)
+      .select({ reference: orders.reference })
+      .from(orderItems)
+      .innerJoin(orders, eq(orders.reference, orderItems.orderReference))
+      .where(
+        and(
+          eq(orderItems.planId, planId),
+          eq(orderItems.unitPaise, 0),
+          inArray(orders.status, CLAIMED_STATUSES),
+          or(eq(orders.email, email), eq(orders.phone, phone)),
+          exceptReference ? ne(orders.reference, exceptReference) : undefined,
+        ),
+      )
+      .limit(1);
+    return row !== undefined;
+  }
+
+  /**
+   * Holds off other claims of `planId` by this email or phone until `tx` ends, so two at once can't
+   * both pass hasClaimedFree. Email first, then phone, in every caller, so claims can't deadlock.
+   */
+  async lockFreeClaim(tx: Tx, planId: string, email: string, phone: string): Promise<void> {
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${`free:${planId}:email:${email}`}))`);
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${`free:${planId}:phone:${phone}`}))`);
   }
 
   /**

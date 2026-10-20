@@ -22,6 +22,8 @@ export const routes = {
   /** Admin dashboard; the order list is below it. */
   admin: "/sview/admin",
   adminOrders: "/sview/admin/orders",
+  /** The plans on sale and their prices. */
+  adminPlans: "/sview/admin/plans",
   /** The desktop app's forced-update policy. */
   adminAppUpdate: "/sview/admin/app-update",
 } as const;
@@ -37,6 +39,12 @@ export const apiRoutes = {
  * visitors to the sign-in page, so a new folder there is protected without listing it anywhere.
  */
 export const secureRoot = "/sview";
+
+/** The admin portal's form for a new plan. "new" can't be a plan id (planHelper.ts). */
+export const adminNewPlanLink = `${routes.adminPlans}/new`;
+
+/** One plan's editor in the admin portal: "/sview/admin/plans/yearly". */
+export const adminPlanLink = (id: string) => `${routes.adminPlans}/${encodeURIComponent(id)}`;
 
 /** One order in the admin portal: "/sview/admin/orders/IOV-AB12CD". */
 export const adminOrderLink = (reference: string) => `${routes.adminOrders}/${encodeURIComponent(reference)}`;
