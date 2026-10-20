@@ -7,6 +7,7 @@ import { orderReviewService } from "@/server/features/order/module/orderModule";
 import { detail } from "../content/adminContent";
 import { formatIst, ordersLink } from "../helper/adminHelper";
 import type { AdminOrderDetail, OrderStatus, ReviewAction } from "../services/adminService";
+import ReceiptImage from "./ReceiptImage";
 import ReviewPanel from "./ReviewPanel";
 import StatusBadge from "./StatusBadge";
 
@@ -114,11 +115,7 @@ export default async function OrderDetail({ params }: { params: PageProps<"/svie
               <p className="text-muted">{detail.receipt.none}</p>
             ) : order.receipt.url ? (
               <figure className="receipt">
-                <a href={order.receipt.url} target="_blank" rel="noopener noreferrer" className="receipt__frame">
-                  {/* A signed link to a private bucket: not something next/image can optimise. */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={order.receipt.url} alt={detail.receipt.alt.replace("{reference}", order.reference)} />
-                </a>
+                <ReceiptImage src={order.receipt.url} alt={detail.receipt.alt.replace("{reference}", order.reference)} />
                 <figcaption className="receipt__caption">
                   <span className="code">{order.receipt.fileName}</span>
                   <a href={order.receipt.url} target="_blank" rel="noopener noreferrer" className="panel__link mono">

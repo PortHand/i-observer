@@ -81,6 +81,8 @@ export const detail = {
   receipt: {
     alt: "Payment screenshot sent by the customer for {reference}",
     open: "Open full size",
+    /** The full-window preview opened by clicking the screenshot (ReceiptImage.tsx). */
+    preview: { open: "Preview payment screenshot", actual: "Show actual size", fit: "Fit to window", close: "Close preview" },
     expires: "Link works for 15 minutes. Reload the page for a new one.",
     none: "The customer didn't attach a screenshot.",
     unavailable: "A screenshot was saved but can't be shown. Check the Supabase settings (SUPABASE_URL, SUPABASE_SECRET_KEY) and the server log.",
