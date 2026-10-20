@@ -150,6 +150,8 @@ export const demo = {
   lead: "A short walkthrough of the overlay, from sign-in to screen share.",
   /** The intro video, served from Supabase through this route. */
   videoSrc: apiRoutes.introVideo,
+  /** Shown until the video plays (public/intro-banner.jpg, from brand/intro-video/banner.jpg). */
+  videoPoster: "/intro-banner.jpg",
   videoTitle: "iOverlay demo",
 };
 

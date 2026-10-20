@@ -521,6 +521,113 @@ kbd {
   transform: scale(0.9);
 }
 
+/* Corner button over the frame that opens the full-window preview. */
+
+.video__expand {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 25%);
+  background: rgb(0 0 0 / 55%);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    opacity var(--duration) var(--easing),
+    background var(--duration-fast) var(--easing);
+}
+
+.video__expand:hover {
+  background: rgb(0 0 0 / 80%);
+}
+
+.video__expand:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.video__expand .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.video--loading .video__expand {
+  opacity: 0;
+}
+
+/* Full-window preview (VideoPreview.tsx): the video as large as the window allows, with native controls. */
+
+.video-preview {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: var(--space-8);
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+.video-preview[open] {
+  display: grid;
+  place-items: center;
+  animation: modal-in var(--duration) var(--easing);
+}
+
+.video-preview::backdrop {
+  background: rgb(0 0 0 / 92%);
+}
+
+.video-preview__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: calc((100dvh - 2 * var(--space-8)) * 16 / 9);
+  background: #000;
+  object-fit: contain;
+}
+
+.video-preview__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 25%);
+  background: rgb(0 0 0 / 55%);
+  color: #fff;
+  cursor: pointer;
+}
+
+.video-preview__close:hover {
+  background: rgb(0 0 0 / 80%);
+}
+
+.video-preview__close .icon {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-width: 480px) {
+  .video-preview {
+    padding: 56px 0; /* room for the close button above the video */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-preview[open] {
+    animation: none;
+  }
+}
+
 /* Cards and forms */
 
 .card {
