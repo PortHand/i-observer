@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { routes } from "@/helper/route";
-import { pageMetadata, seo } from "@/helper/seo";
+import JsonLd from "@/components/common/JsonLd";
+import { apiRoutes, routes } from "@/helper/route";
+import { howToJsonLd, pageMetadata, seo, videoJsonLd } from "@/helper/seo";
+import { demo, howSection, howSteps } from "./home/content/homeContent";
 import HomeView from "./home";
 import PricingLoader from "./home/components/PricingLoader";
 import PricingSkeleton from "./home/components/PricingSkeleton";
@@ -31,6 +33,18 @@ export default function Page() {
       <Suspense fallback={null}>
         <SoftwareJsonLd />
       </Suspense>
+      <JsonLd
+        data={[
+          videoJsonLd({
+            name: demo.videoTitle,
+            description: demo.videoDescription,
+            path: apiRoutes.introVideo,
+            thumbnailPath: demo.videoPoster,
+            uploadDate: demo.videoUploaded,
+          }),
+          howToJsonLd(howSection.title, howSteps),
+        ]}
+      />
     </>
   );
 }

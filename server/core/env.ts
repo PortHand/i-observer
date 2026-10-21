@@ -35,6 +35,30 @@ export const env = {
     return (optional("SITE_URL") ?? "https://i-overlay.com").replace(/\/$/, "");
   },
 
+  /** Search console ownership tokens: the content of each <meta> tag the console asks for. */
+  verification: {
+    /** Google Search Console: GOOGLE_SITE_VERIFICATION. */
+    get google() {
+      return optional("GOOGLE_SITE_VERIFICATION")?.trim();
+    },
+    /** Bing Webmaster Tools (also covers Yahoo and DuckDuckGo): BING_SITE_VERIFICATION. */
+    get bing() {
+      return optional("BING_SITE_VERIFICATION")?.trim();
+    },
+    /** Yandex Webmaster: YANDEX_VERIFICATION. */
+    get yandex() {
+      return optional("YANDEX_VERIFICATION")?.trim();
+    },
+    /** Pinterest: PINTEREST_VERIFICATION. */
+    get pinterest() {
+      return optional("PINTEREST_VERIFICATION")?.trim();
+    },
+    /** Meta Business Suite: FACEBOOK_DOMAIN_VERIFICATION. */
+    get facebook() {
+      return optional("FACEBOOK_DOMAIN_VERIFICATION")?.trim();
+    },
+  },
+
   /** Signs the sign-in cookie. At least 32 characters; changing it signs everyone out. */
   get sessionSecret() {
     return optional("SESSION_SECRET");

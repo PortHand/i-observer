@@ -153,7 +153,24 @@ export const demo = {
   /** Shown until the video plays (public/intro-banner.jpg, from brand/intro-video/banner.jpg). */
   videoPoster: "/intro-banner.jpg",
   videoTitle: "iOverlay demo",
+  /** For video search (VideoObject structured data). Update when the video is replaced. */
+  videoDescription:
+    "A walkthrough of iOverlay, the invisible screen overlay: sign in, open the embedded browser and share your screen in Zoom, Meet or Teams while the overlay stays hidden.",
+  videoUploaded: "2026-10-21",
 };
+
+/** Links in the site footer, so every page links to the search landing pages. */
+export const footerLinks = [
+  { href: routes.whatIsIOverlay, label: "What is iOverlay?" },
+  { href: routes.interviewHelper, label: "Interview helper" },
+  { href: routes.screenHider, label: "Screen hider" },
+  { href: routes.invisibleOverlay, label: "Invisible overlay" },
+  { href: routes.embeddedChromeBrowser, label: "Embedded Chrome browser" },
+  { href: routes.getIOverlay, label: "Pricing" },
+  { href: routes.contact, label: "Contact & FAQ" },
+];
+
+export const footer = { linksLabel: "Site" };
 
 export const pricing = {
   eyebrow: "Pricing",

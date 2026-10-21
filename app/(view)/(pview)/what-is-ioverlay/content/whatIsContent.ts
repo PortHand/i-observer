@@ -32,8 +32,9 @@ export const insideSection = {
 export const insideTopics = [
   {
     label: "Browse",
-    title: "Built-in browser",
+    title: "Embedded Chrome browser",
     description: "Open any site inside the overlay: your notes, docs, a script or a dashboard.",
+    link: { href: routes.embeddedChromeBrowser, label: "About the browser" },
   },
   {
     label: "Coming soon",
@@ -88,6 +89,8 @@ export const useCases = [
   { label: "02 · Sales demos", description: "Keep pricing, objections and next steps in view while you demo." },
   { label: "03 · Teachers", description: "Follow your lesson plan while the class watches the shared screen." },
   { label: "04 · Support", description: "Keep runbooks and checklists open while you screen-share with a customer." },
+  { label: "05 · Interviews", description: "Keep your prep notes in view as an interview helper during video interviews." },
+  { label: "06 · Creators", description: "Read a script in the embedded Chrome browser while you record your screen." },
 ];
 
 export const closing = {

@@ -9,24 +9,48 @@ import { routes } from "./route";
 
 export const seo = {
   /** Home page title and the fallback for pages without one. */
-  defaultTitle: `${appInfo.name}: Private Screen Overlay Hidden from Screen Share`,
+  defaultTitle: `${appInfo.name}: Invisible Screen Overlay & Screen Hider for Zoom, Meet and Teams`,
   /** Other pages: "Contact | iOverlay". */
   titleTemplate: `%s | ${appInfo.name}`,
   description:
-    "iOverlay is a desktop overlay for your notes, docs or any website that stays hidden from Zoom, Google Meet, Teams, screen recordings and screenshots. For macOS and Windows, with Linux coming soon.",
+    "iOverlay is an invisible screen overlay with an embedded Chrome browser: keep notes, docs or any website on your screen while Zoom, Google Meet, Teams, recordings and screenshots leave it out. A screen hider and interview helper for macOS and Windows.",
   keywords: [
     "iOverlay",
-    "screen share overlay",
+    "i overlay",
+    "overlay",
+    "screen overlay",
     "invisible overlay",
+    "invisible screen overlay",
+    "screen share overlay",
+    "desktop overlay app",
+    "transparent overlay window",
+    "always on top overlay",
+    "screen hider",
+    "screen hider app",
     "hide window from screen share",
+    "hide app from screen share",
+    "hide screen during screen share",
+    "embedded chrome",
+    "embedded chrome browser",
+    "embedded browser overlay",
+    "floating browser window",
+    "always on top browser",
+    "interview helper",
+    "interview helper app",
+    "online interview helper",
+    "interview notes overlay",
+    "video interview notes",
     "hidden notes during screen share",
     "private presenter notes",
     "teleprompter for Zoom",
+    "hidden teleprompter",
     "Zoom notes overlay",
     "Google Meet notes",
     "Microsoft Teams notes",
     "capture-protected window",
-    "screen recording hidden window",
+    "hidden from screen recording",
+    "screenshot proof window",
+    "undetectable overlay",
   ],
   locale: "en_IN",
   /** Browser UI colour: the site's ink. */
@@ -34,6 +58,25 @@ export const seo = {
   backgroundColor: "#e9e9e5",
   /** Shown alongside the share image. */
   imageAlt: `${appInfo.name}: ${appInfo.tagline}`,
+};
+
+/**
+ * Ownership tokens from the search consoles, set in the environment so each can be added without a
+ * code change. Each becomes a <meta> tag in every page's head; unset ones are left out.
+ */
+export const siteVerification = (): Metadata["verification"] => {
+  const other = Object.fromEntries(
+    Object.entries({
+      "msvalidate.01": env.verification.bing,
+      "p:domain_verify": env.verification.pinterest,
+      "facebook-domain-verification": env.verification.facebook,
+    }).filter((entry): entry is [string, string] => Boolean(entry[1])),
+  );
+  return {
+    ...(env.verification.google && { google: env.verification.google }),
+    ...(env.verification.yandex && { yandex: env.verification.yandex }),
+    ...(Object.keys(other).length > 0 && { other }),
+  };
 };
 
 /** The public address of the site, without a trailing slash. */
@@ -49,6 +92,8 @@ interface PageSeo {
   description: string;
   /** The page's path, used as its canonical URL. */
   path: string;
+  /** Page-specific search terms, added to the site-wide ones. */
+  keywords?: string[];
   /** false keeps the page out of search results (links on it are still followed). */
   index?: boolean;
   /**
@@ -66,12 +111,21 @@ const defaultShareImage = { url: "/opengraph-image", width: 1200, height: 630, a
  * set only its title there would lose the site-wide fields (the share image included): this fills
  * them all in.
  */
-export function pageMetadata({ title, absoluteTitle, description, path, index = true, ownShareImage }: PageSeo): Metadata {
+export function pageMetadata({
+  title,
+  absoluteTitle,
+  description,
+  path,
+  keywords,
+  index = true,
+  ownShareImage,
+}: PageSeo): Metadata {
   // Leave the key out entirely for pages with their own image: even `images: undefined` hides it.
   const images = ownShareImage ? {} : { images: [defaultShareImage] };
   return {
     title: absoluteTitle ? { absolute: title } : title,
     description,
+    ...(keywords && { keywords: [...new Set([...keywords, ...seo.keywords])] }),
     alternates: { canonical: path },
     openGraph: {
       type: "website",
@@ -132,9 +186,21 @@ export const softwareJsonLd = (plans: { name: string; amount: number }[]): JsonL
   url: siteUrl(),
   description: seo.description,
   applicationCategory: "BusinessApplication",
+  applicationSubCategory: "Screen overlay",
   operatingSystem: "macOS 12 or later, Windows 10 or 11",
   softwareVersion: appInfo.version,
   image: absoluteUrl("/opengraph-image"),
+  screenshot: absoluteUrl("/intro-banner.jpg"),
+  keywords: seo.keywords.join(", "),
+  featureList: [
+    "Invisible overlay hidden from Zoom, Google Meet and Microsoft Teams screen shares",
+    "Screen hider: left out of screen recordings and screenshots",
+    "Embedded Chrome (Chromium) browser for notes, docs or any website",
+    "Interview helper: private notes during video interviews",
+    "Adjustable opacity from 30 to 100%",
+    "Click-through mode",
+    "Global keyboard shortcuts",
+  ],
   publisher: { "@id": organizationId() },
   ...(plans.length > 0 && {
     offers: plans.map((plan) => ({
@@ -156,6 +222,37 @@ export const faqJsonLd = (faqs: { question: string; answer: string }[]): JsonLdO
     "@type": "Question",
     name: question,
     acceptedAnswer: { "@type": "Answer", text: answer },
+  })),
+});
+
+/** A video shown on a page, so it can appear in video search. */
+export const videoJsonLd = (video: {
+  name: string;
+  description: string;
+  path: string;
+  thumbnailPath: string;
+  uploadDate: string;
+}): JsonLdObject => ({
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  name: video.name,
+  description: video.description,
+  thumbnailUrl: absoluteUrl(video.thumbnailPath),
+  contentUrl: absoluteUrl(video.path),
+  uploadDate: video.uploadDate,
+  publisher: { "@id": organizationId() },
+});
+
+/** A numbered set of steps, e.g. how to use the overlay. */
+export const howToJsonLd = (name: string, steps: { label: string; description: string }[]): JsonLdObject => ({
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name,
+  step: steps.map(({ label, description }, index) => ({
+    "@type": "HowToStep",
+    position: index + 1,
+    name: label,
+    text: description,
   })),
 });
 

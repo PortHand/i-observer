@@ -12,6 +12,11 @@ export const routes = {
   whatIsIOverlay: "/what-is-ioverlay",
   getIOverlay: "/get-ioverlay",
   contact: "/contact",
+  /** Search landing pages, one per thing people search for (app/(view)/(pview)/_landing). */
+  interviewHelper: "/interview-helper",
+  screenHider: "/screen-hider",
+  invisibleOverlay: "/invisible-overlay",
+  embeddedChromeBrowser: "/embedded-chrome-browser",
   signIn: "/sign-in",
   /** Signed-in pages, in app/(view)/sview. */
   welcome: "/sview/welcome",

@@ -593,6 +593,22 @@ a {
   font-size: var(--text-xs);
 }
 
+.page-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  padding-top: var(--space-6);
+  font-size: var(--text-xs);
+}
+
+.page-footer__links a {
+  color: var(--color-text-muted);
+}
+
+.page-footer__links a:hover {
+  color: inherit;
+}
+
 .page-footer__inner span:last-child {
   color: var(--color-text-muted);
   font-weight: var(--weight-regular);

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo_Narrow, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import JsonLd from "@/components/common/JsonLd";
-import { organizationJsonLd, seo, siteUrl, websiteJsonLd } from "@/helper/seo";
+import { organizationJsonLd, seo, siteUrl, siteVerification, websiteJsonLd } from "@/helper/seo";
 import { appInfo } from "./(view)/(pview)/home/content/homeContent";
 
 const archivoNarrow = Archivo_Narrow({
@@ -41,6 +41,7 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
   formatDetection: { email: false, telephone: false, address: false },
+  verification: siteVerification(),
 };
 
 export const viewport: Viewport = {

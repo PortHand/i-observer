@@ -1,0 +1,11 @@
+/* Search landing pages. Layout, sections and cards come from ../home/home.css (loaded by ../layout.tsx);
+   the callout and "Good to know" box from ../what-is-ioverlay/what-is-ioverlay.css. */
+
+.landing__callout {
+  max-width: 790px;
+}
+
+.landing__limits {
+  max-width: 790px;
+  margin-top: var(--space-8);
+}

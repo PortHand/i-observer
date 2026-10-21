@@ -7,7 +7,7 @@ export default function UseCases() {
     <section className="band band--light" id="who">
       <div className="container section">
         <SectionHeader {...useCasesSection} />
-        <StepList items={useCases} numbered={false} four />
+        <StepList items={useCases} numbered={false} />
       </div>
     </section>
   );
