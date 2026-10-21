@@ -11,7 +11,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:seed-admin": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seed-admin.mjs",
     "db:check": "drizzle-kit check",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "indexnow": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/indexnow.mjs"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.4",
