@@ -102,6 +102,8 @@ export interface FirstOpenFix {
 export const setupGuide = {
   tabsLabel: "Your computer",
   stepLabel: "Step {n}",
+  copy: "Copy",
+  copied: "Copied",
   linux: { tab: "Linux", tabDetail: "Coming soon" },
 };
 

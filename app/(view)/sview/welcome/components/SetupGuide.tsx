@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useSyncExternalStore, type KeyboardEvent, type ReactNode } from "react";
-import { CircleAlert, Clock, Download, RotateCw, ShieldAlert, TriangleAlert } from "lucide-react";
+import { Check, CircleAlert, Clock, Copy, Download, RotateCw, ShieldAlert, TriangleAlert } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
 import { download, macOpen, setupGuide, windowsOpen, type FirstOpenFix, type InstallerId } from "../content/welcomeContent";
 import { fill, getInstaller } from "../helper/welcomeHelper";
@@ -190,7 +190,7 @@ function Steps({ guide }: { guide: PlatformGuide }) {
           {guide.fix.title}
         </span>
         <p className="text-muted">{guide.fix.text}</p>
-        {guide.fix.command && <code className="mac-open__command">{guide.fix.command}</code>}
+        {guide.fix.command && <CopyCommand command={guide.fix.command} />}
         {guide.fix.items && (
           <ul className="setup__fix-list text-muted">
             {guide.fix.items.map((item) => (
@@ -200,6 +200,33 @@ function Steps({ guide }: { guide: PlatformGuide }) {
         )}
       </div>
     </>
+  );
+}
+
+/** A terminal line with a button that copies it, so nobody has to select it by hand. */
+function CopyCommand({ command }: { command: string }) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(command);
+    } catch {
+      return;
+    }
+    setCopied(true);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="mac-open__command-row">
+      <code className="mac-open__command">{command}</code>
+      <button type="button" className="mac-open__copy" onClick={copy} aria-live="polite">
+        {copied ? <Check className="icon icon--sm" strokeWidth={1.75} /> : <Copy className="icon icon--sm" strokeWidth={1.75} />}
+        {copied ? setupGuide.copied : setupGuide.copy}
+      </button>
+    </div>
   );
 }
 

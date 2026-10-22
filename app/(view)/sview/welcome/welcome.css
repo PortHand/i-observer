@@ -291,8 +291,17 @@
   color: var(--color-warning);
 }
 
+.mac-open__command-row {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  background: var(--color-text);
+}
+
 .mac-open__command {
   display: block;
+  flex: 1;
+  min-width: 0;
   overflow-x: auto;
   padding: var(--space-3);
   background: var(--color-text);
@@ -301,6 +310,30 @@
   font-size: var(--text-sm);
   white-space: nowrap;
   user-select: all;
+}
+
+.mac-open__copy {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-2);
+  align-items: center;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-left: 1px solid color-mix(in srgb, var(--color-surface) 20%, transparent);
+  background: transparent;
+  color: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.mac-open__copy:hover {
+  background: color-mix(in srgb, var(--color-surface) 10%, transparent);
+}
+
+.mac-open__copy:focus-visible {
+  outline: 2px solid var(--color-warning);
+  outline-offset: -2px;
 }
 
 /*
