@@ -37,6 +37,10 @@ export const routes = {
 export const apiRoutes = {
   /** Redirects to a short-lived link to the intro video (app/api/intro-video/route.ts). */
   introVideo: "/api/intro-video",
+  /** The install scripts the welcome page's Terminal commands run, and where they trade the command's token for a download link. */
+  installMac: "/api/install/mac",
+  installWindows: "/api/install/windows",
+  installLink: "/api/install/link",
 } as const;
 
 /**

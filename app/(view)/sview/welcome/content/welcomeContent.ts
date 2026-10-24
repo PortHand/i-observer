@@ -6,7 +6,7 @@ import { apiRoutes } from "@/helper/route";
 export const welcome = {
   eyebrow: "Signed in",
   title: "Welcome to iOverlay",
-  lead: "Pick your computer, follow the steps to get past its one-time security check, then download below. Sign in to the app with the same login and you're ready for your next screen share.",
+  lead: "Pick your computer, then paste one command into its terminal: it downloads iOverlay, installs it and opens it, with no security prompts to click through. Sign in to the app with the same login and you're ready for your next screen share.",
 };
 
 /** One installer per system. The file names match electron-builder's (iobserver-app/electron-builder.yml). */
@@ -59,12 +59,44 @@ export const download = {
   retry: "Try again",
 };
 
+/**
+ * The Terminal install at the top of each tab (components/InstallTerminal.tsx). The command holds a
+ * one-time token for this account; the script it runs is public (app/api/install/*).
+ */
+export const installCommand = {
+  label: "Quick install",
+  title: "Install with one command",
+  mac: {
+    windowTitle: "Terminal",
+    prompt: "%",
+    lead: "Open Terminal (Applications → Utilities, or press ⌘ Space and type Terminal), paste this command and press Return. It picks the version for your Mac's chip, installs iOverlay in Applications and opens it.",
+  },
+  windows: {
+    windowTitle: "Windows PowerShell",
+    prompt: "PS>",
+    lead: "Open PowerShell (press Start, type PowerShell, press Enter), paste this command and press Enter. It downloads iOverlay, installs it for your account and opens it.",
+  },
+  placeholder: "# Your private install command appears here",
+  noPrompts: "Installed this way, iOverlay opens straight away: no \"unverified app\" or SmartScreen warnings.",
+  generate: "Show my install command",
+  generating: "Making your command…",
+  regenerate: "Get a new command",
+  copy: "Copy command",
+  copied: "Copied",
+  validity: "Works once, for {minutes} minutes, and only for your account. Don't share it: get a new one for each computer.",
+  expired: "This command has expired. Get a new one to install.",
+  error: "We couldn't make your install command. Please try again in a minute.",
+  readScript: "Read the script it runs",
+  /** The disclosure holding the manual steps and the installer download. */
+  manualTitle: "Rather download the installer yourself?",
+};
+
 export const howTo = {
   eyebrow: "How to use",
   title: "From download to presenting.",
   lead: "Four steps, about two minutes. Your login is the one we emailed you; you can find it in your inbox.",
   steps: [
-    { icon: Download, label: "Install", description: "Mac: open the .dmg and drag iOverlay to Applications. Windows: run the setup .exe." },
+    { icon: Download, label: "Install", description: "Paste the install command from the top of this page into Terminal (Mac) or PowerShell (Windows)." },
     { icon: KeyRound, label: "Sign in", description: "Start iOverlay and sign in with the email and password from your login email." },
     { icon: Rocket, label: "Open the overlay", description: "Press Start overlay, then load your notes, a doc or any website inside it." },
     { icon: MonitorUp, label: "Share your screen", description: "Share in Zoom, Meet or Teams as usual. You see the overlay; they don't." },
@@ -72,7 +104,7 @@ export const howTo = {
   firstRun: {
     title: "First launch tips",
     items: [
-      "The first time you open iOverlay, macOS or Windows asks you to confirm it: follow the steps for your computer at the top of this page, once.",
+      "Installed with the command at the top of this page, iOverlay opens without warnings. Downloaded the installer yourself? macOS or Windows asks you to confirm it once: the steps are under \"Rather download the installer yourself?\".",
       "The first time you share your screen, macOS asks for Screen Recording permission: allow it in System Settings → Privacy & Security.",
       "On Windows, voice input needs the microphone: if it stays silent, turn on Settings → Privacy & security → Microphone → Let desktop apps access your microphone.",
     ],

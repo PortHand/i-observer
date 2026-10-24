@@ -2,13 +2,17 @@
 
 import { useRef, useState, useSyncExternalStore, type KeyboardEvent, type ReactNode } from "react";
 import { Check, CircleAlert, Clock, Copy, Download, RotateCw, ShieldAlert, TriangleAlert } from "lucide-react";
+import Accordion from "@/components/common/Accordion";
 import Spinner from "@/components/common/Spinner";
-import { download, macOpen, setupGuide, windowsOpen, type FirstOpenFix, type InstallerId } from "../content/welcomeContent";
+import { download, installCommand, macOpen, setupGuide, windowsOpen, type FirstOpenFix, type InstallerId } from "../content/welcomeContent";
 import { fill, getInstaller } from "../helper/welcomeHelper";
+import { useCopyHandler } from "../handler/useCopyHandler";
 import { useDownloadHandler } from "../handler/useDownloadHandler";
+import { useInstallCommandHandler } from "../handler/useInstallCommandHandler";
 import type { DownloadAccess } from "../services/welcomeService";
 import DownloadLocked from "./DownloadLocked";
 import DownloadStatus from "./DownloadStatus";
+import InstallTerminal from "./InstallTerminal";
 import MacOpenShot from "./MacOpenShot";
 import WindowsOpenShot from "./WindowsOpenShot";
 
@@ -57,13 +61,15 @@ const readHash = () => window.location.hash;
 const noHash = () => "";
 
 /**
- * The top of the welcome page: pick a computer (the visitor's own is preselected), follow its
- * one-time install steps, each with a picture of the screen, then download its installer from the
- * bar below them. "#open-on-mac" and "#open-on-windows" links open that tab. Locked accounts see the
- * steps, with why the download is locked in place of the bar.
+ * The top of the welcome page: pick a computer (the visitor's own is preselected) and paste its
+ * one-time install command into a terminal. Below it, folded away, the manual route: the steps
+ * past the system's first-launch check, each with a picture of the screen, then the installer
+ * download. "#open-on-mac" and "#open-on-windows" links open that tab. Locked accounts see why the
+ * download is locked in place of the command, and the steps without the download.
  */
 export default function SetupGuide({ access }: { access: DownloadAccess }) {
   const { detected, started, loading, error, startInstaller } = useDownloadHandler();
+  const install = useInstallCommandHandler();
   const hash = useSyncExternalStore(subscribeHash, readHash, noHash);
   const [chosen, setChosen] = useState<Platform | null>(null);
   const [chosenMac, setChosenMac] = useState<InstallerId | null>(null);
@@ -146,20 +152,45 @@ export default function SetupGuide({ access }: { access: DownloadAccess }) {
             </div>
           ) : (
             <>
-              <Steps guide={guides[platform]} />
               {access.allowed ? (
-                <DownloadBar
-                  installer={platform === "mac" ? macInstaller : "windows"}
-                  hint={guides[platform].hint}
-                  onPickMac={platform === "mac" ? setChosenMac : undefined}
-                  started={started}
-                  loading={loading}
-                  error={error}
-                  onDownload={(installer) => void startInstaller(installer)}
+                <InstallTerminal
+                  platform={platform}
+                  command={install.commands?.[platform] ?? null}
+                  expiresIn={install.commands?.expiresIn ?? null}
+                  expired={install.expired}
+                  loading={install.loading}
+                  error={install.error}
+                  onGenerate={() => void install.generate()}
                 />
               ) : (
                 <DownloadLocked access={access} />
               )}
+              <div className="setup__manual">
+                <Accordion
+                  items={[
+                    {
+                      id: `${tabs[platform].id}-manual`,
+                      title: installCommand.manualTitle,
+                      content: (
+                        <div className="setup__manual-body">
+                          <Steps guide={guides[platform]} />
+                          {access.allowed && (
+                            <DownloadBar
+                              installer={platform === "mac" ? macInstaller : "windows"}
+                              hint={guides[platform].hint}
+                              onPickMac={platform === "mac" ? setChosenMac : undefined}
+                              started={started}
+                              loading={loading}
+                              error={error}
+                              onDownload={(installer) => void startInstaller(installer)}
+                            />
+                          )}
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
+              </div>
             </>
           )}
         </div>
@@ -205,24 +236,12 @@ function Steps({ guide }: { guide: PlatformGuide }) {
 
 /** A terminal line with a button that copies it, so nobody has to select it by hand. */
 function CopyCommand({ command }: { command: string }) {
-  const [copied, setCopied] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(command);
-    } catch {
-      return;
-    }
-    setCopied(true);
-    clearTimeout(timer.current);
-    timer.current = setTimeout(() => setCopied(false), 2000);
-  };
+  const { copied, copy } = useCopyHandler();
 
   return (
     <div className="mac-open__command-row">
       <code className="mac-open__command">{command}</code>
-      <button type="button" className="mac-open__copy" onClick={copy} aria-live="polite">
+      <button type="button" className="mac-open__copy" onClick={() => void copy(command)} aria-live="polite">
         {copied ? <Check className="icon icon--sm" strokeWidth={1.75} /> : <Copy className="icon icon--sm" strokeWidth={1.75} />}
         {copied ? setupGuide.copied : setupGuide.copy}
       </button>

@@ -242,6 +242,118 @@
   }
 }
 
+/* Quick install: a terminal window with the account's one-time command (components/InstallTerminal.tsx) */
+
+.install {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+.install__text {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 760px;
+}
+
+.install__terminal {
+  min-width: 0;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-input);
+}
+
+.install__bar {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.install__lights {
+  display: flex;
+  gap: 6px;
+}
+
+.install__lights span {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-border-strong);
+}
+
+.install__window-title {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.install__screen {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-5) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.install__prompt {
+  flex-shrink: 0;
+  color: var(--color-success);
+}
+
+/* Long commands wrap anywhere rather than scroll, so the whole thing is visible before copying. */
+.install__command {
+  min-width: 0;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.install__command--placeholder {
+  color: var(--color-text-subtle);
+  user-select: none;
+}
+
+.install__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.install__notes {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.install__script-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .install__actions > .button {
+    flex: 1 1 100%;
+  }
+}
+
+/* The manual route under the quick install, folded away: the first-launch steps, then the download. */
+
+.setup__manual .accordion__body {
+  color: var(--color-text);
+}
+
+.setup__manual-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-8);
+  padding-top: var(--space-3);
+}
+
 .setup__fix-list {
   display: grid;
   gap: var(--space-1);

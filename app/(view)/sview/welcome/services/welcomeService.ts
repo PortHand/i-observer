@@ -1,5 +1,5 @@
-// Shapes the welcome page shows, and its server calls. Download links come from a Server Action
-// (server/features/download/action/downloadActions.ts), so there's no API route.
+// Shapes the welcome page shows, and its server calls. Download links and install commands come
+// from Server Actions (server/features/download/action/downloadActions.ts), so there's no API route.
 
 import * as downloadActions from "@/server/features/download/action/downloadActions";
 import type { InstallerId } from "../content/welcomeContent";
@@ -33,5 +33,20 @@ export interface DownloadLink {
 
 export type DownloadLinkResult = Awaited<ReturnType<typeof downloadActions.getDownloadLink>>;
 
+/** The commands that download and install the app from a terminal. Both hold the same one-time token. */
+export interface InstallCommands {
+  /** For Terminal on a Mac. */
+  mac: string;
+  /** For PowerShell on Windows. */
+  windows: string;
+  /** Seconds until the token stops working, if it isn't used first. */
+  expiresIn: number;
+}
+
+export type InstallCommandsResult = Awaited<ReturnType<typeof downloadActions.getInstallCommands>>;
+
 /** A fresh, short-lived link to this installer. */
 export const getDownloadLink = (installer: InstallerId): Promise<DownloadLinkResult> => downloadActions.getDownloadLink(installer);
+
+/** New install commands; the account's earlier unused ones stop working. */
+export const getInstallCommands = (): Promise<InstallCommandsResult> => downloadActions.getInstallCommands();

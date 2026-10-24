@@ -33,6 +33,22 @@ export const runRoute = async (handler: () => Promise<object>, status = 200): Pr
   }
 };
 
+/**
+ * Like runRoute, for callers that print the answer rather than parse it (the install scripts): the
+ * text on success, the HttpError's message with its status on failure.
+ */
+export const runTextRoute = async (handler: () => Promise<string>): Promise<Response> => {
+  const text = (body: string, status: number) =>
+    new Response(body, { status, headers: { ...NO_STORE, "Content-Type": "text/plain; charset=utf-8" } });
+  try {
+    return text(await handler(), 200);
+  } catch (error) {
+    if (error instanceof HttpError) return text(error.message, error.status);
+    console.error(error);
+    return text("Something went wrong on our side. Please try again in a minute.", 500);
+  }
+};
+
 /** The request's JSON object body. A 400 when it isn't JSON, is too large or isn't an object. */
 export const readJson = async (request: Request): Promise<Record<string, unknown>> => {
   const invalid = () => HttpError.badRequest("Send the details as a JSON object.");
