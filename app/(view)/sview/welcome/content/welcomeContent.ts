@@ -70,6 +70,15 @@ export const installCommand = {
     windowTitle: "Terminal",
     prompt: "%",
     lead: "Open Terminal (Applications → Utilities, or press ⌘ Space and type Terminal), paste this command and press Return. It picks the version for your Mac's chip, installs iOverlay in Applications and opens it.",
+    /**
+     * The app keeps its sign-in in the keychain ("iOverlay Safe Storage"). It's ad-hoc signed, so
+     * macOS can't tell a new install is the same app and asks again after each install or update.
+     */
+    keychain: {
+      label: "Then",
+      title: "Click Always Allow",
+      text: "When iOverlay opens, macOS asks to use \"iOverlay Safe Storage\" in your keychain. Enter your Mac password and click Always Allow, so it doesn't ask again.",
+    },
   },
   windows: {
     windowTitle: "Windows PowerShell",
@@ -77,7 +86,6 @@ export const installCommand = {
     lead: "Open PowerShell (press Start, type PowerShell, press Enter), paste this command and press Enter. It downloads iOverlay, installs it for your account and opens it.",
   },
   placeholder: "# Your private install command appears here",
-  noPrompts: "Installed this way, iOverlay opens straight away: no \"unverified app\" or SmartScreen warnings.",
   generate: "Show my install command",
   generating: "Making your command…",
   regenerate: "Get a new command",
@@ -86,7 +94,6 @@ export const installCommand = {
   validity: "Works once, for {minutes} minutes, and only for your account. Don't share it: get a new one for each computer.",
   expired: "This command has expired. Get a new one to install.",
   error: "We couldn't make your install command. Please try again in a minute.",
-  readScript: "Read the script it runs",
   /** The disclosure holding the manual steps and the installer download. */
   manualTitle: "Rather download the installer yourself?",
 };
@@ -105,6 +112,7 @@ export const howTo = {
     title: "First launch tips",
     items: [
       "Installed with the command at the top of this page, iOverlay opens without warnings. Downloaded the installer yourself? macOS or Windows asks you to confirm it once: the steps are under \"Rather download the installer yourself?\".",
+      "On a Mac, iOverlay asks to use \"iOverlay Safe Storage\" in your keychain, where it keeps your sign-in: enter your Mac password and click Always Allow. It asks once more after each update.",
       "The first time you share your screen, macOS asks for Screen Recording permission: allow it in System Settings → Privacy & Security.",
       "On Windows, voice input needs the microphone: if it stays silent, turn on Settings → Privacy & security → Microphone → Let desktop apps access your microphone.",
     ],
@@ -112,7 +120,7 @@ export const howTo = {
 };
 
 /** The illustration drawn for each macOS step (components/MacOpenShot.tsx). */
-export type MacOpenShot = "install" | "blocked" | "settings" | "confirm";
+export type MacOpenShot = "install" | "blocked" | "settings" | "confirm" | "keychain";
 
 /** The illustration drawn for each Windows step (components/WindowsOpenShot.tsx). */
 export type WindowsOpenShot = "run" | "protected" | "run-anyway" | "install";

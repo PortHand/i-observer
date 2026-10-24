@@ -1,11 +1,11 @@
 "use client";
 
-import { Check, CircleAlert, Copy, KeyRound, RotateCw, ShieldCheck, SquareTerminal } from "lucide-react";
+import { Check, CircleAlert, Copy, KeyRound, RotateCw, SquareTerminal } from "lucide-react";
 import Spinner from "@/components/common/Spinner";
-import { apiRoutes } from "@/helper/route";
 import { installCommand } from "../content/welcomeContent";
 import { useCopyHandler } from "../handler/useCopyHandler";
 import { fill } from "../helper/welcomeHelper";
+import MacOpenShot from "./MacOpenShot";
 
 interface InstallTerminalProps {
   platform: "mac" | "windows";
@@ -20,8 +20,8 @@ interface InstallTerminalProps {
 
 /**
  * The quick install at the top of a tab: a terminal window with this account's one-time command,
- * shown on request, and a button that copies it. The script it runs is linked for anyone who wants
- * to read it first.
+ * shown on request, and a button that copies it. On a Mac, a picture of the keychain prompt the app
+ * shows when it opens, and which button to click.
  */
 export default function InstallTerminal({ platform, command, expiresIn, expired, loading, error, onGenerate }: InstallTerminalProps) {
   const { copied, copy } = useCopyHandler();
@@ -98,16 +98,18 @@ export default function InstallTerminal({ platform, command, expiresIn, expired,
             </p>
           )
         )}
-        <p className="hint">
-          <ShieldCheck className="icon icon--sm" strokeWidth={1.75} />
-          <span>
-            {installCommand.noPrompts}{" "}
-            <a href={platform === "mac" ? apiRoutes.installMac : apiRoutes.installWindows} target="_blank" rel="noopener" className="install__script-link">
-              {installCommand.readScript}
-            </a>
-          </span>
-        </p>
       </div>
+
+      {platform === "mac" && (
+        <div className="install__after">
+          <MacOpenShot shot="keychain" />
+          <div className="stack-sm">
+            <span className="section-label">{installCommand.mac.keychain.label}</span>
+            <h4 className="mac-open__title">{installCommand.mac.keychain.title}</h4>
+            <p className="text-muted">{installCommand.mac.keychain.text}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { ArrowRight, Folder, Hand, ShieldCheck } from "lucide-react";
+import { ArrowRight, Folder, Hand, LockKeyhole, ShieldCheck } from "lucide-react";
 import type { MacOpenShot as Shot } from "../content/welcomeContent";
 
 /** A macOS window's title bar: the three window buttons and an optional title. */
@@ -106,6 +106,19 @@ export default function MacOpenShot({ shot }: { shot: Shot }) {
           buttons={["Open Anyway", "Move to Bin"]}
           target="Open Anyway"
         />
+      )}
+
+      {shot === "keychain" && (
+        <div className="mac-shot__alert mac-shot__keychain">
+          <LockKeyhole className="mac-shot__lock" strokeWidth={1.75} />
+          <strong>{'iOverlay wants to use "iOverlay Safe Storage" in your keychain.'}</strong>
+          <span className="mac-shot__password">••••••••</span>
+          <div className="mac-shot__buttons mac-shot__buttons--row">
+            <span className="mac-shot__btn mac-shot__btn--target">Always Allow</span>
+            <span className="mac-shot__btn">Deny</span>
+            <span className="mac-shot__btn mac-shot__btn--default">Allow</span>
+          </div>
+        </div>
       )}
     </div>
   );
