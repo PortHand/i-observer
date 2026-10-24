@@ -8,7 +8,7 @@ export default function SectionHeader({
   lead: string;
 }) {
   return (
-    <header className="section__header">
+    <header className="section__header" data-reveal>
       <div className="stack-sm">
         <span className="eyebrow">{eyebrow}</span>
         <h2 className="display section__title">{title}</h2>

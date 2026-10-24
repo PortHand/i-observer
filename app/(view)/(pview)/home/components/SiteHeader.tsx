@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { CircleUser } from "lucide-react";
 import { routes } from "@/helper/route";
+import ThemeToggle from "@/components/common/ThemeToggle";
 import { getCurrentUser } from "@/server/features/auth/guard/authGuard";
 import { appInfo, auth, navLinks } from "../content/homeContent";
 import AccountMenu from "./AccountMenu";
@@ -67,6 +68,7 @@ export default function SiteHeader({ current }: { current?: string }) {
               </Link>
             ))}
           </nav>
+          <ThemeToggle />
           <Suspense fallback={<AccountPlaceholder />}>
             <AccountSlot current={current} />
           </Suspense>

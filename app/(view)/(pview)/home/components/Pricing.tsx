@@ -12,7 +12,7 @@ export default function Pricing({ plans }: { plans: Plan[] }) {
     <PricingSection>
       <div className="plans" style={{ "--plan-count": plans.length } as CSSProperties}>
         {plans.map((plan, index) => (
-          <PlanCard key={plan.id} plan={plan} icon={pricing.icons[index % pricing.icons.length]} />
+          <PlanCard key={plan.id} plan={plan} index={index} icon={pricing.icons[index % pricing.icons.length]} />
         ))}
       </div>
     </PricingSection>

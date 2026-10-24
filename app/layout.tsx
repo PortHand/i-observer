@@ -1,10 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo_Narrow, Geist_Mono } from "next/font/google";
+import { Archivo_Narrow, Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import JsonLd from "@/components/common/JsonLd";
+import { themeScript } from "@/components/common/themeScript";
 import { organizationJsonLd, seo, siteUrl, siteVerification, websiteJsonLd } from "@/helper/seo";
 import { appInfo } from "./(view)/(pview)/home/content/homeContent";
 
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+// The admin portal's condensed headline face (the legacy theme in globals.css).
 const archivoNarrow = Archivo_Narrow({
   variable: "--font-archivo-narrow",
   subsets: ["latin"],
@@ -46,13 +54,22 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: seo.themeColor,
-  colorScheme: "light",
+  colorScheme: "dark light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${archivoNarrow.variable} ${geistMono.variable}`} data-scroll-behavior="smooth">
+    // suppressHydrationWarning: themeScript sets data-theme on <html> before React loads.
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${archivoNarrow.variable} ${geistMono.variable}`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <body>
+        <Script id="theme" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
         {children}
       </body>

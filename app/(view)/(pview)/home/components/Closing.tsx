@@ -7,13 +7,15 @@ interface ClosingProps {
   cta: { href: string; label: string };
 }
 
-/** Closing call to action between two ink rules, shared by every page. */
+/** Closing call to action on a glowing panel, shared by every page. */
 export default function Closing({ title, lead, cta }: ClosingProps) {
   return (
-    <section className="band">
+    <section className="band band--closing">
       <div className="container section">
-        <div className="closing">
-          <div className="stack-sm">
+        <div className="closing" data-reveal="scale">
+          <span className="closing__glow" aria-hidden="true" />
+          <span className="closing__grid" aria-hidden="true" />
+          <div className="closing__copy">
             <h2 className="display section__title">{title}</h2>
             <p className="lead">{lead}</p>
           </div>

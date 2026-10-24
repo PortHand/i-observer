@@ -194,6 +194,7 @@
 }
 
 .setup__arch-option {
+  border-radius: var(--radius);
   position: relative;
   display: grid;
   gap: 2px;
@@ -276,6 +277,7 @@
 }
 
 .mac-open__damaged {
+  border-radius: var(--radius);
   display: grid;
   gap: var(--space-2);
   max-width: 860px;
@@ -341,6 +343,7 @@
  * rounded windows and blue buttons. The button to click gets the site's red ring.
  */
 .mac-shot {
+  border-radius: var(--radius-lg);
   --mac-window: #f6f6f6;
   --mac-line: rgb(0 0 0 / 12%);
   --mac-text: #1d1d1f;
@@ -590,6 +593,7 @@
  * SmartScreen's blue), with the site's red ring on the thing to click.
  */
 .win-shot {
+  border-radius: var(--radius-lg);
   --win-window: #f3f3f3;
   --win-line: rgb(0 0 0 / 10%);
   --win-text: #1b1b1b;

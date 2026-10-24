@@ -2,12 +2,21 @@
 // prices come from the database (plans and plan_prices tables).
 
 import {
+  Bot,
+  Camera,
   Crown,
   Eye,
+  EyeOff,
   Gem,
+  Globe,
+  Keyboard,
+  MonitorUp,
   MousePointerClick,
   Power,
+  ScreenShare,
   Sparkles,
+  SunDim,
+  Video,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -41,6 +50,8 @@ export const navLinks = [
 
 export const hero = {
   eyebrow: "Private screen overlay",
+  /** The pill above the headline. */
+  badge: { tag: "New", label: "Now on macOS and Windows", href: homeSection("platforms") },
   titleStart: "You see it.",
   titleAccent: "They",
   titleEnd: "don't.",
@@ -48,6 +59,8 @@ export const hero = {
   primaryCta: { href: routes.whatIsIOverlay, label: "What is iOverlay?" },
   demoCta: { href: homeSection("demo"), label: "Watch the demo" },
   fineprint: "macOS and Windows · Linux coming soon · Login within 24 hours",
+  /** Short reassurances under the buttons. */
+  trust: ["Hidden from Zoom, Meet and Teams", "One-time UPI payment", "Login within 24 hours"],
 };
 
 export const heroExplainer = {
@@ -58,7 +71,86 @@ export const heroExplainer = {
   theirs: "What they see",
   hidden: "Hidden from capture",
   caption: "Same screen, two views.",
+  /** The mock meeting window behind the overlay (HeroStage.tsx). */
+  meeting: "Q3 review · Sharing screen",
+  live: "Live",
+  slideTitle: "Quarterly revenue",
+  participants: ["AK", "RS", "MJ"],
+  opacity: "Opacity",
+  viewLabel: "Switch view",
 };
+
+/** The strip of things the overlay stays out of, scrolling under the hero. */
+export const marquee = {
+  label: "Stays out of every capture",
+  items: [
+    { label: "Zoom", icon: Video },
+    { label: "Google Meet", icon: ScreenShare },
+    { label: "Microsoft Teams", icon: MonitorUp },
+    { label: "Screen recordings", icon: Camera },
+    { label: "Screenshots", icon: EyeOff },
+  ] as { label: string; icon: LucideIcon }[],
+};
+
+export const featuresSection = {
+  eyebrow: "Features",
+  title: "Everything you need on screen. Nothing they can see.",
+  lead: "A small panel you drag and resize anywhere, built for the moments you present.",
+};
+
+export type FeatureVisual = "capture" | "browser" | "opacity" | "clickThrough" | "shortcuts" | "ai";
+
+export interface Feature {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  visual: FeatureVisual;
+  /** Columns it spans in the bento grid on wide screens: 2, or 3 for a full-width row. */
+  span?: 2 | 3;
+  tag?: string;
+}
+
+export const features: Feature[] = [
+  {
+    title: "Invisible to screen share",
+    description: "Your operating system leaves the overlay out of every capture: Zoom, Meet, Teams, recordings and screenshots.",
+    icon: EyeOff,
+    visual: "capture",
+    span: 2,
+  },
+  {
+    title: "Embedded Chrome browser",
+    description: "Open your notes, a doc, a script or any website right inside the overlay.",
+    icon: Globe,
+    visual: "browser",
+  },
+  {
+    title: "Fade it to fit",
+    description: "Set the overlay anywhere from 30 to 100% opacity so it never blocks your view.",
+    icon: SunDim,
+    visual: "opacity",
+  },
+  {
+    title: "Click-through mode",
+    description: "Let clicks pass straight through to the app underneath while you keep reading.",
+    icon: MousePointerClick,
+    visual: "clickThrough",
+  },
+  {
+    title: "Global shortcuts",
+    description: "Show, hide and control it from any app without touching the mouse.",
+    icon: Keyboard,
+    visual: "shortcuts",
+  },
+  {
+    title: "Your AI model",
+    description: "Chat with the AI model you prefer, right inside the private panel.",
+    icon: Bot,
+    visual: "ai",
+    tag: "Coming soon",
+    span: 3,
+  },
+];
 
 export const auth = {
   signIn: {
@@ -94,6 +186,7 @@ export const auth = {
 };
 
 export const questionsSection = {
+  eyebrow: "Start here",
   title: "Start with the question.",
   lead: "The three things people ask first, with where to find the answer.",
 };
@@ -120,6 +213,7 @@ export const questions = [
 ];
 
 export const howSection = {
+  eyebrow: "How it works",
   title: "How it works in a meeting.",
   lead: "Four steps, from opening the overlay to presenting with it.",
 };
@@ -137,6 +231,15 @@ export const stats = [
   { value: "3", label: "Global shortcuts" },
   { value: "24 h", label: "Login delivery" },
 ];
+
+/** The home page FAQ: a few questions from the Contact page's FAQ, by id. */
+export const homeFaq = {
+  eyebrow: "FAQ",
+  title: "Questions, answered.",
+  lead: "The quick answers. The full list is on the contact page.",
+  ids: ["which-apps", "macos-15", "how-pay", "when-login", "systems", "camera"],
+  more: { href: routes.contact, label: "See all questions" },
+};
 
 export const closing = {
   title: "Ready to present privately?",
@@ -170,7 +273,10 @@ export const footerLinks = [
   { href: routes.contact, label: "Contact & FAQ" },
 ];
 
-export const footer = { linksLabel: "Site" };
+export const footer = {
+  linksLabel: "Site",
+  blurb: "A private window on top of your screen. You see it, your audience doesn't.",
+};
 
 export const pricing = {
   eyebrow: "Pricing",

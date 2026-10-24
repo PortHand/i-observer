@@ -361,6 +361,7 @@
 }
 
 .rating__option {
+  border-radius: var(--radius);
   position: relative;
   display: grid;
   place-items: center;

@@ -7,7 +7,13 @@ import "../(pview)/home/home.css";
 import "./welcome/welcome.css";
 import "./profile/profile.css";
 import "./admin/admin.css";
+import ScrollEffects from "@/components/common/ScrollEffects";
 
 export default function SignedInLayout({ children }: LayoutProps<"/">) {
-  return children;
+  return (
+    <>
+      {children}
+      <ScrollEffects />
+    </>
+  );
 }

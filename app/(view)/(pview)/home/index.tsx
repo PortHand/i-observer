@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
 import Closing from "./components/Closing";
 import Demo from "./components/Demo";
+import Features from "./components/Features";
 import Hero from "./components/Hero";
 import HeroExplainer from "./components/HeroExplainer";
+import HomeFaq from "./components/HomeFaq";
 import HowItWorks from "./components/HowItWorks";
+import Marquee from "./components/Marquee";
 import Platforms from "./components/Platforms";
 import Questions from "./components/Questions";
 import SiteFooter from "./components/SiteFooter";
@@ -24,11 +27,14 @@ export default function HomeView({ header, pricing }: HomeViewProps) {
         <Hero>
           <HeroExplainer />
         </Hero>
-        <Questions />
+        <Marquee />
+        <Features />
         <HowItWorks />
-        <Platforms />
         <Demo />
+        <Questions />
+        <Platforms />
         {pricing}
+        <HomeFaq />
         <Closing {...closing} />
       </main>
       <SiteFooter />

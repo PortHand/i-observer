@@ -12,6 +12,7 @@
 }
 
 .callout {
+  border-radius: var(--radius);
   padding: var(--space-6) var(--space-8);
   border-left: 3px solid var(--color-accent);
   background: var(--color-surface);
@@ -46,6 +47,7 @@
 /* Limitations under the hiding steps */
 
 .limits {
+  border-radius: var(--radius);
   display: grid;
   gap: var(--space-3);
   padding: var(--space-5) var(--space-6);

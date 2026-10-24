@@ -3,7 +3,13 @@
 // override shared ones. Importing it from each page let Next re-insert it after the page CSS when
 // navigating, which dropped those overrides until a refresh.
 import "./home/home.css";
+import ScrollEffects from "@/components/common/ScrollEffects";
 
 export default function PublicLayout({ children }: LayoutProps<"/">) {
-  return children;
+  return (
+    <>
+      {children}
+      <ScrollEffects />
+    </>
+  );
 }

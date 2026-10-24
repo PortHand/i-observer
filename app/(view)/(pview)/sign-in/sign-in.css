@@ -7,8 +7,17 @@
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: 72px;
   align-items: start;
-  padding-top: 88px;
-  padding-bottom: 96px;
+  /* Room under the header that grows with the window, while the whole sign-in card still fits
+     in a laptop window without scrolling. */
+  padding-top: clamp(32px, 7vh, 72px);
+  padding-bottom: 64px;
+}
+
+/* Short windows (720px tall laptops): less room on top, so the card still fits. */
+@media (max-height: 760px) and (min-width: 981px) {
+  .sign-in {
+    padding-top: 24px;
+  }
 }
 
 .sign-in__intro {
@@ -17,12 +26,31 @@
 }
 
 .sign-in__intro .page-hero {
+  justify-items: start;
   padding: 0;
+  text-align: left;
+}
+
+.sign-in__intro .page-hero .eyebrow {
+  justify-self: start;
 }
 
 .sign-in__card {
   position: sticky;
   top: 96px;
+  padding: var(--space-8);
+}
+
+.sign-in__card .form {
+  gap: var(--space-4);
+}
+
+.sign-in__card .auth__header {
+  padding-bottom: var(--space-4);
+}
+
+.sign-in__card .auth__header h2 {
+  font-size: 34px;
 }
 
 /* Login help */
@@ -90,8 +118,8 @@
 
 .sign-in__buy {
   display: grid;
-  gap: var(--space-4);
-  margin-top: var(--space-8);
+  gap: var(--space-3);
+  margin-top: var(--space-6);
 }
 
 .sign-in__divider {
@@ -124,7 +152,7 @@
   .sign-in {
     grid-template-columns: 1fr;
     gap: var(--space-10);
-    padding-top: 56px;
+    padding-top: var(--space-6);
   }
 
   /* Stacked: the form comes right after the title, the help after it. */

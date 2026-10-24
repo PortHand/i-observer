@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, type LucideIcon } from "lucide-react";
 import { checkoutPlanLink } from "@/helper/route";
@@ -6,12 +7,17 @@ import type { Plan } from "../../get-ioverlay/services/getService";
 import { pricing } from "../content/homeContent";
 
 /** One plan column: name, price, what's included and a link to checkout with it picked. */
-export default function PlanCard({ plan, icon: Icon }: { plan: Plan; icon: LucideIcon }) {
+export default function PlanCard({ plan, index, icon: Icon }: { plan: Plan; index: number; icon: LucideIcon }) {
   // The plan checkout pre-selects is the one to draw attention to.
   const highlighted = plan.isDefault;
   const percent = discountPercent(plan);
   return (
-    <article className={highlighted ? "plan plan--highlighted theme-ink" : "plan"}>
+    <article
+      className={highlighted ? "plan plan--highlighted theme-ink" : "plan"}
+      data-reveal
+      data-spotlight
+      style={{ "--reveal-order": index % 4 } as CSSProperties}
+    >
       <div className="plan__header">
         <span className="icon-tile">
           <Icon className="icon" strokeWidth={1.75} />

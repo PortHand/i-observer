@@ -117,6 +117,7 @@
 /* Order summary card */
 
 .checkout-summary {
+  border-radius: var(--radius-lg);
   display: grid;
   gap: var(--space-5);
   position: sticky;
@@ -176,6 +177,7 @@
 /* Contact form */
 
 .file-input {
+  border-radius: var(--radius);
   padding: var(--space-3);
   border: 1px dashed var(--color-border-strong);
   background: var(--color-input);
@@ -213,6 +215,7 @@
 /* QR code */
 
 .qr {
+  border-radius: var(--radius);
   display: grid;
   justify-items: center;
   gap: var(--space-3);
@@ -327,6 +330,7 @@
 }
 
 .success__message {
+  border-radius: var(--radius);
   display: flex;
   gap: var(--space-3);
   align-items: flex-start;
@@ -438,6 +442,7 @@
 /* Support note under the download */
 
 .support-note {
+  border-radius: var(--radius-lg);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   gap: var(--space-3);
@@ -553,6 +558,7 @@
 }
 
 .plan-tile {
+  border-radius: var(--radius);
   position: relative;
   display: grid;
   gap: var(--space-1);

@@ -53,9 +53,9 @@ export const seo = {
     "undetectable overlay",
   ],
   locale: "en_IN",
-  /** Browser UI colour: the site's ink. */
-  themeColor: "#242321",
-  backgroundColor: "#e9e9e5",
+  /** Browser UI colour: the site's night canvas. */
+  themeColor: "#07070c",
+  backgroundColor: "#07070c",
   /** Shown alongside the share image. */
   imageAlt: `${appInfo.name}: ${appInfo.tagline}`,
 };
