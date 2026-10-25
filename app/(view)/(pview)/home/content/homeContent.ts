@@ -45,6 +45,7 @@ export const navLinks = [
   { href: routes.home, label: "Home" },
   { href: routes.whatIsIOverlay, label: "What is iOverlay?" },
   { href: routes.getIOverlay, label: "Get iOverlay" },
+  { href: routes.prompts, label: "Prompts" },
   { href: routes.contact, label: "Contact" },
 ];
 
@@ -270,6 +271,7 @@ export const footerLinks = [
   { href: routes.invisibleOverlay, label: "Invisible overlay" },
   { href: routes.embeddedChromeBrowser, label: "Embedded Chrome browser" },
   { href: routes.getIOverlay, label: "Pricing" },
+  { href: routes.prompts, label: "Practice prompts" },
   { href: routes.contact, label: "Contact & FAQ" },
 ];
 

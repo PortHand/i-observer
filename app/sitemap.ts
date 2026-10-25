@@ -13,6 +13,7 @@ const pages: { path: string; changeFrequency: "weekly" | "monthly"; priority: nu
   { path: routes.screenHider, changeFrequency: "monthly", priority: 0.8 },
   { path: routes.invisibleOverlay, changeFrequency: "monthly", priority: 0.8 },
   { path: routes.embeddedChromeBrowser, changeFrequency: "monthly", priority: 0.8 },
+  { path: routes.prompts, changeFrequency: "monthly", priority: 0.7 },
   { path: routes.contact, changeFrequency: "monthly", priority: 0.6 },
 ];
 

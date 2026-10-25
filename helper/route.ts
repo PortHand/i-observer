@@ -12,6 +12,8 @@ export const routes = {
   whatIsIOverlay: "/what-is-ioverlay",
   getIOverlay: "/get-ioverlay",
   contact: "/contact",
+  /** Copy-ready interview practice prompts, one per developer role. */
+  prompts: "/prompts",
   /** Search landing pages, one per thing people search for (app/(view)/(pview)/_landing). */
   interviewHelper: "/interview-helper",
   screenHider: "/screen-hider",
