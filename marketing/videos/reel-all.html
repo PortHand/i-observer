@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>iOverlay in 45 seconds (reel)</title>
+    <link rel="stylesheet" href="reel.css" />
+    <style>
+      /* Montage cuts: short scenes with quick fades. */
+      .scene--quick {
+        animation:
+          scene-in 250ms var(--ease) var(--t0) both,
+          scene-out 250ms var(--ease) calc(var(--t1) - 250ms) forwards;
+      }
+
+      .newtab {
+        display: grid;
+        place-items: center;
+        height: 300px;
+        color: var(--muted);
+        font-size: 34px;
+      }
+
+      .share-btn {
+        position: relative;
+      }
+
+      .share-btn .tool--share {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+
+      .cursor--share {
+        animation: to-share 1000ms var(--ease) calc(var(--t0) + 0.5s) both;
+      }
+
+      @keyframes to-share {
+        from {
+          left: 880px;
+          top: 1520px;
+        }
+
+        to {
+          left: 548px;
+          top: 1206px;
+        }
+      }
+
+      .fading {
+        animation: fading 3200ms ease-in-out calc(var(--t0) + 1.2s) both;
+      }
+
+      @keyframes fading {
+        0%,
+        100% {
+          opacity: 1;
+        }
+
+        45%,
+        60% {
+          opacity: 0.35;
+        }
+      }
+
+      .fading .slider i {
+        animation: knob 3200ms ease-in-out calc(var(--t0) + 1.2s) both;
+      }
+
+      @keyframes knob {
+        0%,
+        100% {
+          right: 0%;
+        }
+
+        45%,
+        60% {
+          right: 65%;
+        }
+      }
+
+      /* Montage screens: dashboard, lesson, settings and code. */
+      .kpis {
+        position: absolute;
+        left: 70px;
+        top: 130px;
+        display: grid;
+        grid-template-columns: repeat(2, 380px);
+        gap: 26px;
+      }
+
+      .kpi {
+        display: grid;
+        gap: 10px;
+        padding: 28px;
+        border: 3px solid var(--tile);
+        background: var(--panel);
+      }
+
+      .kpi span {
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 26px;
+        text-transform: uppercase;
+      }
+
+      .kpi b {
+        font-family: var(--head);
+        font-size: 80px;
+        line-height: 1;
+      }
+
+      .lesson-list {
+        display: grid;
+        gap: 20px;
+        margin: 10px 0 0;
+        padding-left: 40px;
+        color: var(--muted);
+        font-size: 40px;
+      }
+
+      .settings {
+        position: absolute;
+        left: 70px;
+        top: 130px;
+        display: grid;
+        gap: 22px;
+        width: 860px;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 32px;
+        border: 3px solid var(--tile);
+        background: var(--panel);
+        font-size: 36px;
+      }
+
+      .toggle {
+        width: 90px;
+        height: 50px;
+        padding: 6px;
+        border-radius: 999px;
+        background: var(--green);
+      }
+
+      .toggle::after {
+        content: "";
+        display: block;
+        width: 38px;
+        height: 38px;
+        margin-left: auto;
+        border-radius: 50%;
+        background: #fff;
+      }
+
+      .toggle--off {
+        background: var(--rule);
+      }
+
+      .toggle--off::after {
+        margin-left: 0;
+      }
+
+      .code {
+        position: absolute;
+        left: 70px;
+        top: 140px;
+        display: grid;
+        gap: 18px;
+        font-family: var(--mono);
+        font-size: 36px;
+        white-space: pre;
+      }
+
+      .k {
+        color: var(--red);
+      }
+
+      .c {
+        color: var(--muted);
+      }
+    </style>
+    <script>
+      window.SIZE = [1080, 1920];
+      window.DURATION = 49.2;
+    </script>
+  </head>
+  <body>
+    <div class="frame">
+      <!-- Hook -->
+      <section class="scene" style="--t0: 0s; --t1: 5.4s">
+        <div class="head" style="top: 260px; gap: 34px">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Private screen overlay</span>
+          <h1 class="h h--xl">
+            <span class="a-mask" style="--d: 0.15s">You see it.</span>
+            <span class="a-mask red" style="--d: 0.45s">They don't.</span>
+          </h1>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.9s; top: 700px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Sharing</span></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="bar" style="width: 60%"></span><span class="block"></span></div>
+              <span class="btn">Next slide</span>
+              <div class="ov a-slide" style="--d: 1.6s; right: 80px; top: 150px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__body" style="padding-top: 30px">
+                  <span class="note">Open with the Q3 numbers</span>
+                  <span class="note">Revenue up 18% year on year</span>
+                  <span class="note">Ask about the rollout date</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Meet iOverlay -->
+      <section class="scene" style="--t0: 5.4s; --t1: 10.8s">
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Meet iOverlay</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.15s">A private</span>
+            <span class="a-mask red" style="--d: 0.35s">window.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.4s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Sharing</span></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <div class="toolbar"><span class="tool">Mic</span><span class="tool tool--share">Sharing screen</span><span class="tool tool--leave">Leave</span></div>
+              <div class="ov a-slide" style="--d: 0.9s; right: 370px; top: 130px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__tabs"><span class="ov__tab">Talking points</span></div>
+                <div class="ov__body" style="padding-top: 30px">
+                  <span class="note a-fade" style="--d: 1.4s"><span class="a-type" style="--d: 1.5s">Open with the Q3 numbers</span></span>
+                  <span class="note a-fade" style="--d: 2.1s"><span class="a-type" style="--d: 2.2s">Revenue up 18% year on year</span></span>
+                  <span class="note a-fade" style="--d: 2.8s"><span class="a-type" style="--d: 2.9s">Ask about the rollout date</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Proof: they see nothing -->
+      <section class="scene" style="--t0: 10.8s; --t1: 17.3s">
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Hidden from the share</span>
+          <h2 class="h h--md">
+            <span class="a-mask" style="--d: 0.15s">They see</span>
+            <span class="a-mask red" style="--d: 0.35s">nothing.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.4s; top: 560px; --w: 520px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <div class="ov" style="right: 370px; top: 160px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px"><span class="note">Open with the Q3 numbers</span><span class="note">Revenue up 18% year on year</span><span class="note">Ask about the rollout date</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.7s; top: 960px; --w: 520px">
+          <span class="scr-label scr-label--call">What the call sees</span>
+          <div class="scr scr--call">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <span class="scan" style="--d: 1.2s"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Here's how it works -->
+      <section class="scene" style="--t0: 17.3s; --t1: 19.1s">
+        <span class="bignum" style="top: 760px; right: 60px; font-size: 760px">4</span>
+        <div class="head" style="top: 520px">
+          <span class="eyebrow a-fade" style="--d: 0.05s">4 steps</span>
+          <h2 class="h h--xl">
+            <span class="a-mask" style="--d: 0.1s">Here's how</span>
+            <span class="a-mask red" style="--d: 0.3s">it works.</span>
+          </h2>
+        </div>
+      </section>
+
+      <!-- Step 1 -->
+      <section class="scene" style="--t0: 19.1s; --t1: 22.4s">
+        <span class="bignum">01</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.05s">Step 01 · Open</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.1s">Hit the</span>
+            <span class="a-mask red" style="--d: 0.3s">shortcut.</span>
+          </h2>
+        </div>
+        <div class="keys a-popout" style="--d: 0.3s; --out: 1.8s; top: 820px">
+          <span class="key" style="--d: 0.8s">⌥</span>
+          <span class="key" style="--d: 0.95s">⇧</span>
+          <span class="key" style="--d: 1.1s">G</span>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 2s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="bar" style="width: 60%"></span><span class="block"></span></div>
+              <span class="btn">Next slide</span>
+              <div class="ov a-slide" style="--d: 2.4s; right: 90px; top: 150px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__tabs"><span class="ov__tab">New tab</span></div>
+                <div class="ov__url">Search or enter address</div>
+                <div class="newtab">Ready when you are</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2 -->
+      <section class="scene" style="--t0: 22.4s; --t1: 26.4s">
+        <span class="bignum">02</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.05s">Step 02 · Fill</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.1s">Open your</span>
+            <span class="a-mask red" style="--d: 0.3s">notes.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.3s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="bar" style="width: 60%"></span><span class="block"></span></div>
+              <span class="btn">Next slide</span>
+              <div class="ov" style="right: 90px; top: 110px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__tabs"><span class="ov__tab">Talking points</span></div>
+                <div class="ov__url"><span class="a-type" style="--d: 0.6s">docs.example.com/talking-points</span></div>
+                <div class="ov__body">
+                  <span class="note a-up" style="--d: 1.8s">Thank everyone for joining</span>
+                  <span class="note a-up" style="--d: 2.1s">Q3: revenue up 18% year on year</span>
+                  <span class="note a-up" style="--d: 2.4s">New customers: 42 this quarter</span>
+                  <span class="note a-up" style="--d: 2.7s">Close with the Q4 roadmap</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3 -->
+      <section class="scene" style="--t0: 26.4s; --t1: 30s">
+        <span class="bignum">03</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.05s">Step 03 · Share</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.1s">Share as</span>
+            <span class="a-mask red" style="--d: 0.3s">usual.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.2s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <span class="banner a-pop" style="--d: 1.8s">You are sharing your screen</span>
+              <div class="toolbar">
+                <span class="tool">Mic</span>
+                <span class="share-btn"><span class="tool">Share screen</span><span class="tool tool--share a-fade" style="--d: 1.6s">Sharing</span></span>
+                <span class="tool tool--leave">Leave</span>
+              </div>
+              <div class="ov" style="right: 370px; top: 230px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__body" style="padding-top: 30px"><span class="note">Thank everyone for joining</span><span class="note">Q3: revenue up 18% year on year</span><span class="note">Close with the Q4 roadmap</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <svg class="cursor cursor--share" viewBox="0 0 24 24"><path d="M4 2l16 9-7 2-3 7z" fill="#1d1c1a" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" /></svg>
+        <span class="ripple" style="--d: 1.5s; left: 556px; top: 1214px"></span>
+      </section>
+
+      <!-- Step 4 -->
+      <section class="scene" style="--t0: 30s; --t1: 35.6s">
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.05s">Step 04 · Present</span>
+          <h2 class="h h--md">
+            <span class="a-mask" style="--d: 0.1s">You read.</span>
+            <span class="a-mask red" style="--d: 0.3s">They don't.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.3s; top: 560px; --w: 520px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <div class="ov fading" style="right: 370px; top: 160px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px"><span class="note">Thank everyone for joining</span><span class="note">Close with the Q4 roadmap</span></div>
+                <div class="ov__foot">Opacity <span class="slider"><i></i></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.6s; top: 960px; --w: 520px">
+          <span class="scr-label scr-label--call">What the call sees</span>
+          <div class="scr scr--call">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Montage: sales -->
+      <section class="scene scene--quick" style="--t0: 35.6s; --t1: 37.225s">
+        <div class="head">
+          <span class="eyebrow">Made for</span>
+          <h2 class="h h--md"><span class="a-mask" style="--d: 0s">Sales</span><span class="a-mask red" style="--d: 0.1s">demos.</span></h2>
+        </div>
+        <div class="scr-wrap" style="top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Sharing</span></div>
+              <div class="kpis"><div class="kpi"><span>Active users</span><b>12,480</b></div><div class="kpi"><span>Hours saved</span><b>6.5 h</b></div></div>
+              <div class="people"><span class="person person--talk" data-avatar="daniel"></span><span class="person" data-avatar="maya"></span><span class="person" data-avatar="sam"></span></div>
+              <div class="ov" style="right: 370px; top: 330px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />DEMO NOTES<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px"><span class="note">Lead with the time it saves</span><span class="note">Close: offer a pilot next week</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Montage: classes -->
+      <section class="scene scene--quick" style="--t0: 37.225s; --t1: 38.85s">
+        <div class="head">
+          <span class="eyebrow">Made for</span>
+          <h2 class="h h--md"><span class="a-mask" style="--d: 0s">Online</span><span class="a-mask red" style="--d: 0.1s">classes.</span></h2>
+        </div>
+        <div class="scr-wrap" style="top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Sharing</span></div>
+              <div class="slide"><span class="slide__kicker">Science · Grade 7</span><h3 class="slide__title">The water cycle</h3><ul class="lesson-list"><li>Evaporation</li><li>Condensation</li><li>Precipitation</li></ul></div>
+              <div class="people"><span class="person" data-avatar="leo"></span><span class="person person--talk" data-avatar="priya"></span><span class="person" data-avatar="sam"></span></div>
+              <div class="ov" style="right: 370px; top: 330px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />LESSON PLAN<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px"><span class="note">Recap last class (2 min)</span><span class="note">Group activity at 20 minutes</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Montage: support -->
+      <section class="scene scene--quick" style="--t0: 38.85s; --t1: 40.475s">
+        <div class="head">
+          <span class="eyebrow">Made for</span>
+          <h2 class="h h--md"><span class="a-mask" style="--d: 0s">Customer</span><span class="a-mask red" style="--d: 0.1s">calls.</span></h2>
+        </div>
+        <div class="scr-wrap" style="top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Sharing</span></div>
+              <div class="settings"><div class="row">Email notifications <span class="toggle"></span></div><div class="row">Two-step sign-in <span class="toggle toggle--off"></span></div><div class="row">Sync across devices <span class="toggle"></span></div></div>
+              <div class="people"><span class="person person--talk" data-avatar="rahul"></span></div>
+              <div class="ov" style="right: 370px; top: 380px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />RUNBOOK<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px"><span class="note">Confirm the account email</span><span class="note">Turn on two-step sign-in</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Montage: creators -->
+      <section class="scene scene--quick" style="--t0: 40.475s; --t1: 42.1s">
+        <div class="head">
+          <span class="eyebrow">Made for</span>
+          <h2 class="h h--md"><span class="a-mask" style="--d: 0s">Screen</span><span class="a-mask red" style="--d: 0.1s">recordings.</span></h2>
+        </div>
+        <div class="scr-wrap" style="top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Rec 00:12</span></div>
+              <div class="code"><span class="c">// Tutorial: build a to-do list</span><span><span class="k">const</span> todos = [];</span><span><span class="k">function</span> add(text) {</span><span>  todos.push({ text });</span><span>}</span></div>
+              <div class="ov" style="right: 80px; top: 200px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span></div>
+                <div class="ov__tabs"><span class="ov__tab">Video script</span></div>
+                <div class="ov__body"><span class="note">Intro: what we're building</span><span class="note">Outro: link in the description</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Save this -->
+      <section class="scene scene--last" style="--t0: 42.1s">
+        <div class="head" style="top: 280px; gap: 44px">
+          <div class="lockup a-pop" style="--d: 0.1s">
+            <img src="../../public/logo.svg" alt="" />
+            <div><b>iOverlay</b><span>I-OVERLAY.COM</span></div>
+          </div>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.3s">Save this for</span>
+            <span class="a-mask" style="--d: 0.5s">your next</span>
+            <span class="a-mask red" style="--d: 0.7s">presentation.</span>
+          </h2>
+          <span class="url a-pop" style="--d: 1s">I-OVERLAY.COM</span>
+          <div class="chips a-up" style="--d: 1.3s"><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux soon</span></div>
+        </div>
+      </section>
+    </div>
+    <script src="avatars.js"></script>
+  </body>
+</html>

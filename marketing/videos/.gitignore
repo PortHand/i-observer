@@ -1,0 +1,5 @@
+# Rendered videos (render.mjs output); large binaries, shared outside git.
+out/
+# Secrets and paid voice renders.
+.env
+voice-cache/

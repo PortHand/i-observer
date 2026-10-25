@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>How to use iOverlay (reel)</title>
+    <link rel="stylesheet" href="reel.css" />
+    <style>
+      .newtab {
+        display: grid;
+        place-items: center;
+        height: 300px;
+        color: var(--muted);
+        font-size: 34px;
+      }
+
+      /* "Share screen" turns into "Sharing" when clicked. */
+      .share-btn {
+        position: relative;
+      }
+
+      .share-btn .tool--share {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+
+      .cursor--share {
+        animation: to-share 1300ms var(--ease) calc(var(--t0) + 0.8s) both;
+      }
+
+      @keyframes to-share {
+        from {
+          left: 880px;
+          top: 1520px;
+        }
+
+        to {
+          left: 548px;
+          top: 1206px;
+        }
+      }
+
+      .fading {
+        animation: fading 3600ms ease-in-out calc(var(--t0) + 1.8s) both;
+      }
+
+      @keyframes fading {
+        0%,
+        100% {
+          opacity: 1;
+        }
+
+        45%,
+        60% {
+          opacity: 0.35;
+        }
+      }
+
+      .fading .slider i {
+        animation: knob 3600ms ease-in-out calc(var(--t0) + 1.8s) both;
+      }
+
+      @keyframes knob {
+        0%,
+        100% {
+          right: 0%;
+        }
+
+        45%,
+        60% {
+          right: 65%;
+        }
+      }
+    </style>
+    <script>
+      window.SIZE = [1080, 1920];
+      window.DURATION = 38.4;
+    </script>
+  </head>
+  <body>
+    <div class="frame">
+      <!-- Title -->
+      <section class="scene" style="--t0: 0s; --t1: 4.2s">
+        <span class="bignum" style="top: 760px; right: 60px; font-size: 760px">4</span>
+        <div class="head" style="top: 420px; gap: 36px">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Getting started</span>
+          <h1 class="h h--xl">
+            <span class="a-mask" style="--d: 0.2s">How to use</span>
+            <span class="a-mask red" style="--d: 0.45s">iOverlay.</span>
+          </h1>
+          <p class="lead a-up" style="--d: 0.9s">Four steps. Under a minute.</p>
+        </div>
+      </section>
+
+      <!-- Step 1: press the shortcut -->
+      <section class="scene" style="--t0: 4.2s; --t1: 11.2s">
+        <span class="bignum">01</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Step 01 · Open</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.2s">Press the</span>
+            <span class="a-mask red" style="--d: 0.45s">shortcut.</span>
+          </h2>
+        </div>
+        <div class="keys a-popout" style="--d: 0.6s; --out: 3s; top: 820px">
+          <span class="key" style="--d: 1.4s">⌥</span>
+          <span class="key" style="--d: 1.55s">⇧</span>
+          <span class="key" style="--d: 1.7s">G</span>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 3.2s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="bar" style="width: 60%"></span><span class="block"></span></div>
+              <span class="btn">Next slide</span>
+              <div class="ov a-slide" style="--d: 3.8s; right: 90px; top: 150px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__tabs"><span class="ov__tab">New tab</span></div>
+                <div class="ov__url">Search or enter address</div>
+                <div class="newtab">Ready when you are</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: open your notes -->
+      <section class="scene" style="--t0: 11.2s; --t1: 18.2s">
+        <span class="bignum">02</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Step 02 · Fill</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.2s">Open your</span>
+            <span class="a-mask red" style="--d: 0.45s">notes.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.4s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="bar" style="width: 60%"></span><span class="block"></span></div>
+              <span class="btn">Next slide</span>
+              <div class="ov" style="right: 90px; top: 110px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__tabs"><span class="ov__tab">Talking points</span></div>
+                <div class="ov__url"><span class="a-type" style="--d: 0.9s">docs.example.com/talking-points</span></div>
+                <div class="ov__body">
+                  <span class="note a-up" style="--d: 2.2s">Thank everyone for joining</span>
+                  <span class="note a-up" style="--d: 2.5s">Q3: revenue up 18% year on year</span>
+                  <span class="note a-up" style="--d: 2.8s">New customers: 42 this quarter</span>
+                  <span class="note a-up" style="--d: 3.1s">Close with the Q4 roadmap</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3: share as usual -->
+      <section class="scene" style="--t0: 18.2s; --t1: 25.2s">
+        <span class="bignum">03</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Step 03 · Share</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.2s">Share as</span>
+            <span class="a-mask red" style="--d: 0.45s">usual.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.3s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <span class="banner a-pop" style="--d: 2.4s">You are sharing your screen</span>
+              <div class="toolbar">
+                <span class="tool">Mic</span>
+                <span class="share-btn"><span class="tool">Share screen</span><span class="tool tool--share a-fade" style="--d: 2.2s">Sharing</span></span>
+                <span class="tool tool--leave">Leave</span>
+              </div>
+              <div class="ov" style="right: 370px; top: 230px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__body" style="padding-top: 30px"><span class="note">Thank everyone for joining</span><span class="note">Q3: revenue up 18% year on year</span><span class="note">Close with the Q4 roadmap</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <svg class="cursor cursor--share" viewBox="0 0 24 24"><path d="M4 2l16 9-7 2-3 7z" fill="#1d1c1a" stroke="#fff" stroke-width="1.5" stroke-linejoin="round" /></svg>
+        <span class="ripple" style="--d: 2.1s; left: 556px; top: 1214px"></span>
+      </section>
+
+      <!-- Step 4: present -->
+      <section class="scene" style="--t0: 25.2s; --t1: 33.4s">
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Step 04 · Present</span>
+          <h2 class="h h--md">
+            <span class="a-mask" style="--d: 0.2s">You read.</span>
+            <span class="a-mask red" style="--d: 0.45s">They don't.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.5s; top: 560px; --w: 520px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <div class="ov fading" style="right: 370px; top: 160px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px"><span class="note">Thank everyone for joining</span><span class="note">Close with the Q4 roadmap</span></div>
+                <div class="ov__foot">Opacity <span class="slider"><i></i></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.9s; top: 960px; --w: 520px">
+          <span class="scr-label scr-label--call">What the call sees</span>
+          <div class="scr scr--call">
+            <div class="scr__in">
+              <div class="app-bar"></div>
+              <div class="slide"><span class="slide__kicker">Quarterly review</span><h3 class="slide__title">Team update</h3><span class="bar" style="width: 80%"></span><span class="block"></span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Call to action -->
+      <section class="scene scene--last" style="--t0: 33.4s">
+        <div class="head" style="top: 330px; gap: 50px">
+          <div class="lockup a-pop" style="--d: 0.1s">
+            <img src="../../public/logo.svg" alt="" />
+            <div><b>iOverlay</b><span>I-OVERLAY.COM</span></div>
+          </div>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.4s">Set up in</span>
+            <span class="a-mask red" style="--d: 0.65s">a minute.</span>
+          </h2>
+          <span class="url a-pop" style="--d: 1s">I-OVERLAY.COM</span>
+          <div class="chips a-up" style="--d: 1.3s"><span class="chip">macOS</span><span class="chip">Windows</span><span class="chip">Linux soon</span></div>
+        </div>
+      </section>
+    </div>
+    <script src="avatars.js"></script>
+  </body>
+</html>

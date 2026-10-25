@@ -152,36 +152,36 @@
 :root[data-theme="light"] {
   color-scheme: light;
 
-  --color-canvas: #f2f4f8;
-  --color-bg: #f2f4f8;
+  --color-canvas: #e9e9e5;
+  --color-bg: #e9e9e5;
   --color-surface: #ffffff;
-  --color-surface-hover: #f1f4f9;
-  --color-surface-active: #e4e9f1;
-  --color-input: #f8fafc;
+  --color-surface-hover: #f4f4f1;
+  --color-surface-active: #deded9;
+  --color-input: #f7f7f4;
 
-  --color-border: rgb(15 23 42 / 10%);
-  --color-border-strong: rgb(15 23 42 / 18%);
-  --color-border-hover: rgb(15 23 42 / 40%);
+  --color-border: rgb(0 0 0 / 10%);
+  --color-border-strong: rgb(0 0 0 / 18%);
+  --color-border-hover: rgb(0 0 0 / 40%);
 
-  --color-text: #0f172a;
+  --color-text: #000000;
   --color-text-muted: #4b5568;
   --color-text-subtle: #8590a3;
 
-  --color-primary: #0f172a;
-  --color-primary-hover: #000000;
+  --color-primary: #000000;
+  --color-primary-hover: #262626;
   --color-primary-text: #ffffff;
 
-  --color-accent: #c4312a;
-  --color-accent-hover: #a5241e;
-  --color-accent-text: #b42a23;
-  --color-accent-soft: rgb(196 49 42 / 8%);
-  --color-accent-border: rgb(196 49 42 / 30%);
+  --color-accent: #c83232;
+  --color-accent-hover: #a82828;
+  --color-accent-text: #c83232;
+  --color-accent-soft: rgb(200 50 50 / 8%);
+  --color-accent-border: rgb(200 50 50 / 30%);
 
   --gradient-brand: linear-gradient(var(--color-accent), var(--color-accent));
   --gradient-text: none;
   --gradient-primary: none;
 
-  --tone-1: #c4312a;
+  --tone-1: #c83232;
   --tone-2: #1d4ed8;
   --tone-3: #15803d;
   --tone-4: #7e22ce;
@@ -192,25 +192,25 @@
   --color-success-soft: rgb(21 128 61 / 10%);
   --color-warning: #b45309;
   --color-warning-soft: rgb(180 83 9 / 10%);
-  --color-danger: #c4312a;
-  --color-danger-soft: rgb(196 49 42 / 9%);
+  --color-danger: #c83232;
+  --color-danger-soft: rgb(200 50 50 / 9%);
 
-  --shadow-card: 0 1px 2px rgb(15 23 42 / 5%), 0 12px 32px -18px rgb(15 23 42 / 18%);
-  --shadow-pop: 0 20px 50px -18px rgb(15 23 42 / 22%), 0 0 0 1px rgb(15 23 42 / 6%);
-  --shadow-glow: 0 10px 24px -10px rgb(15 23 42 / 45%);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 5%), 0 12px 32px -18px rgb(0 0 0 / 18%);
+  --shadow-pop: 0 20px 50px -18px rgb(0 0 0 / 22%), 0 0 0 1px rgb(0 0 0 / 6%);
+  --shadow-glow: 0 10px 24px -10px rgb(0 0 0 / 45%);
   --glass: linear-gradient(#ffffff, #ffffff);
-  --ring: 0 0 0 3px rgb(196 49 42 / 22%);
+  --ring: 0 0 0 3px rgb(200 50 50 / 22%);
 
-  --overlay-1: rgb(15 23 42 / 3%);
-  --overlay-2: rgb(15 23 42 / 5%);
-  --overlay-3: rgb(15 23 42 / 8%);
-  --overlay-inset: rgb(15 23 42 / 5%);
-  --grid-line: rgb(15 23 42 / 5%);
+  --overlay-1: rgb(0 0 0 / 3%);
+  --overlay-2: rgb(0 0 0 / 5%);
+  --overlay-3: rgb(0 0 0 / 8%);
+  --overlay-inset: rgb(0 0 0 / 5%);
+  --grid-line: rgb(0 0 0 / 5%);
   --beam: transparent;
-  --nav-glass: rgb(255 255 255 / 82%);
+  --nav-glass: rgb(233 233 229 / 92%);
   --highlight-bg: linear-gradient(#ffffff, #ffffff);
-  --closing-bg: linear-gradient(#0f172a, #0f172a);
-  --wordmark: rgb(15 23 42 / 7%);
+  --closing-bg: linear-gradient(#000000, #000000);
+  --wordmark: rgb(0 0 0 / 7%);
   --orb-opacity: 0;
 }
 
@@ -403,11 +403,11 @@ body:has(> .admin-shell) {
 
   --color-bg: #ffffff;
   --color-surface: #ffffff;
-  --color-surface-hover: #f1f4f9;
-  --color-surface-active: #e4e9f1;
-  --color-input: #f8fafc;
-  --color-border: rgb(15 23 42 / 10%);
-  --color-border-strong: rgb(15 23 42 / 18%);
+  --color-surface-hover: #f4f4f1;
+  --color-surface-active: #deded9;
+  --color-input: #f7f7f4;
+  --color-border: rgb(0 0 0 / 10%);
+  --color-border-strong: rgb(0 0 0 / 18%);
 }
 
 .theme-ink {
@@ -529,7 +529,7 @@ button {
 }
 
 :root[data-theme="light"] ::selection {
-  background: rgb(196 49 42 / 18%);
+  background: rgb(200 50 50 / 18%);
   color: inherit;
 }
 

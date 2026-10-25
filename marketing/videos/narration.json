@@ -1,0 +1,137 @@
+{
+  "voice": "Samantha",
+  "rate": 172,
+  "videos": {
+    "meet-ioverlay": [
+      {
+        "at": 0.5,
+        "text": "You see it. They don't."
+      },
+      {
+        "at": 2.4,
+        "text": "Meet iOverlay."
+      },
+      {
+        "at": 5.3,
+        "text": "A private window that floats over every app. Your notes, a doc, or any website."
+      },
+      {
+        "at": 13.3,
+        "text": "Share your screen in Zoom, Meet, or Teams, and the overlay stays out of the share, recordings, and screenshots."
+      },
+      {
+        "at": 20.9,
+        "text": "A built-in browser. Adjustable opacity. Click-through. And global shortcuts, on macOS and Windows."
+      },
+      {
+        "at": 27.9,
+        "text": "iOverlay. Present with confidence. Get it at i-overlay dot com."
+      }
+    ],
+    "how-to-use": [
+      {
+        "at": 0.5,
+        "text": "Here's how to use iOverlay, in four steps."
+      },
+      {
+        "at": 4.9,
+        "text": "Step one. Press the shortcut, and the overlay opens on top of everything."
+      },
+      {
+        "at": 11.7,
+        "text": "Step two. Open your notes, a doc, or any website, right inside it."
+      },
+      {
+        "at": 18.7,
+        "text": "Step three. Share your screen in Zoom, Meet, or Teams, just like you always do."
+      },
+      {
+        "at": 25.7,
+        "text": "Step four. Present. Read your notes, and fade them whenever you like. Viewers only see what's underneath."
+      },
+      {
+        "at": 33.9,
+        "text": "Set up in under a minute, at i-overlay dot com."
+      }
+    ],
+    "use-cases": [
+      {
+        "at": 0.5,
+        "text": "iOverlay is made for people who present."
+      },
+      {
+        "at": 4.9,
+        "text": "Sales teams keep pricing and next steps in view during demos."
+      },
+      {
+        "at": 10.9,
+        "text": "Teachers follow their lesson plan while the class watches."
+      },
+      {
+        "at": 16.9,
+        "text": "Support teams keep runbooks open while they help a customer."
+      },
+      {
+        "at": 22.9,
+        "text": "And creators read their script while they record their screen."
+      },
+      {
+        "at": 28.9,
+        "text": "You see it. They don't. iOverlay, at i-overlay dot com."
+      }
+    ],
+    "all": [
+      {
+        "at": 0.3,
+        "text": "Ever wished you could keep your notes on screen while you present, without anyone else seeing them?"
+      },
+      {
+        "at": 5.6,
+        "text": "Meet iOverlay. It's a private window that floats on top of everything."
+      },
+      {
+        "at": 11.0,
+        "text": "Share your screen on Zoom, Meet, or Teams, and for everyone else, it's just not there."
+      },
+      {
+        "at": 17.5,
+        "text": "Here's how it works."
+      },
+      {
+        "at": 19.3,
+        "text": "Step one: hit the shortcut."
+      },
+      {
+        "at": 22.6,
+        "text": "Step two: open your notes, a doc, or any website."
+      },
+      {
+        "at": 26.6,
+        "text": "Step three: share your screen like you always do."
+      },
+      {
+        "at": 30.2,
+        "text": "Step four: present. Fade it, click through it. It stays out of your way."
+      },
+      {
+        "at": 35.8,
+        "text": "Sales demos, online classes, customer calls, screen recordings. It works for all of them."
+      },
+      {
+        "at": 42.3,
+        "text": "Save this for your next presentation, and get iOverlay at i-overlay dot com."
+      }
+    ]
+  },
+  "elevenlabs": {
+    "voiceId": "EXAVITQu4vr4xnSDxMaL",
+    "voiceName": "Sarah",
+    "model": "eleven_multilingual_v2",
+    "settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.8,
+      "style": 0.35,
+      "use_speaker_boost": true
+    }
+  }
+}

@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Made for people who present (reel)</title>
+    <link rel="stylesheet" href="reel.css" />
+    <style>
+      /* Sales: a product dashboard. */
+      .kpis {
+        position: absolute;
+        left: 70px;
+        top: 130px;
+        display: grid;
+        grid-template-columns: repeat(2, 380px);
+        gap: 26px;
+      }
+
+      .kpi {
+        display: grid;
+        gap: 10px;
+        padding: 28px;
+        border: 3px solid var(--tile);
+        background: var(--panel);
+      }
+
+      .kpi span {
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 26px;
+        text-transform: uppercase;
+      }
+
+      .kpi b {
+        font-family: var(--head);
+        font-size: 80px;
+        line-height: 1;
+      }
+
+      .wave {
+        position: absolute;
+        left: 70px;
+        top: 520px;
+        width: 800px;
+        height: 300px;
+      }
+
+      /* Teaching: a lesson slide. */
+      .lesson-list {
+        display: grid;
+        gap: 20px;
+        margin: 10px 0 0;
+        padding-left: 40px;
+        color: var(--muted);
+        font-size: 40px;
+      }
+
+      /* Support: an app settings screen. */
+      .settings {
+        position: absolute;
+        left: 70px;
+        top: 130px;
+        display: grid;
+        gap: 22px;
+        width: 860px;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 32px;
+        border: 3px solid var(--tile);
+        background: var(--panel);
+        font-size: 36px;
+      }
+
+      .toggle {
+        width: 90px;
+        height: 50px;
+        padding: 6px;
+        border-radius: 999px;
+        background: var(--green);
+      }
+
+      .toggle::after {
+        content: "";
+        display: block;
+        width: 38px;
+        height: 38px;
+        margin-left: auto;
+        border-radius: 50%;
+        background: #fff;
+      }
+
+      .toggle--off {
+        background: var(--rule);
+      }
+
+      .toggle--off::after {
+        margin-left: 0;
+      }
+
+      /* Creators: a code editor being recorded. */
+      .code {
+        position: absolute;
+        left: 70px;
+        top: 140px;
+        display: grid;
+        gap: 18px;
+        font-family: var(--mono);
+        font-size: 36px;
+        white-space: pre;
+      }
+
+      .k {
+        color: var(--red);
+      }
+
+      .c {
+        color: var(--muted);
+      }
+    </style>
+    <script>
+      window.SIZE = [1080, 1920];
+      window.DURATION = 34;
+    </script>
+  </head>
+  <body>
+    <div class="frame">
+      <!-- Title -->
+      <section class="scene" style="--t0: 0s; --t1: 4.4s">
+        <div class="head" style="top: 420px; gap: 36px">
+          <span class="eyebrow a-fade" style="--d: 0.1s">Use cases</span>
+          <h1 class="h h--xl">
+            <span class="a-mask" style="--d: 0.2s">Made for</span>
+            <span class="a-mask" style="--d: 0.4s">people who</span>
+            <span class="a-mask red" style="--d: 0.6s">present.</span>
+          </h1>
+          <p class="lead a-up" style="--d: 1.1s">Keep your material in view, without a second monitor.</p>
+        </div>
+      </section>
+
+      <!-- Sales -->
+      <section class="scene" style="--t0: 4.4s; --t1: 10.4s">
+        <span class="bignum">01</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">01 · Sales</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.2s">Product</span>
+            <span class="a-mask red" style="--d: 0.45s">demos.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.4s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Sharing</span></div>
+              <div class="kpis">
+                <div class="kpi"><span>Active users</span><b>12,480</b></div>
+                <div class="kpi"><span>Hours saved</span><b>6.5 h</b></div>
+              </div>
+              <svg class="wave" viewBox="0 0 800 300" fill="none"><path d="M0 250 C120 230 160 160 260 170 S420 80 520 100 S700 30 800 40" style="stroke: var(--red)" stroke-width="10" stroke-linecap="round" /></svg>
+              <div class="people"><span class="person person--talk" data-avatar="daniel"></span><span class="person" data-avatar="maya"></span><span class="person" data-avatar="sam"></span></div>
+              <div class="ov a-slide" style="--d: 1s; right: 370px; top: 200px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />DEMO NOTES<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px">
+                  <span class="note a-up" style="--d: 1.6s">Lead with the time it saves</span>
+                  <span class="note a-up" style="--d: 1.9s">Pricing question → plans slide</span>
+                  <span class="note a-up" style="--d: 2.2s">Close: offer a pilot next week</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Teaching -->
+      <section class="scene" style="--t0: 10.4s; --t1: 16.4s">
+        <span class="bignum">02</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">02 · Education</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.2s">Online</span>
+            <span class="a-mask red" style="--d: 0.45s">classes.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.4s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Sharing</span></div>
+              <div class="slide">
+                <span class="slide__kicker">Science · Grade 7</span>
+                <h3 class="slide__title">The water cycle</h3>
+                <ul class="lesson-list"><li>Evaporation</li><li>Condensation</li><li>Precipitation</li><li>Collection</li></ul>
+              </div>
+              <div class="people"><span class="person" data-avatar="leo"></span><span class="person person--talk" data-avatar="priya"></span><span class="person" data-avatar="sam"></span></div>
+              <div class="ov a-slide" style="--d: 1s; right: 370px; top: 200px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />LESSON PLAN<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px">
+                  <span class="note a-up" style="--d: 1.6s">Recap last class (2 min)</span>
+                  <span class="note a-up" style="--d: 1.9s">Ask: where does rain come from?</span>
+                  <span class="note a-up" style="--d: 2.2s">Group activity at 20 minutes</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Support -->
+      <section class="scene" style="--t0: 16.4s; --t1: 22.4s">
+        <span class="bignum">03</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">03 · Support</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.2s">Customer</span>
+            <span class="a-mask red" style="--d: 0.45s">calls.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.4s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Sharing</span></div>
+              <div class="settings">
+                <div class="row">Email notifications <span class="toggle"></span></div>
+                <div class="row">Two-step sign-in <span class="toggle toggle--off"></span></div>
+                <div class="row">Sync across devices <span class="toggle"></span></div>
+              </div>
+              <div class="people"><span class="person person--talk" data-avatar="rahul"></span></div>
+              <div class="ov a-slide" style="--d: 1s; right: 370px; top: 300px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />RUNBOOK<span class="ov__meter"></span></div>
+                <div class="ov__body" style="padding-top: 30px">
+                  <span class="note note--check tick a-up" style="--d: 1.6s">Confirm the account email</span>
+                  <span class="note note--check tick a-up" style="--d: 2.4s">Turn on two-step sign-in</span>
+                  <span class="note note--check a-up" style="--d: 3.2s">Check sync on their phone</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Creators -->
+      <section class="scene" style="--t0: 22.4s; --t1: 28.4s">
+        <span class="bignum">04</span>
+        <div class="head">
+          <span class="eyebrow a-fade" style="--d: 0.1s">04 · Creators</span>
+          <h2 class="h">
+            <span class="a-mask" style="--d: 0.2s">Screen</span>
+            <span class="a-mask red" style="--d: 0.45s">recordings.</span>
+          </h2>
+        </div>
+        <div class="scr-wrap a-up" style="--d: 0.4s; top: 650px; --w: 920px">
+          <span class="scr-label">Your screen</span>
+          <div class="scr">
+            <div class="scr__in">
+              <div class="app-bar"><span class="rec">Rec 00:12</span></div>
+              <div class="code">
+                <span class="c">// Tutorial: build a to-do list</span>
+                <span><span class="k">const</span> todos = [];</span>
+                <span><span class="k">function</span> add(text) {</span>
+                <span>  todos.push({ text });</span>
+                <span>  render();</span>
+                <span>}</span>
+              </div>
+              <div class="ov a-slide" style="--d: 1s; right: 80px; top: 150px">
+                <div class="ov__head"><img src="../../public/logo.svg" alt="" />IOVERLAY<span class="ov__meter"></span><span class="ov__state">PRIVATE</span></div>
+                <div class="ov__tabs"><span class="ov__tab">Video script</span></div>
+                <div class="ov__url"><span class="a-type" style="--d: 1.5s">docs.example.com/video-script</span></div>
+                <div class="ov__body">
+                  <span class="note a-up" style="--d: 2.6s">Intro: what we're building</span>
+                  <span class="note a-up" style="--d: 2.9s">Explain the add() function</span>
+                  <span class="note a-up" style="--d: 3.2s">Outro: link in the description</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Call to action -->
+      <section class="scene scene--last" style="--t0: 28.4s">
+        <div class="head" style="top: 330px; gap: 50px">
+          <div class="lockup a-pop" style="--d: 0.1s">
+            <img src="../../public/logo.svg" alt="" />
+            <div><b>iOverlay</b><span>I-OVERLAY.COM</span></div>
+          </div>
+          <h2 class="h h--xl">
+            <span class="a-mask" style="--d: 0.4s">You see it.</span>
+            <span class="a-mask red" style="--d: 0.65s">They don't.</span>
+          </h2>
+          <div class="chips a-up" style="--d: 0.9s"><span class="chip">Presenters</span><span class="chip">Sales</span><span class="chip">Teachers</span><span class="chip">Support</span><span class="chip">Creators</span></div>
+          <span class="url a-pop" style="--d: 1.2s">I-OVERLAY.COM</span>
+        </div>
+      </section>
+    </div>
+    <script src="avatars.js"></script>
+  </body>
+</html>

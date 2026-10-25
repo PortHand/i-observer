@@ -87,36 +87,28 @@ a {
   top: 0;
   /* Above sticky page toolbars (the FAQ filter bar on phones), so header menus open over them. */
   z-index: 10;
-  padding: var(--space-3) 0;
-}
-
-/* The bar itself: a glass pill that stays the same whether or not the page has scrolled. */
-.nav__inner {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  padding-top: var(--space-2);
-  padding-bottom: var(--space-2);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
+  border-bottom: 1px solid var(--color-border);
   background: var(--nav-glass);
-  box-shadow: var(--shadow-pop);
   backdrop-filter: blur(16px) saturate(140%);
 }
 
 /* backdrop-filter would pin the menu sheet (position: fixed) inside the header; drop it while open. */
-.nav:has(.mobile-nav--open) .nav__inner {
+.nav:has(.mobile-nav--open) {
   background: var(--color-surface);
   backdrop-filter: none;
 }
 
+.nav__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding-top: calc(var(--space-3) + var(--space-2));
+  padding-bottom: calc(var(--space-3) + var(--space-2));
+}
+
 .nav__links {
   display: flex;
-  gap: var(--space-1);
-  padding: 4px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background: var(--overlay-1);
+  gap: var(--space-6);
   font-family: var(--font-sans);
   font-size: var(--text-base);
   font-weight: var(--weight-medium);
@@ -125,23 +117,22 @@ a {
 }
 
 .nav__links a {
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid transparent;
   color: var(--color-text-muted);
   transition:
     color var(--duration-fast) var(--easing),
-    background var(--duration-fast) var(--easing);
+    border-color var(--duration-fast) var(--easing);
 }
 
 .nav__links a:hover {
   color: var(--color-text);
-  background: var(--overlay-2);
+  border-bottom-color: var(--color-text);
 }
 
 .nav__links a[aria-current="page"] {
   color: var(--color-text);
-  background: var(--overlay-3);
-  box-shadow: inset 0 1px 0 var(--overlay-2);
+  border-bottom-color: var(--color-accent);
 }
 
 .brand__logo {
@@ -2260,12 +2251,10 @@ a {
     display: none;
   }
 
-  .nav {
-    padding: var(--space-2) 0;
-  }
-
   .nav__inner {
     gap: var(--space-3);
+    padding-top: calc(var(--space-2) * 2);
+    padding-bottom: calc(var(--space-2) * 2);
   }
 
   .brand {
@@ -2812,12 +2801,12 @@ a {
 }
 
 :root[data-theme="light"] .button--primary {
-  box-shadow: 0 1px 2px rgb(15 23 42 / 20%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 20%);
 }
 
 :root[data-theme="light"] :is(.stage__switch-thumb, .theme-toggle__thumb) {
   background: var(--color-primary);
-  box-shadow: 0 2px 6px rgb(15 23 42 / 25%);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 25%);
 }
 
 :root[data-theme="light"] .eyebrow {
@@ -2827,12 +2816,6 @@ a {
 
 :root[data-theme="light"] .eyebrow::before {
   background: var(--color-accent);
-  box-shadow: none;
-}
-
-:root[data-theme="light"] .nav__links a[aria-current="page"] {
-  background: var(--color-primary);
-  color: #fff;
   box-shadow: none;
 }
 
@@ -2900,7 +2883,7 @@ a {
 :root[data-theme="light"] .plan--highlighted {
   border: 2px solid var(--color-primary);
   background: var(--color-surface);
-  box-shadow: 0 24px 48px -24px rgb(15 23 42 / 35%);
+  box-shadow: 0 24px 48px -24px rgb(0 0 0 / 35%);
   animation: none;
 }
 
@@ -2913,7 +2896,7 @@ a {
   --grid-line: rgb(255 255 255 / 6%);
 
   border-color: transparent;
-  box-shadow: 0 30px 70px -35px rgb(15 23 42 / 55%);
+  box-shadow: 0 30px 70px -35px rgb(0 0 0 / 55%);
   color: #fff;
 }
 
@@ -2942,5 +2925,5 @@ a {
 /* The demo video's play button: solid crimson in the day theme. */
 :root[data-theme="light"] .video__play {
   background-color: var(--color-accent);
-  box-shadow: 0 10px 28px -8px rgb(196 49 42 / 55%);
+  box-shadow: 0 10px 28px -8px rgb(200 50 50 / 55%);
 }

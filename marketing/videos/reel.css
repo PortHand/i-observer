@@ -1,0 +1,901 @@
+/*
+ * Vertical reels (1080×1920), in the editorial "paper & ink" style: cream paper with a faint grid,
+ * heavy condensed uppercase headlines, red accents, outlined step numbers and screen mock-ups.
+ * Rendered by render.mjs like the landscape videos; the timing model is the same (scenes set
+ * --t0/--t1, elements add --d). Keep text and mock-ups between y≈200 and y≈1520: reel apps put
+ * their own buttons and captions outside that band.
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@600;700&family=Space+Mono:wght@700&family=Geist:wght@400;500;600&display=block");
+
+:root {
+  --paper: #efede7;
+  --paper-2: #e2dfd7;
+  --ink: #1d1c1a;
+  --muted: #625f59;
+  --red: #c3282e;
+  --pink: #e9b2a6;
+  --green: #2fbf71;
+  --line: rgb(29 28 26 / 10%);
+  --frame: #1d1c1a;
+  --chrome: #d2cfc7;
+  --rule: #c7c4bc;
+  --tile: #cfccc4;
+  --panel: #f4f2ed;
+  --panel-2: #d9d6ce;
+  --panel-line: #dedbd3;
+  --ok-soft: #cdeedb;
+  --ok-ink: #17824a;
+  --ov-head: #1d1c1a;
+  --key: #ffffff;
+  --sub-bg: #1d1c1a;
+  --sub-ink: #ffffff;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --head: "Archivo Narrow", "Arial Narrow", sans-serif;
+  --mono: "Space Mono", ui-monospace, monospace;
+  --sans: "Geist", system-ui, sans-serif;
+}
+
+/* Dark "ink" version (render.mjs --theme dark): the same layout on a near-black page. */
+:root[data-theme="dark"] {
+  --paper: #121110;
+  --paper-2: #1f1d1b;
+  --ink: #f1eee7;
+  --muted: #a29d94;
+  --red: #e5483f;
+  --pink: #6f3631;
+  --line: rgb(255 255 255 / 6%);
+  --frame: #3a3734;
+  --chrome: #2b2926;
+  --rule: #3b3835;
+  --tile: #2f2c29;
+  --panel: #1b1a18;
+  --panel-2: #2b2926;
+  --panel-line: #33302d;
+  --ok-soft: #173d2b;
+  --ok-ink: #5fdc98;
+  --ov-head: #050504;
+  --key: #1b1a18;
+  --sub-bg: #f1eee7;
+  --sub-ink: #121110;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 1080px;
+  height: 1920px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.frame {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 54px 54px;
+}
+
+/* Scenes and entrance animations (same model as shared.css). */
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation:
+    scene-in 600ms var(--ease) var(--t0) both,
+    scene-out 500ms var(--ease) calc(var(--t1) - 500ms) forwards;
+}
+
+.scene--last {
+  animation: scene-in 600ms var(--ease) var(--t0) both;
+}
+
+@keyframes scene-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scene-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.a-up {
+  animation: up 800ms var(--ease) calc(var(--t0) + var(--d, 0s)) both;
+}
+
+.a-fade {
+  animation: fade 600ms var(--ease) calc(var(--t0) + var(--d, 0s)) both;
+}
+
+.a-pop {
+  animation: pop 700ms var(--ease) calc(var(--t0) + var(--d, 0s)) both;
+}
+
+.a-slide {
+  animation: slide 900ms var(--ease) calc(var(--t0) + var(--d, 0s)) both;
+}
+
+.a-mask {
+  display: block;
+  clip-path: inset(0 0 100% 0);
+  animation: mask 700ms var(--ease) calc(var(--t0) + var(--d, 0s)) forwards;
+}
+
+.a-type {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(0 100% 0 0);
+  animation: type 1100ms steps(30, end) calc(var(--t0) + var(--d, 0s)) forwards;
+}
+
+.a-popout {
+  animation:
+    pop 600ms var(--ease) calc(var(--t0) + var(--d, 0s)) both,
+    out 400ms var(--ease) calc(var(--t0) + var(--out, 3s)) forwards;
+}
+
+@keyframes up {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateX(120px);
+  }
+}
+
+@keyframes mask {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(40px);
+  }
+
+  to {
+    clip-path: inset(0 0 -10% 0);
+    transform: none;
+  }
+}
+
+@keyframes type {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes out {
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Header block: label, headline, lead. */
+.head {
+  position: absolute;
+  left: 80px;
+  right: 80px;
+  top: 230px;
+  display: grid;
+  gap: 26px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: var(--red);
+  font-family: var(--mono);
+  font-size: 30px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 56px;
+  height: 3px;
+  background: currentColor;
+}
+
+.h {
+  margin: 0;
+  font-family: var(--head);
+  font-size: 150px;
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+
+.h--md {
+  font-size: 124px;
+}
+
+.h--xl {
+  font-size: 176px;
+}
+
+.red {
+  color: var(--red);
+}
+
+.lead {
+  margin: 0;
+  max-width: 880px;
+  color: var(--muted);
+  font-size: 40px;
+  line-height: 1.35;
+}
+
+.tag {
+  justify-self: start;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Huge outlined step number behind the header. */
+.bignum {
+  position: absolute;
+  z-index: 0;
+  right: 40px;
+  top: 120px;
+  color: transparent;
+  font-family: var(--head);
+  font-size: 560px;
+  font-weight: 700;
+  line-height: 1;
+  -webkit-text-stroke: 4px rgb(195 40 46 / 20%);
+  animation: up 900ms var(--ease) calc(var(--t0) + var(--d, 0.1s)) both;
+}
+
+.head,
+.scr-wrap {
+  z-index: 1;
+}
+
+/* Screen mock-up: an inner 1600×1000 desktop scaled to the wrapper's --w. */
+.scr-wrap {
+  position: absolute;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  transform: translateX(-50%);
+}
+
+.scr-label {
+  font-family: var(--mono);
+  font-size: 28px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.scr-label--call {
+  color: var(--red);
+}
+
+.scr {
+  position: relative;
+  width: var(--w);
+  height: calc(var(--w) * 0.625);
+  overflow: hidden;
+}
+
+.scr__in {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1600px;
+  height: 1000px;
+  overflow: hidden;
+  border: 26px solid var(--frame);
+  border-radius: 40px;
+  background: var(--paper-2);
+  transform: scale(calc(var(--w) / 1600px));
+  transform-origin: 0 0;
+  box-shadow: 0 40px 80px -30px rgb(0 0 0 / 35%);
+}
+
+.scr--call .scr__in {
+  border-color: var(--red);
+}
+
+/* What fills a screen: a slide, the meeting toolbar and participants. */
+.app-bar {
+  height: 70px;
+  background: var(--chrome);
+}
+
+.slide {
+  position: absolute;
+  left: 70px;
+  top: 130px;
+  display: grid;
+  gap: 26px;
+  width: 1000px;
+}
+
+.slide__kicker {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 34px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.slide__title {
+  margin: 0 0 10px;
+  font-family: var(--head);
+  font-size: 110px;
+  font-weight: 700;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.bar {
+  height: 20px;
+  background: var(--rule);
+}
+
+.block {
+  width: 560px;
+  height: 250px;
+  margin-top: 20px;
+  background: var(--pink);
+}
+
+.btn {
+  position: absolute;
+  left: 70px;
+  bottom: 70px;
+  padding: 26px 46px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 36px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.people {
+  position: absolute;
+  top: 110px;
+  right: 50px;
+  display: grid;
+  gap: 22px;
+  width: 280px;
+}
+
+.person {
+  position: relative;
+  height: 190px;
+  overflow: hidden;
+  border: 4px solid transparent;
+  border-radius: 20px;
+  background: var(--tile);
+}
+
+.person .avatar {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.person__name {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 4px 14px;
+  border-radius: 10px;
+  background: rgb(0 0 0 / 60%);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.person--talk {
+  border-color: var(--green);
+  animation: talking 1.6s ease-in-out infinite;
+}
+
+@keyframes talking {
+  50% {
+    box-shadow: 0 0 0 10px rgb(47 191 113 / 25%);
+  }
+}
+
+.toolbar {
+  position: absolute;
+  left: 50%;
+  bottom: 50px;
+  display: flex;
+  gap: 20px;
+  transform: translateX(-50%);
+}
+
+.tool {
+  padding: 22px 38px;
+  border-radius: 999px;
+  background: var(--chrome);
+  font-size: 34px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tool--share {
+  background: var(--ok-soft);
+  color: var(--ok-ink);
+}
+
+.tool--leave {
+  background: var(--red);
+  color: #fff;
+}
+
+.banner {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  padding: 16px 36px;
+  border-radius: 999px;
+  background: var(--ok-soft);
+  color: var(--ok-ink);
+  font-size: 34px;
+  font-weight: 600;
+  transform: translateX(-50%);
+}
+
+.rec {
+  position: absolute;
+  top: 12px;
+  right: 30px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 20px;
+  border-radius: 999px;
+  background: rgb(195 40 46 / 14%);
+  color: var(--red);
+  font-family: var(--mono);
+  font-size: 30px;
+}
+
+.rec::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* The iOverlay panel, in the app's own look: ink header, tab strip, paper body. */
+.ov {
+  position: absolute;
+  overflow: hidden;
+  width: 760px;
+  border-radius: 18px;
+  background: var(--panel);
+  box-shadow: 0 50px 90px -30px rgb(0 0 0 / 45%), 0 0 0 2px rgb(29 28 26 / 12%);
+}
+
+.ov__head {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  height: 96px;
+  padding: 0 32px;
+  background: var(--ov-head);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 32px;
+  letter-spacing: 0.1em;
+}
+
+.ov__head img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.ov__meter {
+  width: 160px;
+  height: 10px;
+  margin-left: auto;
+  border-radius: 999px;
+  background: var(--red);
+}
+
+.ov__state {
+  color: var(--green);
+  font-size: 28px;
+}
+
+.ov__tabs {
+  display: flex;
+  height: 70px;
+  padding: 12px 16px 0;
+  background: var(--panel-2);
+}
+
+.ov__tab {
+  padding: 10px 30px;
+  border-radius: 10px 10px 0 0;
+  background: var(--panel);
+  font-size: 28px;
+}
+
+.ov__url {
+  margin: 18px 22px;
+  padding: 14px 20px;
+  border: 2px solid var(--tile);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 26px;
+}
+
+.ov__body {
+  display: grid;
+  gap: 18px;
+  padding: 10px 30px 34px;
+}
+
+.note {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 34px;
+  font-weight: 500;
+}
+
+.note::before {
+  content: "";
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.note--check::before {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--rule);
+  border-radius: 8px;
+  background: none;
+}
+
+.note--check.tick::before {
+  animation: tick 300ms var(--ease) calc(var(--t0) + var(--d, 1s)) both;
+}
+
+@keyframes tick {
+  to {
+    border-color: var(--green);
+    background:
+      no-repeat center / 22px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E"),
+      var(--green);
+  }
+}
+
+.ov__lines {
+  display: grid;
+  gap: 18px;
+  padding: 20px 30px 40px;
+}
+
+.ov__lines i {
+  height: 18px;
+  background: var(--rule);
+}
+
+.ov__foot {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 30px 30px;
+  border-top: 2px solid var(--panel-line);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 24px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.slider {
+  position: relative;
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--chrome);
+}
+
+.slider i {
+  position: absolute;
+  inset: 0 20% 0 0;
+  border-radius: inherit;
+  background: var(--red);
+}
+
+.slider i::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--frame);
+  transform: translateY(-50%);
+}
+
+.nothing {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--red);
+  font-family: var(--mono);
+  font-size: 46px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.scan {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent, rgb(195 40 46 / 18%) 48%, rgb(195 40 46 / 50%) 50%, transparent 52%);
+  background-size: 100% 240%;
+  opacity: 0;
+  animation: scan 1500ms var(--ease) calc(var(--t0) + var(--d, 1s)) both;
+}
+
+@keyframes scan {
+  0% {
+    opacity: 1;
+    background-position: 0 -140%;
+  }
+
+  100% {
+    opacity: 0;
+    background-position: 0 140%;
+  }
+}
+
+/* Keycaps */
+.keys {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+}
+
+.key {
+  display: grid;
+  place-items: center;
+  width: 190px;
+  height: 190px;
+  border: 5px solid var(--ink);
+  border-bottom-width: 18px;
+  border-radius: 30px;
+  background: var(--key);
+  font-family: var(--head);
+  font-size: 96px;
+  font-weight: 700;
+  animation: press 450ms var(--ease) calc(var(--t0) + var(--d, 1s)) both;
+}
+
+@keyframes press {
+  0%,
+  100% {
+    transform: none;
+    border-bottom-width: 18px;
+  }
+
+  45% {
+    transform: translateY(12px);
+    border-bottom-width: 6px;
+    background: var(--red);
+    color: #fff;
+  }
+}
+
+.cursor {
+  position: absolute;
+  z-index: 5;
+  width: 70px;
+  height: 70px;
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 40%));
+}
+
+.ripple {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  margin: -65px 0 0 -65px;
+  border: 6px solid var(--green);
+  border-radius: 50%;
+  opacity: 0;
+  animation: ripple 800ms ease-out calc(var(--t0) + var(--d, 1s)) both;
+}
+
+@keyframes ripple {
+  from {
+    opacity: 1;
+    transform: scale(0.3);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+/* Checklist end card */
+.checks {
+  position: absolute;
+  left: 80px;
+  right: 80px;
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checks li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 34px 0;
+  border-bottom: 2px solid var(--panel-line);
+  font-size: 46px;
+}
+
+.checks li::after {
+  content: "";
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background:
+    no-repeat center / 34px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E"),
+    var(--red);
+}
+
+.lockup {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.lockup img {
+  width: 120px;
+  height: 120px;
+}
+
+.lockup b {
+  display: block;
+  font-family: var(--head);
+  font-size: 88px;
+  line-height: 1;
+}
+
+.lockup span {
+  color: var(--red);
+  font-family: var(--mono);
+  font-size: 30px;
+  letter-spacing: 0.12em;
+}
+
+.url {
+  justify-self: start;
+  padding: 30px 56px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 50px;
+  letter-spacing: 0.08em;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.chip {
+  padding: 14px 28px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Subtitles, injected by render.mjs from narration.json. */
+.sub {
+  position: absolute;
+  left: 70px;
+  right: 70px;
+  top: 1395px;
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  animation:
+    sub-in 250ms var(--ease) var(--t0) both,
+    out 200ms var(--ease) calc(var(--t1) - 200ms) forwards;
+}
+
+.sub span {
+  padding: 16px 28px;
+  border-radius: 14px;
+  background: var(--sub-bg);
+  color: var(--sub-ink);
+  font-size: 42px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+@keyframes sub-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>How to use iOverlay</title>
+    <link rel="stylesheet" href="shared.css" />
+    <style>
+      .desktop--steps {
+        left: 170px;
+        top: 110px;
+        width: 1580px;
+        height: 770px;
+      }
+
+      .keys-wrap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 330px;
+        display: grid;
+        justify-items: center;
+        gap: 26px;
+      }
+
+      .keys-wrap .small {
+        color: var(--muted);
+      }
+
+      .newtab {
+        display: grid;
+        place-items: center;
+        gap: 14px;
+        height: 200px;
+        color: var(--subtle);
+        font-size: 22px;
+      }
+
+      .newtab b {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        background: var(--brand);
+        opacity: 0.8;
+      }
+
+      .ov--big {
+        width: 720px;
+      }
+
+      .ov--big .notes li {
+        font-size: 24px;
+      }
+
+      /* "Share screen" turns into "Sharing" when clicked. */
+      .share-btn {
+        position: relative;
+      }
+
+      .share-btn .tool {
+        background: rgb(255 255 255 / 9%);
+        color: var(--text);
+      }
+
+      .share-btn .tool--share {
+        position: absolute;
+        inset: 0;
+        background: #173d33;
+        color: var(--green);
+      }
+
+      .cursor--share {
+        animation: to-share 1300ms var(--ease) calc(var(--t0) + 0.8s) both;
+      }
+
+      @keyframes to-share {
+        from {
+          left: 1560px;
+          top: 960px;
+        }
+
+        to {
+          left: 1012px;
+          top: 812px;
+        }
+      }
+
+      /* Step 4: the overlay fades as the opacity slider moves. */
+      .mini {
+        position: absolute;
+        top: 250px;
+        width: 860px;
+        height: 446px;
+        overflow: hidden;
+        border-radius: 22px;
+      }
+
+      .mini .desktop {
+        left: 0;
+        top: 0;
+        width: 1580px;
+        height: 820px;
+        transform: scale(0.5443);
+        transform-origin: 0 0;
+        border-radius: 40px;
+      }
+
+      .mini--you {
+        left: 80px;
+      }
+
+      .mini--them {
+        left: 980px;
+        outline: 3px solid rgb(255 107 127 / 35%);
+      }
+
+      .fading {
+        animation: fading 3600ms ease-in-out calc(var(--t0) + 1.6s) both;
+      }
+
+      @keyframes fading {
+        0%,
+        100% {
+          opacity: 1;
+        }
+
+        45%,
+        60% {
+          opacity: 0.4;
+        }
+      }
+
+      .fading .slider i {
+        animation: knob 3600ms ease-in-out calc(var(--t0) + 1.6s) both;
+      }
+
+      @keyframes knob {
+        0%,
+        100% {
+          right: 0%;
+        }
+
+        45%,
+        60% {
+          right: 60%;
+        }
+      }
+    </style>
+    <script>
+      window.DURATION = 38.4;
+    </script>
+  </head>
+  <body>
+    <div class="frame">
+      <span class="orb orb--coral"></span>
+      <span class="orb orb--violet"></span>
+      <span class="orb orb--cyan"></span>
+
+      <!-- Title -->
+      <section class="scene" style="--t0: 0s; --t1: 4.2s">
+        <div class="center">
+          <span class="pill a-up" style="--d: 0.2s">Getting started</span>
+          <h1 class="title a-up" style="--d: 0.4s">How to use <span class="grad">iOverlay</span></h1>
+          <p class="lead a-up" style="--d: 0.8s">Four steps. Under a minute.</p>
+        </div>
+      </section>
+
+      <!-- Step tracker -->
+      <section class="scene" style="--t0: 4.2s; --t1: 33.4s">
+        <div class="steps">
+          <span class="step" style="--on: 4.4s; --off: 11.2s"><b>1</b>Open</span>
+          <span class="step" style="--on: 11.2s; --off: 18.2s"><b>2</b>Fill</span>
+          <span class="step" style="--on: 18.2s; --off: 25.2s"><b>3</b>Share</span>
+          <span class="step" style="--on: 25.2s; --off: 40s"><b>4</b>Present</span>
+        </div>
+      </section>
+
+      <!-- Step 1: open with the shortcut -->
+      <section class="scene" style="--t0: 4.2s; --t1: 11.2s">
+        <div class="desktop desktop--steps a-up">
+          <div class="menubar"><b>Slides</b><span>File</span><span>Edit</span><span>View</span><span>10:28</span></div>
+          <div class="win" style="left: 60px; top: 80px; width: 1100px; height: 620px">
+            <div class="win__bar"><span class="dots"><i></i><i></i><i></i></span><span class="win__title">Quarterly review.slides</span></div>
+            <div class="slide">
+              <h4>Quarterly review</h4>
+              <span class="line" style="width: 70%"></span>
+              <span class="line" style="width: 50%"></span>
+              <span class="line" style="width: 62%"></span>
+            </div>
+          </div>
+          <div class="ov a-right" style="--d: 3.5s; right: 120px; top: 120px">
+            <div class="ov__head"><span class="ov__logo"></span><span class="ov__name">iOverlay</span><span class="ov__tag">Hidden from capture</span></div>
+            <div class="browser-bar">Search or enter address</div>
+            <div class="newtab"><b></b>New tab</div>
+          </div>
+        </div>
+        <div class="keys-wrap a-popout" style="--d: 0.7s; --out: 3.1s">
+          <div class="keys">
+            <span class="key" style="--d: 1.5s">⌥</span>
+            <span class="key" style="--d: 1.65s">⇧</span>
+            <span class="key" style="--d: 1.8s">G</span>
+          </div>
+          <span class="small">Windows: Ctrl + Shift + Space</span>
+        </div>
+        <div class="caption" style="--d: 0.5s"><span class="caption__num">1</span>Press the shortcut. The overlay opens on top.</div>
+      </section>
+
+      <!-- Step 2: open your notes in the built-in browser -->
+      <section class="scene" style="--t0: 11.2s; --t1: 18.2s">
+        <div class="desktop desktop--steps">
+          <div class="menubar"><b>Slides</b><span>File</span><span>Edit</span><span>View</span><span>10:29</span></div>
+          <div class="win" style="left: 60px; top: 80px; width: 1100px; height: 620px">
+            <div class="win__bar"><span class="dots"><i></i><i></i><i></i></span><span class="win__title">Quarterly review.slides</span></div>
+            <div class="slide">
+              <h4>Quarterly review</h4>
+              <span class="line" style="width: 70%"></span>
+              <span class="line" style="width: 50%"></span>
+            </div>
+          </div>
+          <div class="ov ov--big a-pop" style="--d: 0.2s; right: 90px; top: 90px">
+            <div class="ov__head"><span class="ov__logo"></span><span class="ov__name">iOverlay</span><span class="ov__tag">Hidden from capture</span></div>
+            <div class="browser-bar"><span class="a-type" style="--d: 0.8s">docs.example.com/talking-points</span></div>
+            <div class="page">
+              <h5 class="a-up" style="--d: 2.1s">Talking points</h5>
+              <ul class="notes">
+                <li class="a-up" style="--d: 2.5s">Thank everyone for joining</li>
+                <li class="a-up" style="--d: 2.8s">Q3: revenue up 18% year on year</li>
+                <li class="a-up" style="--d: 3.1s">New customers: 42 this quarter</li>
+                <li class="a-up" style="--d: 3.4s">Close with the Q4 roadmap</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="caption" style="--d: 0.5s"><span class="caption__num">2</span>Open your notes, a doc or any website inside it.</div>
+      </section>
+
+      <!-- Step 3: share your screen as usual -->
+      <section class="scene" style="--t0: 18.2s; --t1: 25.2s">
+        <div class="desktop desktop--steps">
+          <div class="menubar"><b>Meeting</b><span>File</span><span>View</span><span>10:30</span></div>
+          <div class="win" style="left: 36px; top: 70px; width: 1508px; height: 670px">
+            <div class="win__bar"><span class="dots"><i></i><i></i><i></i></span><span class="win__title">Q3 review · Team call</span></div>
+            <div class="slide" style="width: 1260px">
+              <h4>Quarterly revenue</h4>
+              <span class="line" style="width: 60%"></span>
+              <div class="chart" style="height: 220px"><i style="height: 40%"></i><i style="height: 55%"></i><i style="height: 48%"></i><i style="height: 66%"></i><i style="height: 86%"></i></div>
+            </div>
+            <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+            <span class="banner a-pop" style="--d: 2.4s">You are sharing your screen</span>
+            <div class="toolbar">
+              <span class="tool">Mic</span><span class="tool">Camera</span>
+              <span class="share-btn"><span class="tool">Share screen</span><span class="tool tool--share a-fade" style="--d: 2.2s">Sharing</span></span>
+              <span class="tool tool--leave">Leave</span>
+            </div>
+          </div>
+          <div class="ov" style="right: 290px; top: 230px">
+            <div class="ov__head"><span class="ov__logo"></span><span class="ov__name">iOverlay</span><span class="ov__tag">Hidden from capture</span></div>
+            <ul class="notes"><li>Thank everyone for joining</li><li>Q3: revenue up 18% year on year</li><li>Close with the Q4 roadmap</li></ul>
+          </div>
+        </div>
+        <svg class="cursor cursor--share" viewBox="0 0 24 24"><path d="M4 2l16 9-7 2-3 7z" fill="#fff" stroke="#07070c" stroke-width="1.5" stroke-linejoin="round" /></svg>
+        <span class="ripple" style="--d: 2.1s; left: 1020px; top: 818px"></span>
+        <div class="caption" style="--d: 0.5s"><span class="caption__num">3</span>Share your screen in Zoom, Meet or Teams as usual.</div>
+      </section>
+
+      <!-- Step 4: present -->
+      <section class="scene" style="--t0: 25.2s; --t1: 33.4s">
+        <span class="label label--you a-fade" style="--d: 0.2s; left: 80px; top: 196px">● On your screen</span>
+        <span class="label label--them a-fade" style="--d: 0.4s; left: 980px; top: 196px">● What they see</span>
+        <div class="mini mini--you a-left" style="--d: 0.1s">
+          <div class="desktop">
+            <div class="menubar"><b>Meeting</b><span>10:31</span></div>
+            <div class="win" style="left: 36px; top: 70px; width: 1508px; height: 710px">
+              <div class="win__bar"><span class="dots"><i></i><i></i><i></i></span><span class="win__title">Q3 review · Team call</span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <div class="slide" style="width: 1260px">
+                <h4>Quarterly revenue</h4>
+                <span class="line" style="width: 60%"></span>
+                <div class="chart"><i style="height: 40%"></i><i style="height: 55%"></i><i style="height: 48%"></i><i style="height: 66%"></i><i style="height: 86%"></i></div>
+              </div>
+            </div>
+            <div class="ov fading" style="right: 300px; top: 150px">
+              <div class="ov__head"><span class="ov__logo"></span><span class="ov__name">iOverlay</span><span class="ov__tag">Hidden from capture</span></div>
+              <ul class="notes"><li>Thank everyone for joining</li><li>Q3: revenue up 18% year on year</li><li>Close with the Q4 roadmap</li></ul>
+              <div class="ov__foot">Opacity <span class="slider"><i></i></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="mini mini--them a-right" style="--d: 0.3s">
+          <div class="desktop">
+            <div class="menubar"><b>Meeting</b><span>10:31</span></div>
+            <div class="win" style="left: 36px; top: 70px; width: 1508px; height: 710px">
+              <div class="win__bar"><span class="dots"><i></i><i></i><i></i></span><span class="win__title">Q3 review · Team call</span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <div class="slide" style="width: 1260px">
+                <h4>Quarterly revenue</h4>
+                <span class="line" style="width: 60%"></span>
+                <div class="chart"><i style="height: 40%"></i><i style="height: 55%"></i><i style="height: 48%"></i><i style="height: 66%"></i><i style="height: 86%"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chips a-up" style="--d: 1.2s; position: absolute; left: 0; right: 0; top: 760px">
+          <span class="chip">Fade 30–100%</span><span class="chip">Click-through</span><span class="chip">Global shortcuts</span><span class="chip">Drag &amp; resize</span>
+        </div>
+        <div class="caption" style="--d: 0.6s"><span class="caption__num">4</span>Read your notes. Viewers see only what's underneath.</div>
+      </section>
+
+      <!-- Call to action -->
+      <section class="scene scene--last" style="--t0: 33.4s">
+        <div class="center" style="gap: 36px">
+          <div class="brandline a-pop" style="--d: 0.2s"><img class="logo logo--sm" src="../../public/logo.svg" alt="" />iOverlay</div>
+          <h2 class="title title--md a-up" style="--d: 0.5s">Set up in <span class="grad">under a minute.</span></h2>
+          <span class="url a-pop" style="--d: 0.9s">i-overlay.com</span>
+          <span class="small a-fade" style="--d: 1.3s">macOS · Windows · Linux coming soon</span>
+        </div>
+      </section>
+    </div>
+    <script src="avatars.js"></script>
+  </body>
+</html>

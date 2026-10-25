@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Meet iOverlay</title>
+    <link rel="stylesheet" href="shared.css" />
+    <style>
+      /* Split view: two scaled-down desktops. */
+      .mini {
+        position: absolute;
+        top: 250px;
+        width: 860px;
+        height: 446px;
+        overflow: hidden;
+        border-radius: 22px;
+      }
+
+      .mini .desktop {
+        left: 0;
+        top: 0;
+        width: 1580px;
+        height: 820px;
+        transform: scale(0.5443);
+        transform-origin: 0 0;
+        border-radius: 40px;
+      }
+
+      .mini--you {
+        left: 80px;
+      }
+
+      .mini--them {
+        left: 980px;
+        outline: 3px solid rgb(255 107 127 / 35%);
+      }
+
+      .hidden-badge {
+        position: absolute;
+        top: 60px;
+        right: 90px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 22px;
+        border: 2px dashed rgb(255 107 127 / 55%);
+        border-radius: 16px;
+        color: var(--red);
+        font-family: var(--mono);
+        font-size: 20px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .icon {
+        width: 32px;
+        height: 32px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        color: #c9bcff;
+      }
+    </style>
+    <script>
+      window.DURATION = 33.5;
+    </script>
+  </head>
+  <body>
+    <div class="frame">
+      <span class="orb orb--coral"></span>
+      <span class="orb orb--violet"></span>
+      <span class="orb orb--cyan"></span>
+
+      <!-- 1. Title -->
+      <section class="scene" style="--t0: 0s; --t1: 4.6s">
+        <div class="center">
+          <img class="logo a-pop" style="--d: 0.2s" src="../../public/logo.svg" alt="" />
+          <span class="pill a-up" style="--d: 0.5s">Private screen overlay</span>
+          <h1 class="title a-up" style="--d: 0.7s">You see it. <span class="grad">They</span> don't.</h1>
+          <p class="lead a-up" style="--d: 1.1s">Meet iOverlay: your notes on screen, out of the screen share.</p>
+        </div>
+      </section>
+
+      <!-- 2. The overlay over a meeting -->
+      <section class="scene" style="--t0: 4.6s; --t1: 12.6s">
+        <div class="desktop desktop--full a-up" style="--d: 0s">
+          <div class="menubar"><b>Meeting</b><span>File</span><span>View</span><span>Window</span><span>10:30</span></div>
+          <div class="win" style="left: 36px; top: 70px; width: 1508px; height: 710px">
+            <div class="win__bar">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span class="win__title">Q3 review · Team call</span>
+              <span class="rec">Sharing</span>
+            </div>
+            <div class="slide" style="width: 1260px">
+              <h4>Quarterly revenue</h4>
+              <span class="line" style="width: 60%"></span>
+              <span class="line" style="width: 38%"></span>
+              <div class="chart">
+                <i style="height: 40%"></i><i style="height: 55%"></i><i style="height: 48%"></i><i style="height: 66%"></i><i style="height: 60%"></i><i style="height: 86%"></i>
+              </div>
+            </div>
+            <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+            <div class="toolbar"><span class="tool">Mic</span><span class="tool">Camera</span><span class="tool tool--share">Sharing screen</span><span class="tool tool--leave">Leave</span></div>
+          </div>
+          <div class="ov a-right" style="--d: 1.2s; right: 300px; top: 150px">
+            <div class="ov__head"><span class="ov__logo"></span><span class="ov__name">iOverlay</span><span class="ov__tag">Hidden from capture</span></div>
+            <ul class="notes">
+              <li class="a-fade" style="--d: 2s"><span class="a-type" style="--d: 2.1s">Open with the Q3 numbers</span></li>
+              <li class="a-fade" style="--d: 2.9s"><span class="a-type" style="--d: 3s">Revenue up 18% year on year</span></li>
+              <li class="a-fade" style="--d: 3.8s"><span class="a-type" style="--d: 3.9s">Ask about the rollout date</span></li>
+            </ul>
+            <div class="ov__foot">Opacity <span class="slider"><i></i></span> ⌥ ⇧ G</div>
+          </div>
+        </div>
+        <div class="caption" style="--d: 0.6s">A private window that floats over every app</div>
+      </section>
+
+      <!-- 3. Your screen vs what they see -->
+      <section class="scene" style="--t0: 12.6s; --t1: 20.2s">
+        <span class="label label--you a-fade" style="--d: 0.3s; left: 80px; top: 196px">● On your screen</span>
+        <span class="label label--them a-fade" style="--d: 0.6s; left: 980px; top: 196px">● What they see</span>
+        <div class="mini mini--you a-left" style="--d: 0.2s">
+          <div class="desktop">
+            <div class="menubar"><b>Meeting</b><span>10:31</span></div>
+            <div class="win" style="left: 36px; top: 70px; width: 1508px; height: 710px">
+              <div class="win__bar"><span class="dots"><i></i><i></i><i></i></span><span class="win__title">Q3 review · Team call</span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <div class="slide" style="width: 1260px">
+                <h4>Quarterly revenue</h4>
+                <span class="line" style="width: 60%"></span>
+                <div class="chart"><i style="height: 40%"></i><i style="height: 55%"></i><i style="height: 48%"></i><i style="height: 66%"></i><i style="height: 86%"></i></div>
+              </div>
+            </div>
+            <div class="ov" style="right: 300px; top: 150px">
+              <div class="ov__head"><span class="ov__logo"></span><span class="ov__name">iOverlay</span><span class="ov__tag">Hidden from capture</span></div>
+              <ul class="notes"><li>Open with the Q3 numbers</li><li>Revenue up 18% year on year</li><li>Ask about the rollout date</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="mini mini--them a-right" style="--d: 0.4s">
+          <div class="desktop">
+            <div class="menubar"><b>Meeting</b><span>10:31</span></div>
+            <div class="win" style="left: 36px; top: 70px; width: 1508px; height: 710px">
+              <div class="win__bar"><span class="dots"><i></i><i></i><i></i></span><span class="win__title">Q3 review · Team call</span></div>
+              <div class="people"><span class="person person--talk" data-avatar="aisha"></span><span class="person" data-avatar="rahul"></span><span class="person" data-avatar="maya"></span></div>
+              <div class="slide" style="width: 1260px">
+                <h4>Quarterly revenue</h4>
+                <span class="line" style="width: 60%"></span>
+                <div class="chart"><i style="height: 40%"></i><i style="height: 55%"></i><i style="height: 48%"></i><i style="height: 66%"></i><i style="height: 86%"></i></div>
+              </div>
+            </div>
+            <span class="scan" style="--d: 1.3s"></span>
+          </div>
+          <span class="hidden-badge a-pop" style="--d: 2.4s">Overlay not in the share</span>
+        </div>
+        <div class="chips a-up" style="--d: 2.8s; position: absolute; left: 0; right: 0; top: 760px">
+          <span class="chip">Zoom</span><span class="chip">Google Meet</span><span class="chip">Microsoft Teams</span><span class="chip">Recordings</span><span class="chip">Screenshots</span>
+        </div>
+        <div class="caption" style="--d: 1.6s">Share your screen. The overlay stays out of it.</div>
+      </section>
+
+      <!-- 4. Features -->
+      <section class="scene" style="--t0: 20.2s; --t1: 27.2s">
+        <div class="center" style="gap: 56px">
+          <h2 class="title title--sm a-up" style="--d: 0.1s">Everything you need. <span class="grad">Nothing they see.</span></h2>
+          <div class="cards">
+            <div class="card a-pop" style="--d: 0.5s">
+              <span class="card__icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20" /></svg></span>
+              <h3>Built-in browser</h3>
+              <p>Open notes, docs or any website inside the overlay.</p>
+            </div>
+            <div class="card a-pop" style="--d: 0.7s">
+              <span class="card__icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 4h.01M20 12h.01M12 20h.01M4 12h.01M17.66 6.34h.01M17.66 17.66h.01M6.34 17.66h.01M6.34 6.34h.01" /></svg></span>
+              <h3>Opacity 30–100%</h3>
+              <p>Fade it so it never blocks your view.</p>
+            </div>
+            <div class="card a-pop" style="--d: 0.9s">
+              <span class="card__icon"><svg class="icon" viewBox="0 0 24 24"><path d="M14 4.1 12 6M5.1 8l-2.9-.8M6 12l-1.9 2M7.2 2.2 8 5.1" /><path d="M9.04 9.69a.5.5 0 0 1 .65-.65l11 4.5a.5.5 0 0 1-.07.95l-4.35 1.04a1 1 0 0 0-.74.74l-1.04 4.35a.5.5 0 0 1-.95.07z" /></svg></span>
+              <h3>Click-through</h3>
+              <p>Clicks pass straight to the app underneath.</p>
+            </div>
+            <div class="card a-pop" style="--d: 1.1s">
+              <span class="card__icon"><svg class="icon" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10" /></svg></span>
+              <h3>Global shortcuts</h3>
+              <p>Show, hide and control it from any app.</p>
+            </div>
+            <div class="card a-pop" style="--d: 1.3s">
+              <span class="card__icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M15 19l-3 3-3-3M19 9l3 3-3 3M5 9l-3 3 3 3M9 5l3-3 3 3" /></svg></span>
+              <h3>Drag &amp; resize</h3>
+              <p>Place the panel anywhere on your screen.</p>
+            </div>
+            <div class="card a-pop" style="--d: 1.5s">
+              <span class="card__icon"><svg class="icon" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8M12 17v4" /></svg></span>
+              <h3>macOS &amp; Windows</h3>
+              <p>Hidden from capture on both. Linux coming soon.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Call to action -->
+      <section class="scene scene--last" style="--t0: 27.2s">
+        <div class="center" style="gap: 36px">
+          <div class="brandline a-pop" style="--d: 0.2s"><img class="logo logo--sm" src="../../public/logo.svg" alt="" />iOverlay</div>
+          <h2 class="title title--md a-up" style="--d: 0.5s">Present with <span class="grad">confidence.</span></h2>
+          <span class="url a-pop" style="--d: 0.9s">i-overlay.com</span>
+          <span class="small a-fade" style="--d: 1.3s">macOS · Windows · Linux coming soon</span>
+        </div>
+      </section>
+    </div>
+    <script src="avatars.js"></script>
+  </body>
+</html>
