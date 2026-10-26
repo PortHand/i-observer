@@ -8,7 +8,7 @@
         "text": "You see it. They don't."
       },
       {
-        "at": 2.4,
+        "at": 2.85,
         "text": "Meet iOverlay."
       },
       {
@@ -16,16 +16,16 @@
         "text": "A private window that floats over every app. Your notes, a doc, or any website."
       },
       {
-        "at": 13.3,
+        "at": 13.0,
         "text": "Share your screen in Zoom, Meet, or Teams, and the overlay stays out of the share, recordings, and screenshots."
       },
       {
-        "at": 20.9,
-        "text": "A built-in browser. Adjustable opacity. Click-through. And global shortcuts, on macOS and Windows."
+        "at": 21.0,
+        "text": "A built-in browser, adjustable opacity, click-through, and global shortcuts."
       },
       {
-        "at": 27.9,
-        "text": "iOverlay. Present with confidence. Get it at i-overlay dot com."
+        "at": 28.3,
+        "text": "Present with confidence. Get iOverlay at i-overlay dot com."
       }
     ],
     "how-to-use": [
@@ -76,7 +76,7 @@
         "text": "And creators read their script while they record their screen."
       },
       {
-        "at": 28.9,
+        "at": 28.55,
         "text": "You see it. They don't. iOverlay, at i-overlay dot com."
       }
     ],
@@ -114,7 +114,7 @@
         "text": "Step four: present. Fade it, click through it. It stays out of your way."
       },
       {
-        "at": 35.8,
+        "at": 35.9,
         "text": "Sales demos, online classes, customer calls, screen recordings. It works for all of them."
       },
       {
@@ -133,5 +133,8 @@
       "style": 0.35,
       "use_speaker_boost": true
     }
-  }
+  },
+  "continuous": [
+    "all"
+  ]
 }

@@ -11,7 +11,7 @@
 // each frame's time before taking a screenshot.
 
 import { spawn } from "node:child_process";
-import { mkdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { basename, dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -41,23 +41,40 @@ const [width, height] = await page.evaluate(() => window.SIZE ?? [1920, 1080]);
 await page.setViewportSize({ width, height });
 if (theme) await page.evaluate((value) => document.documentElement.setAttribute("data-theme", value), theme);
 
-// Subtitles: one per narration line, shown from its start until the next line starts.
+// Subtitles: one box per narration line, its words popping in as they're spoken. Word times come
+// from narration-timing.json (written by add-audio.mjs --timing); without it, from narration.json.
 if (subsId) {
-  const { videos } = JSON.parse(readFileSync(resolve(dirname(input), "narration.json"), "utf8"));
-  const lines = videos[subsId];
+  const timingFile = resolve(dirname(input), "narration-timing.json");
+  const fromTiming = existsSync(timingFile) && JSON.parse(readFileSync(timingFile, "utf8"))[subsId];
+  const lines =
+    fromTiming ||
+    JSON.parse(readFileSync(resolve(dirname(input), "narration.json"), "utf8")).videos[subsId].map((line) => ({
+      at: line.at,
+      words: line.text.split(/\s+/).map((text) => ({ text, t: line.at })),
+    }));
   const end = await page.evaluate(() => window.DURATION);
   await page.evaluate(
     ({ lines, end }) => {
       const frame = document.querySelector(".frame");
       lines.forEach((line, index) => {
-        const until = Math.min(lines[index + 1]?.at ?? end, end) - 0.1;
+        const next = lines[index + 1]?.at ?? end;
+        const until = Math.min(next - 0.05, (line.end ?? next) + 0.9, end);
         const sub = document.createElement("div");
         sub.className = "sub";
         sub.style.setProperty("--t0", `${line.at}s`);
         sub.style.setProperty("--t1", `${until}s`);
-        const text = document.createElement("span");
-        text.textContent = line.text;
-        sub.append(text);
+        const box = document.createElement("p");
+        box.className = "sub__box";
+        line.words.forEach((word, i) => {
+          const span = document.createElement("span");
+          span.className = "sub__word";
+          span.textContent = word.text;
+          const following = line.words[i + 1]?.t ?? line.end ?? word.t + 0.4;
+          span.style.setProperty("--w", `${word.t}s`);
+          span.style.setProperty("--len", `${Math.max(0.12, following - word.t)}s`);
+          box.append(span, " ");
+        });
+        sub.append(box);
         frame.append(sub);
       });
     },
