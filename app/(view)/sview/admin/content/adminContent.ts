@@ -9,6 +9,8 @@ export const portal = {
   ordersHeading: "Orders",
   storeHeading: "Store",
   plans: "Plans & pricing",
+  offerTimer: "Offer timer",
+  upiAccounts: "UPI accounts",
   appHeading: "Desktop app",
   appUpdate: "Force update",
   siteHeading: "Site",
@@ -248,6 +250,128 @@ export const appUpdate = {
 };
 
 /** Most plans on sale at once: the pricing grids are laid out for 2 to 4 columns. */
+export const OFFER_HEADLINE_MAX = 60;
+/** Length a reset runs for when the timer was never saved. */
+export const OFFER_TIMER_DEFAULT_HOURS = 24;
+/** Longest timer the form accepts: 30 days. */
+export const OFFER_TIMER_MAX_HOURS = 720;
+
+export const offerTimerPage = {
+  eyebrow: "Store",
+  title: "Offer timer",
+  lead: "A countdown shown above the plans on the home page and at checkout. It's display only: change prices on the Plans page.",
+  defaultHeadline: "Offer ends in",
+  status: {
+    on: "On: ends {date}.",
+    restarting: "On: ends {date}, then restarts every {hours} h.",
+    ended: "On, but it has run out: customers see no countdown. Reset it or pick a new end time.",
+    off: "Off: no countdown is shown.",
+  },
+  updated: "Last saved {date} by {admin}",
+  neverSaved: "Never saved. The timer is off.",
+  enabledLabel: "Show the countdown",
+  enabledHint: "Shown above the plan cards on the home page and at the top of checkout.",
+  headlineLabel: "Headline",
+  headlinePlaceholder: "e.g. Diwali offer ends in",
+  headlineHint: "Shown before the countdown.",
+  endsAtLabel: "Ends at (IST)",
+  endsAtPlaceholder: "Pick when the offer ends",
+  endsAtHint: "When the countdown reaches zero. Reset sets it to now plus the timer length.",
+  hoursLabel: "Timer length (hours)",
+  hoursHint: "How long a reset runs for, and each automatic restart. 24 = one day, 168 = one week.",
+  restartLabel: "Restart automatically",
+  restartHint: "When it reaches zero, the countdown starts again for the timer length. Off: it disappears at zero.",
+  save: "Save",
+  saving: "Saving…",
+  saved: "Saved. The website shows the change straight away.",
+  reset: "Reset timer",
+  resetDone: "Timer reset. It now ends {date}.",
+  confirmReset: {
+    title: "Reset the timer?",
+    description: "The countdown starts again from now and ends in {hours} h. The other settings in the form are saved too.",
+    action: "Reset timer",
+    cancel: "Cancel",
+  },
+  errors: {
+    headlineMissing: "Enter a headline.",
+    headlineLong: `Keep the headline under ${OFFER_HEADLINE_MAX} characters.`,
+    hours: `Enter whole hours from 1 to ${OFFER_TIMER_MAX_HOURS}.`,
+    endsAt: "Pick the date and time the offer ends.",
+    endsAtPast: "That time has passed. Pick a later one, turn on Restart automatically, or use Reset timer.",
+  },
+};
+
+export const UPI_PAYEE_NAME_MAX = 50;
+
+export const upiPage = {
+  eyebrow: "Store",
+  title: "UPI accounts",
+  lead: "The checkout QR code pays the active account. Orders already placed keep the UPI ID they were shown.",
+  add: "Add account",
+  empty: "No UPI accounts yet. Checkout can't take payments until one is added and active.",
+  noneActive: "No account is active, so checkout can't take payments. Make one active.",
+  columns: { upiId: "UPI ID", payeeName: "Payee name", updated: "Updated", status: "Status" },
+  active: "Active",
+  inactive: "Inactive",
+  /** The status switch's label for screen readers. */
+  switchLabel: "{upiId} takes payments",
+  edit: "Edit",
+  delete: "Delete",
+  form: {
+    addTitle: "Add a UPI account",
+    editTitle: "Edit UPI account",
+    upiIdLabel: "UPI ID",
+    upiIdPlaceholder: "e.g. ioverlay@okaxis",
+    upiIdHint: "The VPA customers pay. Check it by paying ₹1 to it from your own UPI app first.",
+    payeeNameLabel: "Payee name",
+    payeeNamePlaceholder: "e.g. iOverlay",
+    payeeNameHint: "Shown in the customer's UPI app.",
+    activeWarning: "This account takes payments now: new orders pay the changed ID as soon as you save.",
+    save: "Save",
+    saving: "Saving…",
+    cancel: "Cancel",
+  },
+  /** Rows of the confirmations' summary: which account each change affects. */
+  change: {
+    activate: "Takes payments",
+    replaced: "Becomes inactive",
+    deactivate: "Stops taking payments",
+    delete: "Account",
+  },
+  confirmActivate: {
+    title: "Make this account active?",
+    description: "New orders' QR codes pay this account from now on. Only one account can be active. Orders already placed keep the UPI ID they were shown.",
+    action: "Make active",
+    cancel: "Cancel",
+  },
+  confirmDeactivate: {
+    title: "Make this account inactive?",
+    description: "No account will be active, so checkout stops taking orders until you make one active. Orders already placed keep the UPI ID they were shown.",
+    action: "Make inactive",
+    cancel: "Cancel",
+  },
+  confirmDelete: {
+    title: "Delete this account?",
+    description: "It's removed from this list. Orders that paid it keep their UPI ID.",
+    action: "Delete",
+    cancel: "Cancel",
+  },
+  saved: "Saved {upiId}.",
+  activated: "{upiId} now takes payments.",
+  deactivated: "{upiId} is inactive. Checkout takes no payments until an account is active.",
+  deleted: "Deleted {upiId}.",
+  errors: {
+    upiId: "Enter a UPI ID like name@bank.",
+    payeeNameMissing: "Enter the payee name.",
+    payeeNameLong: `Keep the payee name under ${UPI_PAYEE_NAME_MAX} characters.`,
+    upiIdTaken: "That UPI ID is already in the list.",
+    notFound: "That account no longer exists. Reload the page.",
+    deleteActive: "The active account can't be deleted. Make it inactive first.",
+    /** Shown to customers at checkout when no account is active. */
+    paymentsPaused: "Payments are paused for a few minutes. Please try again shortly.",
+  },
+};
+
 export const MAX_PLANS_ON_SALE = 4;
 
 export const plansPage = {
@@ -314,6 +438,8 @@ export const plansPage = {
     fromLabel: "On sale from (IST, optional)",
     untilLabel: "On sale until (IST, optional)",
     windowHint: "Outside these dates the plan is hidden. Leave empty for no limit.",
+    /** The sale-window pickers when left empty. */
+    noLimit: "No limit",
     activeLabel: "On sale",
     activeHint: "Off hides the plan from the website and the app. Existing orders keep it.",
     defaultLabel: "Default plan",

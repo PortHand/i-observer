@@ -187,6 +187,16 @@ export const pricing = {
   was: "Was",
   loading: "Loading plans…",
   unavailable: "Plans can't be shown right now. Email {supportEmail} and we'll help you buy.",
+  /** The admin's offer countdown: over the plans, and in the bar at the top of every page. */
+  countdown: {
+    eyebrow: "Limited-time offer",
+    /** Unit labels under the banner's digits, and after the bar's. */
+    units: { days: "Days", hours: "Hrs", minutes: "Min", seconds: "Sec" },
+    short: { days: "d", hours: "h", minutes: "m", seconds: "s" },
+    viewPlans: "View plans",
+    /** Read out once, since the digits themselves aren't announced as they tick. */
+    endsAt: "Ends {date}",
+  },
 };
 
 export interface OsSupport {

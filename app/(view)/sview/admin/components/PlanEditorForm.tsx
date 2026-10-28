@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, CircleAlert, CircleCheck, Info } from "lucide-react";
+import DateTimePicker from "@/components/common/DateTimePicker";
 import FieldError from "@/components/common/FieldError";
 import { formatAmount } from "@/app/(view)/(pview)/get-ioverlay/helper/getHelper";
 import { routes } from "@/helper/route";
@@ -76,6 +77,31 @@ export default function PlanEditorForm({ plan: loaded, initial }: { plan: AdminP
       </label>
     );
   };
+
+  /** A sale-window end: picked on a calendar, in IST, and may be left empty for no limit. */
+  const dateField = (name: "availableFrom" | "availableUntil", label: string, hint?: string) => (
+    <div className="field plan-editor__field">
+      <span id={`plan-${name}-label`} className="field__label">
+        {label}
+      </span>
+      <DateTimePicker
+        value={form[name]}
+        onChange={(value) => change(name, value)}
+        labelledBy={`plan-${name}-label`}
+        describedBy={hint ? `plan-${name}-hint plan-${name}-error` : `plan-${name}-error`}
+        invalid={Boolean(errors[name])}
+        placeholder={text.noLimit}
+        zoneLabel="IST"
+        clearable
+      />
+      <FieldError id={`plan-${name}-error`} message={errors[name]} />
+      {hint && (
+        <span id={`plan-${name}-hint`} className="plan-editor__hint">
+          {hint}
+        </span>
+      )}
+    </div>
+  );
 
   const toggle = (name: "active" | "isDefault", label: string, hint: string) => (
     <label className="app-update__switch">
@@ -226,8 +252,8 @@ export default function PlanEditorForm({ plan: loaded, initial }: { plan: AdminP
                 {field("sortOrder", text.sortLabel, { hint: text.sortHint, inputMode: "numeric", mono: true })}
               </div>
               <div className="plan-editor__grid">
-                {field("availableFrom", text.fromLabel, { type: "datetime-local", hint: text.windowHint })}
-                {field("availableUntil", text.untilLabel, { type: "datetime-local" })}
+                {dateField("availableFrom", text.fromLabel, text.windowHint)}
+                {dateField("availableUntil", text.untilLabel)}
               </div>
               <div className="plan-editor__grid">
                 {/* An existing plan is switched on and off from the header, which saves straight away. */}

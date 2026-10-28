@@ -1,8 +1,9 @@
 import "server-only";
 import type { Payee, Plan } from "@/app/(view)/(pview)/get-ioverlay/services/getService";
-import { MAX_PLANS_ON_SALE, plansPage } from "@/app/(view)/sview/admin/content/adminContent";
+import { MAX_PLANS_ON_SALE, plansPage, upiPage } from "@/app/(view)/sview/admin/content/adminContent";
 import type { PlanChange } from "@/app/(view)/sview/admin/helper/planHelper";
-import type { AdminPlanStatus, AdminPlanView } from "@/app/(view)/sview/admin/services/adminService";
+import type { UpiAccountInput } from "@/app/(view)/sview/admin/helper/upiHelper";
+import type { AdminPlanStatus, AdminPlanView, UpiAccountView } from "@/app/(view)/sview/admin/services/adminService";
 import { Database } from "@/server/core/database";
 import { HttpError } from "@/server/core/httpError";
 import type { PlanPriceRow, PlanRow, PricedPlan, PricingRepository } from "../repository/pricingRepository";
@@ -121,10 +122,67 @@ export class PricingService {
     return new Map((await this.pricing.findPlans([...new Set(ids)])).map((plan) => [plan.id, plan]));
   }
 
-  /** The UPI account new orders pay. Throws, so the customer sees a server error, when none is active. */
+  /** The UPI account new orders pay. When none is active, the customer is told payments are paused. */
   async getPayee(): Promise<Payee> {
     const account = await this.pricing.findActiveUpiAccount();
-    if (!account) throw new Error("No active UPI account: add one to the upi_accounts table with active = true.");
+    if (!account) {
+      console.error("[pricing] No active UPI account, so an order was turned away: make one active on the admin portal's UPI accounts page.");
+      throw HttpError.conflict(upiPage.errors.paymentsPaused);
+    }
     return { upiId: account.upiId, name: account.payeeName };
+  }
+
+  /** Every UPI account, the active one first, for the admin portal. */
+  async upiAccounts(): Promise<UpiAccountView[]> {
+    return (await this.pricing.listUpiAccounts()).map((row) => ({
+      id: row.id,
+      upiId: row.upiId,
+      payeeName: row.payeeName,
+      active: row.active,
+      updatedAt: row.updatedAt.toISOString(),
+    }));
+  }
+
+  /**
+   * Adds an account (`id` null) or changes one, and makes it the active one when `input.active`.
+   * `input` must have passed parseUpiAccountForm. Orders keep their own copy of the UPI ID, so
+   * changing an account never changes what an existing order pays.
+   */
+  saveUpiAccount(id: number | null, input: UpiAccountInput): Promise<void> {
+    const { errors } = upiPage;
+    return Database.transaction(async (tx) => {
+      if (await this.pricing.findUpiAccountByUpiId(tx, input.upiId, id)) throw HttpError.badRequest(errors.upiIdTaken, { upiId: errors.upiIdTaken });
+      let accountId = id;
+      if (accountId === null) {
+        accountId = await this.pricing.insertUpiAccount(tx, input.upiId, input.payeeName);
+      } else {
+        if (!(await this.pricing.lockUpiAccount(tx, accountId))) throw HttpError.notFound(errors.notFound);
+        await this.pricing.updateUpiAccount(tx, accountId, input.upiId, input.payeeName);
+      }
+      if (input.active) await this.pricing.activateUpiAccount(tx, accountId);
+    });
+  }
+
+  /**
+   * Turns an account on (the one new orders pay, switching off whichever was active, so the QR code
+   * only ever shows one) or off (checkout then takes no payments until another is turned on).
+   */
+  setUpiAccountActive(id: number, active: boolean): Promise<void> {
+    return Database.transaction(async (tx) => {
+      if (!(await this.pricing.lockUpiAccount(tx, id))) throw HttpError.notFound(upiPage.errors.notFound);
+      if (active) await this.pricing.activateUpiAccount(tx, id);
+      else await this.pricing.deactivateUpiAccount(tx, id);
+    });
+  }
+
+  /** Deletes an account that isn't taking payments: checkout always needs the active one. */
+  deleteUpiAccount(id: number): Promise<void> {
+    const { errors } = upiPage;
+    return Database.transaction(async (tx) => {
+      const account = await this.pricing.lockUpiAccount(tx, id);
+      if (!account) throw HttpError.notFound(errors.notFound);
+      if (account.active) throw HttpError.badRequest(errors.deleteActive);
+      await this.pricing.deleteUpiAccount(tx, id);
+    });
   }
 }

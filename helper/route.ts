@@ -29,6 +29,10 @@ export const routes = {
   adminOrders: "/sview/admin/orders",
   /** The plans on sale and their prices. */
   adminPlans: "/sview/admin/plans",
+  /** The "Offer ends in" countdown over the plans. */
+  adminOfferTimer: "/sview/admin/offer-timer",
+  /** The UPI accounts checkout's QR code pays. */
+  adminUpi: "/sview/admin/upi",
   /** The desktop app's forced-update policy. */
   adminAppUpdate: "/sview/admin/app-update",
 } as const;

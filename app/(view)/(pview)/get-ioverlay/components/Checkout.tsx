@@ -1,9 +1,10 @@
 "use client";
 
+import OfferCountdown from "../../home/components/OfferCountdown";
 import { checkoutSectionId } from "../content/getContent";
 import { useCheckoutHandler } from "../handler/useCheckoutHandler";
 import { getPlan, planTitle } from "../helper/getHelper";
-import type { Plan } from "../services/getService";
+import type { Offer, Plan } from "../services/getService";
 import CheckoutHeader from "./CheckoutHeader";
 import CheckoutStepper from "./CheckoutStepper";
 import Confirmation from "./Confirmation";
@@ -17,11 +18,13 @@ import TransactionForm from "./TransactionForm";
 interface CheckoutProps {
   /** Active plans from the database. Must not be empty: CheckoutLoader shows a notice instead. */
   plans: Plan[];
+  /** The admin's offer countdown, or null when none is running. */
+  offer: Offer | null;
   /** Plan to pre-select, e.g. from ?plan=; the default plan when it's null or not on sale. */
   initialPlanId: string | null;
 }
 
-export default function Checkout({ plans, initialPlanId }: CheckoutProps) {
+export default function Checkout({ plans, offer, initialPlanId }: CheckoutProps) {
   const co = useCheckoutHandler(plans, initialPlanId);
   // Once an order exists, show what the server fixed for it rather than the plan list's current price.
   const plan = getPlan(plans, co.planId);
@@ -32,6 +35,8 @@ export default function Checkout({ plans, initialPlanId }: CheckoutProps) {
     <section className="band band--light" id={checkoutSectionId}>
       <div className="container section">
         <CheckoutHeader />
+        {/* Only while choosing a plan: once an order is placed its price is fixed. */}
+        {offer && co.step === "contact" && <OfferCountdown offer={offer} />}
 
         <div className="checkout-flow">
           <CheckoutStepper step={co.step} />

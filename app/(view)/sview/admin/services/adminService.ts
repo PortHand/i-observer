@@ -6,9 +6,13 @@ import type { OrderLine, Payee } from "@/app/(view)/(pview)/get-ioverlay/service
 import type { OrderStatus } from "@/server/features/order/schema/orderSchema";
 import * as reviewActions from "@/server/features/order/action/orderReviewActions";
 import * as appUpdateActions from "@/server/features/appUpdate/action/appUpdateActions";
+import * as offerTimerActions from "@/server/features/offerTimer/action/offerTimerActions";
 import * as pricingActions from "@/server/features/pricing/action/pricingActions";
+import * as upiAccountActions from "@/server/features/pricing/action/upiAccountActions";
 import type { AppUpdateInput } from "../helper/appUpdateHelper";
+import type { OfferTimerInput } from "../helper/offerTimerHelper";
 import type { PlanInput } from "../helper/planHelper";
+import type { UpiAccountInput } from "../helper/upiHelper";
 
 export type { OrderStatus };
 
@@ -184,3 +188,47 @@ export const setPlanActive = (id: string, active: boolean): Promise<PlanToggleRe
 
 /** Adds a plan (`isNew`) or saves changes to one; returns every plan as saved. */
 export const savePlan = (input: PlanInput, isNew: boolean): Promise<PlanSaveResult> => pricingActions.savePlan(input, isNew);
+
+/** The website's offer countdown, as the admin portal shows it. */
+export interface OfferTimerView {
+  enabled: boolean;
+  headline: string;
+  /** The saved end time (ISO); null when never saved. */
+  endsAt: string | null;
+  durationHours: number;
+  autoRestart: boolean;
+  /** When the countdown customers see now reaches zero (ISO), after any restarts; null when none is shown. */
+  nextEndsAt: string | null;
+  /** When it was last saved (ISO), and by which admin; null when never saved. */
+  updatedAt: string | null;
+  updatedBy: string | null;
+}
+
+export type OfferTimerSaveResult = Awaited<ReturnType<typeof offerTimerActions.saveOfferTimer>>;
+
+/** Saves the offer timer; with `reset`, the countdown starts again from now. Pages show it straight away. */
+export const saveOfferTimer = (input: OfferTimerInput, reset: boolean): Promise<OfferTimerSaveResult> =>
+  offerTimerActions.saveOfferTimer(input, reset);
+
+/** A row of the upi_accounts table, as the admin portal shows it. */
+export interface UpiAccountView {
+  id: number;
+  upiId: string;
+  payeeName: string;
+  /** New orders pay this account. At most one is active. */
+  active: boolean;
+  /** ISO. */
+  updatedAt: string;
+}
+
+export type UpiAccountsResult = Awaited<ReturnType<typeof upiAccountActions.saveUpiAccount>>;
+
+/** Adds an account (`id` null) or saves changes to one; returns every account as saved. */
+export const saveUpiAccount = (id: number | null, input: UpiAccountInput): Promise<UpiAccountsResult> =>
+  upiAccountActions.saveUpiAccount(id, input);
+
+/** Turns an account on (switching off the one that was active) or off; returns every account as saved. */
+export const setUpiAccountActive = (id: number, active: boolean): Promise<UpiAccountsResult> => upiAccountActions.setUpiAccountActive(id, active);
+
+/** Deletes an inactive account; returns every account as saved. */
+export const deleteUpiAccount = (id: number): Promise<UpiAccountsResult> => upiAccountActions.deleteUpiAccount(id);

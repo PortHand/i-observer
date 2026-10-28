@@ -2156,3 +2156,51 @@
     gap: var(--space-1);
   }
 }
+
+/* Offer timer: the end time and length side by side */
+
+.offer-timer-admin__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+/* UPI accounts: the confirmations' summary of which account takes payments */
+
+.upi-admin__change {
+  display: grid;
+  margin: 0;
+  border: 1px solid var(--color-border);
+}
+
+.upi-admin__change-row {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+}
+
+.upi-admin__change-row + .upi-admin__change-row {
+  border-top: 1px solid var(--color-border);
+}
+
+.upi-admin__change dt {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.upi-admin__change dd {
+  display: grid;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+/* UPI IDs are lowercase and have no spaces: keep their case and let them wrap anywhere. */
+.upi-admin__upi-id {
+  color: var(--color-text);
+  font-size: var(--text-base);
+  overflow-wrap: anywhere;
+  text-transform: none;
+}

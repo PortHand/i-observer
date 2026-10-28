@@ -12,3 +12,4 @@ export * from "../features/feedback/schema/feedbackSchema";
 export * from "../features/auth/schema/signInAttemptSchema";
 export * from "../features/appUpdate/schema/appUpdateSchema";
 export * from "../features/download/schema/installTokenSchema";
+export * from "../features/offerTimer/schema/offerTimerSchema";

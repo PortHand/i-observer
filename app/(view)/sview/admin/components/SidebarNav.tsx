@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { CircleCheck, CircleX, Clock, ExternalLink, Inbox, LayoutDashboard, List, MonitorDown, Tag, Undo2, type LucideIcon } from "lucide-react";
+import { CircleCheck, CircleX, Clock, ExternalLink, Inbox, LayoutDashboard, List, MonitorDown, QrCode, Tag, Timer, Undo2, type LucideIcon } from "lucide-react";
 import { isUnder, routes } from "@/helper/route";
 import { portal, statusTabs } from "../content/adminContent";
 import { orderListEvents, ordersLink, parseListQuery } from "../helper/adminHelper";
@@ -81,6 +81,18 @@ export default function SidebarNav({ counts }: { counts: AdminOrderPage["counts"
           <Link href={routes.adminPlans} className="admin-nav__link" aria-current={isUnder(pathname, [routes.adminPlans]) ? "page" : undefined}>
             <Tag className="icon icon--sm" strokeWidth={1.75} />
             <span className="admin-nav__label">{portal.plans}</span>
+          </Link>
+        </li>
+        <li>
+          <Link href={routes.adminOfferTimer} className="admin-nav__link" aria-current={pathname === routes.adminOfferTimer ? "page" : undefined}>
+            <Timer className="icon icon--sm" strokeWidth={1.75} />
+            <span className="admin-nav__label">{portal.offerTimer}</span>
+          </Link>
+        </li>
+        <li>
+          <Link href={routes.adminUpi} className="admin-nav__link" aria-current={pathname === routes.adminUpi ? "page" : undefined}>
+            <QrCode className="icon icon--sm" strokeWidth={1.75} />
+            <span className="admin-nav__label">{portal.upiAccounts}</span>
           </Link>
         </li>
       </ul>

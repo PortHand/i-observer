@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { boolean, check, index, integer, pgTable, serial, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
-// Plans and their prices are edited on the admin portal's Plans page; the UPI payee in the database
-// (`npm run db:studio`). Prices and the UPI ID change without a redeploy.
+// Plans and their prices are edited on the admin portal's Plans page; the UPI payee on its UPI
+// accounts page. Prices and the UPI ID change without a redeploy.
 
 export const plans = pgTable(
   "plans",

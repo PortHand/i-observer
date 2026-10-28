@@ -1,5 +1,6 @@
 import { connection } from "next/server";
 import { checkoutPlanParam } from "@/helper/route";
+import { getOffer } from "@/server/features/offerTimer/module/offerTimerModule";
 import { getPlansOrNone } from "@/server/features/pricing/module/pricingModule";
 import { checkout, checkoutSectionId, payment } from "../content/getContent";
 import Checkout from "./Checkout";
@@ -16,9 +17,9 @@ interface CheckoutLoaderProps {
 export default async function CheckoutLoader({ searchParams }: CheckoutLoaderProps) {
   // Prices come from the database, so read them per request (cached a minute), never at build time.
   await connection();
-  const [plans, params] = await Promise.all([getPlansOrNone(), searchParams]);
+  const [plans, offer, params] = await Promise.all([getPlansOrNone(), getOffer(), searchParams]);
   const requested = params[checkoutPlanParam];
-  if (plans.length > 0) return <Checkout plans={plans} initialPlanId={typeof requested === "string" ? requested : null} />;
+  if (plans.length > 0) return <Checkout plans={plans} offer={offer} initialPlanId={typeof requested === "string" ? requested : null} />;
 
   const [before, after] = checkout.unavailable.split("{supportEmail}");
   return (

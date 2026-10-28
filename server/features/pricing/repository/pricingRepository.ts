@@ -71,6 +71,54 @@ export class PricingRepository extends BaseRepository {
     return row ?? null;
   }
 
+  /** Every UPI account, the active one first: for the admin portal. */
+  listUpiAccounts(): Promise<UpiAccountRow[]> {
+    return this.db.select().from(upiAccounts).orderBy(desc(upiAccounts.active), desc(upiAccounts.updatedAt), desc(upiAccounts.id));
+  }
+
+  /** The account with this UPI ID other than `exceptId`, to keep each UPI ID listed once. */
+  async findUpiAccountByUpiId(tx: Tx, upiId: string, exceptId: number | null): Promise<UpiAccountRow | null> {
+    const [row] = await tx
+      .select()
+      .from(upiAccounts)
+      .where(exceptId === null ? eq(upiAccounts.upiId, upiId) : and(eq(upiAccounts.upiId, upiId), ne(upiAccounts.id, exceptId)));
+    return row ?? null;
+  }
+
+  /** Locks and returns the account, or null when there's none with this id. */
+  async lockUpiAccount(tx: Tx, id: number): Promise<UpiAccountRow | null> {
+    const [row] = await tx.select().from(upiAccounts).where(eq(upiAccounts.id, id)).for("update");
+    return row ?? null;
+  }
+
+  /** Returns the new account's id. Inserted inactive: activateUpiAccount makes it the active one. */
+  async insertUpiAccount(tx: Tx, upiId: string, payeeName: string): Promise<number> {
+    const [row] = await tx.insert(upiAccounts).values({ upiId, payeeName, active: false }).returning({ id: upiAccounts.id });
+    return row.id;
+  }
+
+  async updateUpiAccount(tx: Tx, id: number, upiId: string, payeeName: string): Promise<void> {
+    await tx.update(upiAccounts).set({ upiId, payeeName, updatedAt: new Date() }).where(eq(upiAccounts.id, id));
+  }
+
+  /** Makes this the one active account: the others are switched off first (upi_accounts_one_active_idx). */
+  async activateUpiAccount(tx: Tx, id: number): Promise<void> {
+    await tx
+      .update(upiAccounts)
+      .set({ active: false, updatedAt: new Date() })
+      .where(and(eq(upiAccounts.active, true), ne(upiAccounts.id, id)));
+    await tx.update(upiAccounts).set({ active: true, updatedAt: new Date() }).where(eq(upiAccounts.id, id));
+  }
+
+  /** Stops this account taking payments. Checkout then has none until another is made active. */
+  async deactivateUpiAccount(tx: Tx, id: number): Promise<void> {
+    await tx.update(upiAccounts).set({ active: false, updatedAt: new Date() }).where(eq(upiAccounts.id, id));
+  }
+
+  async deleteUpiAccount(tx: Tx, id: number): Promise<void> {
+    await tx.delete(upiAccounts).where(eq(upiAccounts.id, id));
+  }
+
   /**
    * Plan id → its normal price now: the open-ended row in force, ignoring any sale running over it.
    * The admin portal edits this one.

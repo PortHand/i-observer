@@ -23,6 +23,16 @@ export interface Plan {
   maxQuantity: number;
 }
 
+/** The "Offer ends in" countdown over the plans, set on the admin portal's Offer timer page. Display only. */
+export interface Offer {
+  /** Text before the countdown, e.g. "Launch offer ends in". */
+  headline: string;
+  /** When the countdown reaches zero (ISO). */
+  endsAt: string;
+  /** Hours the countdown starts again for each time it reaches zero; null when it disappears instead. */
+  restartHours: number | null;
+}
+
 /** One plan in an order, and how many units of it. */
 export interface OrderItemRequest {
   planId: PlanId;

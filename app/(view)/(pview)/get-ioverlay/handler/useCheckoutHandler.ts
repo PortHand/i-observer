@@ -62,6 +62,30 @@ export const useCheckoutHandler = (plans: getService.Plan[], initialPlanId: getS
   const [copied, setCopied] = useState<CopyTarget | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
+  /**
+   * The plan the link asked for (?plan=) when this was last rendered. Next keeps this page's state
+   * when the visitor navigates away (Activity), so a later "Choose Lifetime" click on the home page
+   * shows the preserved checkout with a new initialPlanId, which useState above would ignore.
+   */
+  const [requestedPlanId, setRequestedPlanId] = useState(initialPlanId);
+  if (initialPlanId !== requestedPlanId) {
+    setRequestedPlanId(initialPlanId);
+    // A link without ?plan= (e.g. "Pricing" in the header) keeps the checkout as it was.
+    if (initialPlanId !== null) {
+      setPlanId(getPlan(plans, initialPlanId).id);
+      setError("");
+      if (step === "pay" || step === "transaction") {
+        // Back to step 1 to show the new plan; saving it there re-prices the unpaid order.
+        setStep("contact");
+      } else if (step === "done") {
+        // That order is finished: the new plan starts a new one.
+        setOrder(null);
+        setSummary(null);
+        setScreenshotUrl(null);
+        setStep("contact");
+      }
+    }
+  }
   const headingRef = useRef<HTMLHeadingElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const copyTimer = useRef<ReturnType<typeof setTimeout>>(undefined);

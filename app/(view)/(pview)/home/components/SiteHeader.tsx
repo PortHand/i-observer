@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/server/features/auth/guard/authGuard";
 import { appInfo, auth, navLinks } from "../content/homeContent";
 import AccountMenu from "./AccountMenu";
 import MobileNav from "./MobileNav";
+import OfferBarLoader from "./OfferBarLoader";
 
 const SignInLink = ({ current }: { current?: string }) => (
   <Link
@@ -31,12 +32,16 @@ async function AccountSlot({ current }: { current?: string }) {
 }
 
 /**
- * The site's top bar. The right-hand button follows the visitor's session: "Sign in", or the
- * account menu.
+ * The site's top bar, under the offer bar when a countdown is running. The right-hand button
+ * follows the visitor's session: "Sign in", or the account menu.
  */
 export default function SiteHeader({ current }: { current?: string }) {
   return (
     <>
+      {/* The admin's offer countdown, when one is running. */}
+      <Suspense fallback={null}>
+        <OfferBarLoader />
+      </Suspense>
       <div className="utility-bar mono">
         <div className="container utility-bar__inner">
           <span>{appInfo.name}</span>

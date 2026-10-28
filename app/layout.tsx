@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo_Narrow, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import JsonLd from "@/components/common/JsonLd";
+import SmoothScroll from "@/components/common/SmoothScroll";
 import { organizationJsonLd, seo, siteUrl, siteVerification, websiteJsonLd } from "@/helper/seo";
 import { appInfo } from "./(view)/(pview)/home/content/homeContent";
 
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${archivoNarrow.variable} ${geistMono.variable}`} data-scroll-behavior="smooth">
       <body>
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+        <SmoothScroll />
         {children}
       </body>
     </html>

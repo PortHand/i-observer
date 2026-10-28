@@ -120,6 +120,13 @@
       "when": 1792837008845,
       "tag": "0016_install_tokens",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1793163688170,
+      "tag": "0017_offer_timer",
+      "breakpoints": true
     }
   ]
 }
