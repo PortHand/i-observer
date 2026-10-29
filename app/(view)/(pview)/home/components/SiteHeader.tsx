@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/server/features/auth/guard/authGuard";
 import { appInfo, auth, navLinks } from "../content/homeContent";
 import AccountMenu from "./AccountMenu";
 import MobileNav from "./MobileNav";
+import { OfferBarFallback } from "./OfferBar";
 import OfferBarLoader from "./OfferBarLoader";
 
 const SignInLink = ({ current }: { current?: string }) => (
@@ -38,8 +39,9 @@ async function AccountSlot({ current }: { current?: string }) {
 export default function SiteHeader({ current }: { current?: string }) {
   return (
     <>
-      {/* The admin's offer countdown, when one is running. */}
-      <Suspense fallback={null}>
+      {/* The admin's offer countdown, when one is running. The fallback keeps the last one in place
+          while a navigation streams in, so the header doesn't jump. */}
+      <Suspense fallback={<OfferBarFallback />}>
         <OfferBarLoader />
       </Suspense>
       <div className="utility-bar mono">

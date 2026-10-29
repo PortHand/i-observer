@@ -1758,24 +1758,53 @@ kbd {
   text-underline-offset: 3px;
 }
 
+/* Phones: the banner stacks, and the clock spans its full width in even tiles. */
 @media (max-width: 640px) {
   .offer-banner {
-    padding: var(--space-5);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    padding: var(--space-5) var(--space-4);
+    border-top: 4px solid var(--color-accent);
+    border-left: 0;
+    text-align: center;
+  }
+
+  .offer-banner__eyebrow {
+    justify-content: center;
   }
 
   .offer-banner__headline {
     font-size: var(--text-xl);
   }
 
+  .countdown-clock--large {
+    width: 100%;
+  }
+
+  .countdown-clock--large .countdown-clock__part {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .countdown-clock--large .countdown-clock__unit {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
   .countdown-clock--large .countdown-clock__value {
-    min-width: 52px;
-    height: 52px;
-    font-size: var(--text-xl);
+    width: 100%;
+    min-width: 0;
+    height: 56px;
+    padding: 0;
+    font-size: 26px;
   }
 
   .countdown-clock__colon {
-    width: 14px;
-    height: 52px;
+    flex: none;
+    width: 12px;
+    height: 56px;
     font-size: var(--text-lg);
   }
 
